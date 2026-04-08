@@ -17,6 +17,10 @@
             "dest": "/public/build/$1"
         },
         {
+            "src": "/(hero-video\\.mp4|favicon\\.ico|robots\\.txt)",
+            "dest": "/public/$1"
+        },
+        {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
