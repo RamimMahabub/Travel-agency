@@ -18,7 +18,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
     })->create();
 
 // Vercel read-only filesystem override
-if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL'])) {
+// getenv() is more reliable than $_ENV/$_SERVER for system-injected vars in PHP serverless
+if (getenv('VERCEL') || getenv('APP_ENV') === 'production' && !is_writable(dirname(__DIR__) . '/storage')) {
     $app->useStoragePath('/tmp/storage');
 }
 
