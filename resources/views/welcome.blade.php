@@ -36,10 +36,15 @@
 
     <!-- Hero Section -->
     <div class="relative bg-dark overflow-hidden h-[500px]">
-        <video poster="{{ asset('hero-poster.jpg') }}" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-60">
-            <source src="{{ asset('hero-video.mp4') }}" type="video/mp4">
-        </video>
-        <div class="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent"></div>
+        <!-- Hardware-accelerated video container to prevent playback lag and stutter -->
+        <div class="absolute inset-0 w-full h-full" style="transform: translateZ(0); will-change: opacity, transform;">
+            <video preload="auto" poster="{{ asset('hero-poster.jpg') }}" autoplay loop muted playsinline class="w-full h-full object-cover opacity-85 transition-opacity duration-1000">
+                <source src="{{ asset('hero-video-hd.mp4') }}" type="video/mp4">
+            </video>
+        </div>
+        
+        <!-- Refined gradient so the video doesn't look muddy or low-res from over-darkening -->
+        <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent"></div>
         
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center items-center text-center">
             <h1 class="text-4xl md:text-6xl font-poppins font-bold text-white mb-4 drop-shadow-md">
@@ -52,8 +57,8 @@
     </div>
 
     <!-- Search Component Container -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-40">
-        <div class="bg-white rounded-2xl shadow-xl" x-data="{ tab: 'flights' }">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-40 pb-12">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 relative" x-data="{ tab: 'flights', tripType: 'one_way' }">
             
             <!-- Tabs -->
             <div class="flex border-b border-gray-100 bg-gray-50/50 rounded-t-2xl overflow-hidden">
@@ -71,68 +76,126 @@
             <div class="p-6 md:p-8">
                 <!-- Flights Search Form -->
                 <div x-show="tab === 'flights'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                    <form action="{{ route('flights.search') }}" method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-                        <div class="relative" x-data="airportSearch('DAC')">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">From</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                    <form action="{{ route('flights.search') }}" method="GET">
+                        
+                        <!-- Trip Options -->
+                        <div class="flex items-center gap-6 mb-6">
+                            <label class="flex items-center gap-2 cursor-pointer group">
+                                <input type="radio" name="trip_type" value="one_way" x-model="tripType" class="w-4 h-4 text-[#1882FF] border-gray-300 focus:ring-[#1882FF]">
+                                <span class="font-bold text-sm tracking-wide transition-colors" :class="tripType === 'one_way' ? 'text-[#1a2b49]' : 'text-gray-400 group-hover:text-gray-600'">One Way</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer group">
+                                <input type="radio" name="trip_type" value="round_way" x-model="tripType" class="w-4 h-4 text-[#1882FF] border-gray-300 focus:ring-[#1882FF]">
+                                <span class="font-bold text-sm tracking-wide transition-colors" :class="tripType === 'round_way' ? 'text-[#1a2b49]' : 'text-gray-400 group-hover:text-gray-600'">Round Way</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer group">
+                                <input type="radio" name="trip_type" value="multi_city" x-model="tripType" class="w-4 h-4 text-[#1882FF] border-gray-300 focus:ring-[#1882FF]">
+                                <span class="font-bold text-sm tracking-wide transition-colors" :class="tripType === 'multi_city' ? 'text-[#1a2b49]' : 'text-gray-400 group-hover:text-gray-600'">Multi City</span>
+                            </label>
+                        </div>
+
+                        <div class="flex flex-col lg:flex-row border border-gray-200 rounded-xl bg-white divide-y lg:divide-y-0 lg:divide-x divide-gray-200 shadow-sm relative z-10 mb-8">
+                            
+                            <!-- From -->
+                            <div class="flex-1 relative p-3 md:p-4 hover:bg-blue-50/50 transition rounded-t-xl lg:rounded-tr-none lg:rounded-l-xl cursor-text" x-data="airportSearch('DAC')" @click="$refs.inputFrom.focus()">
+                                <label class="block text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-0.5">From</label>
+                                <div class="relative">
+                                    <input type="hidden" name="origin" x-model="selectedCode">
+                                    <input x-ref="inputFrom" type="text" x-model="search" @focus="open = true" @input="filter" @click.away="open = false" placeholder="City or airport" class="w-full border-none p-0 focus:ring-0 font-bold text-lg text-[#1a2b49] bg-transparent truncate" required autocomplete="off">
+                                    <div class="text-xs text-gray-400 truncate mt-0.5" x-text="selectedCode ? 'All Airports' : 'Select Airport'"></div>
+                                    
+                                    <!-- Dropdown -->
+                                    <div x-show="open" style="display: none;" class="absolute z-50 left-0 min-w-[320px] mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 max-h-72 overflow-y-auto">
+                                        <template x-for="airport in filtered" :key="airport.code">
+                                            <div @click.stop="select(airport)" class="px-5 py-3 hover:bg-blue-50 cursor-pointer flex items-start justify-between border-b border-gray-50 last:border-0 transition">
+                                                <div class="flex items-start gap-3">
+                                                    <svg class="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                                    <div class="flex flex-col">
+                                                        <span class="font-bold text-[#1a2b49] text-base leading-tight" x-text="airport.name.split(',')[0]"></span>
+                                                        <span class="text-gray-500 text-xs mt-0.5 truncate" x-text="airport.name"></span>
+                                                    </div>
+                                                </div>
+                                                <span class="font-bold text-[#1882FF] bg-blue-50 px-2 py-1 rounded text-xs shrink-0" x-text="airport.code"></span>
+                                            </div>
+                                        </template>
+                                        <div x-show="filtered.length === 0" class="px-5 py-6 text-sm text-gray-500 text-center font-medium">No airports found</div>
+                                    </div>
                                 </div>
-                                <input type="hidden" name="origin" x-model="selectedCode">
-                                <input type="text" x-model="search" @focus="open = true" @input="filter" @click.away="open = false" placeholder="City or code" class="pl-10 w-full border-gray-300 focus:border-primary focus:ring-primary rounded-lg shadow-sm" required autocomplete="off">
                                 
-                                <!-- Dropdown -->
-                                <div x-show="open" style="display: none;" class="absolute z-50 left-0 min-w-[280px] mt-1 bg-white rounded-lg shadow-xl border border-gray-100 max-h-48 overflow-y-auto">
-                                    <template x-for="airport in filtered" :key="airport.code">
-                                        <div @click="select(airport)" class="px-4 py-2 hover:bg-red-50 cursor-pointer flex items-center gap-3 border-b border-gray-50 last:border-0 transition">
-                                            <span class="font-bold text-primary bg-red-100 px-2 py-1 rounded text-xs shrink-0" x-text="airport.code"></span>
-                                            <span class="text-gray-700 text-sm truncate" x-text="airport.name"></span>
-                                        </div>
-                                    </template>
-                                    <div x-show="filtered.length === 0" class="px-4 py-3 text-sm text-gray-500 text-center">No airports found</div>
+                                <!-- Swap Icon -->
+                                <div class="absolute -right-4 top-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center justify-center w-8 h-8 bg-white border border-gray-200 rounded-full shadow-sm text-[#1882FF] cursor-pointer hover:bg-gray-50 hover:shadow transform transition active:scale-95">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="relative" x-data="airportSearch('DXB')">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">To</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                                </div>
-                                <input type="hidden" name="destination" x-model="selectedCode">
-                                <input type="text" x-model="search" @focus="open = true" @input="filter" @click.away="open = false" placeholder="City or code" class="pl-10 w-full border-gray-300 focus:border-primary focus:ring-primary rounded-lg shadow-sm" required autocomplete="off">
-                                
-                                <!-- Dropdown -->
-                                <div x-show="open" style="display: none;" class="absolute z-50 left-0 min-w-[280px] mt-1 bg-white rounded-lg shadow-xl border border-gray-100 max-h-48 overflow-y-auto">
-                                    <template x-for="airport in filtered" :key="airport.code">
-                                        <div @click="select(airport)" class="px-4 py-2 hover:bg-red-50 cursor-pointer flex items-center gap-3 border-b border-gray-50 last:border-0 transition">
-                                            <span class="font-bold text-primary bg-red-100 px-2 py-1 rounded text-xs shrink-0" x-text="airport.code"></span>
-                                            <span class="text-gray-700 text-sm truncate" x-text="airport.name"></span>
-                                        </div>
-                                    </template>
-                                    <div x-show="filtered.length === 0" class="px-4 py-3 text-sm text-gray-500 text-center">No airports found</div>
+                            <!-- To -->
+                            <div class="flex-1 relative p-3 md:p-4 hover:bg-blue-50/50 transition cursor-text lg:pl-6" x-data="airportSearch('DXB')" @click="$refs.inputTo.focus()">
+                                <label class="block text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-0.5">To</label>
+                                <div class="relative">
+                                    <input type="hidden" name="destination" x-model="selectedCode">
+                                    <input x-ref="inputTo" type="text" x-model="search" @focus="open = true" @input="filter" @click.away="open = false" placeholder="City or airport" class="w-full border-none p-0 focus:ring-0 font-bold text-lg text-[#1a2b49] bg-transparent truncate" required autocomplete="off">
+                                    <div class="text-xs text-gray-400 truncate mt-0.5" x-text="selectedCode ? 'All Airports' : 'Select Airport'"></div>
+                                    
+                                    <!-- Dropdown -->
+                                    <div x-show="open" style="display: none;" class="absolute z-50 left-0 min-w-[320px] mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 max-h-72 overflow-y-auto">
+                                        <template x-for="airport in filtered" :key="airport.code">
+                                            <div @click.stop="select(airport)" class="px-5 py-3 hover:bg-blue-50 cursor-pointer flex items-start justify-between border-b border-gray-50 last:border-0 transition">
+                                                <div class="flex items-start gap-3">
+                                                    <svg class="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                                    <div class="flex flex-col">
+                                                        <span class="font-bold text-[#1a2b49] text-base leading-tight" x-text="airport.name.split(',')[0]"></span>
+                                                        <span class="text-gray-500 text-xs mt-0.5 truncate" x-text="airport.name"></span>
+                                                    </div>
+                                                </div>
+                                                <span class="font-bold text-[#1882FF] bg-blue-50 px-2 py-1 rounded text-xs shrink-0" x-text="airport.code"></span>
+                                            </div>
+                                        </template>
+                                        <div x-show="filtered.length === 0" class="px-5 py-6 text-sm text-gray-500 text-center font-medium">No airports found</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Journey Date</label>
-                            <input type="date" name="date" class="w-full border-gray-300 focus:border-primary focus:ring-primary rounded-lg shadow-sm text-gray-600" required value="{{ \Carbon\Carbon::tomorrow()->toDateString() }}">
-                        </div>
+                            <!-- Departure Date -->
+                            <div class="w-full lg:w-40 xl:w-48 relative p-3 md:p-4 hover:bg-blue-50/50 transition cursor-text" @click="$refs.inputDep.showPicker ? $refs.inputDep.showPicker() : $refs.inputDep.focus()">
+                                <label class="block text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-0.5">Departure Date</label>
+                                <input x-ref="inputDep" type="date" name="date" class="w-full border-none p-0 focus:ring-0 font-bold text-lg text-[#1a2b49] bg-transparent" required value="{{ \Carbon\Carbon::tomorrow()->toDateString() }}">
+                                <div class="text-xs text-gray-400 truncate mt-0.5">Any day</div>
+                            </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Passengers</label>
-                            <select name="passengers" class="w-full border-gray-300 focus:border-primary focus:ring-primary rounded-lg shadow-sm text-gray-600">
-                                <option value="1">1 Traveler</option>
-                                <option value="2">2 Travelers</option>
-                                <option value="3">3 Travelers</option>
-                                <option value="4">4 Travelers</option>
-                            </select>
+                            <!-- Return Date -->
+                            <div class="w-full lg:w-40 xl:w-48 relative p-3 md:p-4 hover:bg-blue-50/50 transition cursor-pointer" :class="tripType === 'one_way' ? 'bg-gray-50/30' : ''" @click="if(tripType === 'one_way') tripType = 'round_way'; setTimeout(() => { if($refs.inputRet && $refs.inputRet.showPicker) $refs.inputRet.showPicker(); else if($refs.inputRet) $refs.inputRet.focus(); }, 50)">
+                                <label class="block text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-0.5">Return Date</label>
+                                <template x-if="tripType === 'one_way'">
+                                    <div class="h-[28px] flex items-center">
+                                        <span class="text-xs text-gray-400 font-medium">Save more on return</span>
+                                        <div class="text-xs text-gray-300 truncate mt-0.5 absolute bottom-3">Book round trip</div>
+                                    </div>
+                                </template>
+                                <template x-if="tripType !== 'one_way'">
+                                    <div>
+                                        <input x-ref="inputRet" type="date" name="return_date" class="w-full border-none p-0 focus:ring-0 font-bold text-lg text-[#1a2b49] bg-transparent" :required="tripType === 'round_way'" :value="'{{ \Carbon\Carbon::tomorrow()->addDays(2)->toDateString() }}'">
+                                        <div class="text-xs text-gray-400 truncate mt-0.5">Any day</div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Travelers -->
+                            <div class="w-full lg:w-48 relative p-3 md:p-4 hover:bg-blue-50/50 transition rounded-b-xl lg:rounded-bl-none lg:rounded-r-xl cursor-pointer">
+                                <label class="block text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-0.5">Travelers, Class</label>
+                                <select name="passengers" class="w-full border-none p-0 focus:ring-0 font-bold text-lg text-[#1a2b49] bg-transparent cursor-pointer">
+                                    <option value="1">1 Traveler</option>
+                                    <option value="2">2 Travelers</option>
+                                    <option value="3">3 Travelers</option>
+                                    <option value="4">4 Travelers</option>
+                                    <option value="5">5 Travelers</option>
+                                </select>
+                                <div class="text-xs text-gray-400 truncate mt-0.5">Economy</div>
+                            </div>
                         </div>
                         
-                        <div>
-                            <button type="submit" class="bg-primary hover:bg-red-800 text-white font-bold h-[42px] px-6 rounded-lg transition shadow-md w-full">
+                        <!-- Search Button overlapping the bottom -->
+                        <div class="absolute left-1/2 transform -translate-x-1/2 -bottom-6 z-20">
+                            <button type="submit" class="bg-[#FFB700] hover:bg-[#E6A600] text-[#1a2b49] font-black tracking-widest h-[52px] px-14 rounded-xl transition shadow-[0_4px_15px_rgba(255,183,0,0.4)] hover:shadow-[0_6px_20px_rgba(255,183,0,0.5)] hover:-translate-y-0.5 w-[calc(100vw-3rem)] md:w-auto text-lg border border-[#FFB700] whitespace-nowrap outline-none focus:outline-none">
                                 Search
                             </button>
                         </div>
