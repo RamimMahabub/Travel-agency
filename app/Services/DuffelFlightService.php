@@ -114,9 +114,18 @@ class DuffelFlightService implements FlightServiceInterface
             
             $airline = $offer['owner']['name'] ?? 'Unknown';
 
-            // Convert PT2H15M into 2h 15m
-            $outboundDurationStr = str_replace(['PT', 'H', 'M'], ['', 'h ', 'm'], $outboundSlice['duration']);
-            $inboundDurationStr = $inboundSlice ? str_replace(['PT', 'H', 'M'], ['', 'h ', 'm'], $inboundSlice['duration']) : null;
+            $formatDuration = function ($isoDuration) {
+                if (!$isoDuration) return null;
+                $interval = new \DateInterval($isoDuration);
+                $parts = [];
+                if ($interval->d > 0) $parts[] = $interval->d . 'd';
+                if ($interval->h > 0) $parts[] = $interval->h . 'h';
+                if ($interval->i > 0) $parts[] = $interval->i . 'm';
+                return empty($parts) ? '0m' : implode(' ', $parts);
+            };
+
+            $outboundDurationStr = $formatDuration($outboundSlice['duration']);
+            $inboundDurationStr = $inboundSlice ? $formatDuration($inboundSlice['duration']) : null;
 
             $mappedFlights[] = [
                 'id' => $flightId,

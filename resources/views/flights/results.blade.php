@@ -7,7 +7,12 @@
             <div>
                 <h1 class="text-xl font-bold text-gray-800 tracking-tight">{{ $search['origin'] ?? 'DAC' }} — {{ $search['destination'] ?? 'DXB' }}</h1>
                 <p class="text-xs text-gray-500 font-medium mt-1 uppercase tracking-wide">
-                    Round Trip • {{ \Carbon\Carbon::parse($search['date'] ?? now())->format('d M') }} - {{ \Carbon\Carbon::parse($search['date'] ?? now())->addDays(2)->format('d M') }} • {{ $search['passengers'] ?? 1 }} Traveller • Economy
+                    {{ str_replace('_', ' ', $search['trip_type'] ?? 'one way') }} • 
+                    {{ \Carbon\Carbon::parse($search['date'] ?? now())->format('d M') }} 
+                    @if(($search['trip_type'] ?? 'one_way') == 'round_way' && !empty($search['return_date']))
+                        - {{ \Carbon\Carbon::parse($search['return_date'])->format('d M') }}
+                    @endif
+                    • {{ $search['passengers'] ?? 1 }} Traveller • Economy
                 </p>
             </div>
             <button class="bg-[#FFEFE5] text-[#FF7A00] hover:bg-[#FFE0CC] font-bold text-sm px-6 py-2 rounded-lg transition">
@@ -167,9 +172,11 @@
                         </button>
                         <button @click="sortBy = 'earliest'" :class="sortBy === 'earliest' ? 'bg-blue-600 text-white shadow-inner' : 'bg-white text-gray-600 hover:bg-gray-50'" class="flex-1 font-bold py-3 px-4 flex justify-between items-center transition">
                             <span class="text-sm">Earliest</span>
+                            <span class="text-sm" x-text="formatNumber(earliestPrice)"></span>
                         </button>
                         <button @click="sortBy = 'fastest'" :class="sortBy === 'fastest' ? 'bg-blue-600 text-white shadow-inner' : 'bg-white text-gray-600 hover:bg-gray-50'" class="flex-1 font-bold py-3 px-4 flex justify-between items-center transition">
                             <span class="text-sm">Fastest</span>
+                            <span class="text-sm" x-text="formatNumber(fastestPrice)"></span>
                         </button>
                     </div>
 
@@ -416,6 +423,35 @@
                     return Math.max(...this.flights.map(f => parseFloat(f.price)));
                 },
 
+                get earliestPrice() {
+                    if (this.flights.length === 0) return 0;
+                    return this.flights.reduce((earliest, f) => {
+                        return new Date(f.outbound.departure_time) < new Date(earliest.outbound.departure_time) ? f : earliest;
+                    }, this.flights[0]).price;
+                },
+
+                get fastestPrice() {
+                    if (this.flights.length === 0) return 0;
+                    return this.flights.reduce((fastest, f) => {
+                        return this.getFlightDuration(f) < this.getFlightDuration(fastest) ? f : fastest;
+                    }, this.flights[0]).price;
+                },
+
+                getFlightDuration(flight) {
+                    const parseDuration = (dur) => {
+                        if (!dur) return 0;
+                        let days = 0, hours = 0, mins = 0;
+                        const dMatch = dur.match(/(\d+)d/i);
+                        const hMatch = dur.match(/(\d+)h/i);
+                        const mMatch = dur.match(/(\d+)m/i);
+                        if (dMatch) days = parseInt(dMatch[1]);
+                        if (hMatch) hours = parseInt(hMatch[1]);
+                        if (mMatch) mins = parseInt(mMatch[1]);
+                        return (days * 24 * 60) + (hours * 60) + mins;
+                    };
+                    return parseDuration(flight.outbound.duration) + (flight.inbound ? parseDuration(flight.inbound.duration) : 0);
+                },
+
                 get filteredFlights() {
                     let result = [...this.flights];
 
@@ -457,19 +493,7 @@
                     } else if (this.sortBy === 'earliest') {
                         result = result.sort((a, b) => new Date(a.outbound.departure_time) - new Date(b.outbound.departure_time));
                     } else if (this.sortBy === 'fastest') {
-                        const parseDuration = (dur) => {
-                            let hours = 0, mins = 0;
-                            const hMatch = dur.match(/(\d+)h/);
-                            const mMatch = dur.match(/(\d+)m/);
-                            if (hMatch) hours = parseInt(hMatch[1]);
-                            if (mMatch) mins = parseInt(mMatch[1]);
-                            return (hours * 60) + mins;
-                        };
-                        result = result.sort((a, b) => {
-                            let aDur = parseDuration(a.outbound.duration) + (a.inbound ? parseDuration(a.inbound.duration) : 0);
-                            let bDur = parseDuration(b.outbound.duration) + (b.inbound ? parseDuration(b.inbound.duration) : 0);
-                            return aDur - bDur;
-                        });
+                        result = result.sort((a, b) => this.getFlightDuration(a) - this.getFlightDuration(b));
                     }
 
                     return result;
