@@ -71,6 +71,22 @@
             <div class="p-4 md:p-6 pt-0">
                 <!-- Flights Search Form -->
                 <div x-show="tab === 'flights'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                    @if($errors->has('search'))
+                        <div class="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-red-700 font-medium">
+                                        {{ $errors->first('search') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     <form action="{{ route('flights.search') }}" method="GET">
                         
                         <!-- Trip Options (Pill shaped) -->

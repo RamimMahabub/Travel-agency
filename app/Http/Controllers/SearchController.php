@@ -53,7 +53,7 @@ class SearchController extends Controller
 
             return back()
                 ->withInput()
-                ->withErrors(['search' => 'Unable to fetch flights from provider right now. Please try again.']);
+                ->withErrors(['search' => 'Search failed: ' . $e->getMessage()]);
         }
 
         return view('flights.results', [

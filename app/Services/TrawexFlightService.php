@@ -37,8 +37,7 @@ class TrawexFlightService implements FlightServiceInterface
     ): array
     {
         if (empty($this->userId)) {
-            // Failsafe empty array if user hasn't setup keys yet
-            return [];
+            throw new \Exception('TRAWEX_USER_ID is missing in Vercel Environment Variables. Please add your API keys to Vercel Settings.');
         }
 
         $journeyType = 'OneWay';
@@ -80,8 +79,7 @@ class TrawexFlightService implements FlightServiceInterface
         $response = Http::withoutVerifying()->connectTimeout(10)->timeout(25)->post($this->baseUrl . '/aeroVE5/availability', $payload);
 
         if ($response->failed()) {
-            Log::error('Trawex Flight Availability Search Failed: ' . $response->body());
-            return []; // Return empty on failure for frontend stability
+            throw new \Exception('Trawex HTTP Error: ' . $response->status() . ' - ' . $response->body());
         }
 
         $data = $response->json();
@@ -89,8 +87,13 @@ class TrawexFlightService implements FlightServiceInterface
         
         $searchResponse = $data['AirSearchResponse'] ?? null;
         if (!$searchResponse || !isset($searchResponse['AirSearchResult']['FareItineraries'])) {
-            Log::info("Trawex API returned empty results or unexpected structure.", ['json' => $data]);
-            return [];
+            $errorMsg = 'Unknown error';
+            if (isset($data['AirSearchResponse']['Errors'])) {
+                 $errorMsg = json_encode($data['AirSearchResponse']['Errors']);
+            } elseif (isset($data['Errors'])) {
+                 $errorMsg = json_encode($data['Errors']);
+            }
+            throw new \Exception('Trawex API returned no flights. Error: ' . $errorMsg);
         }
 
         $sessionId = $searchResponse['session_id'] ?? null;
