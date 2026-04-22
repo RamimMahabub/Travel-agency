@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -183,16 +183,16 @@
                             </div>
 
                             <!-- Class & Travelers -->
-                            <div class="sm:w-44 border border-gray-200 rounded-xl bg-white p-3 hover:border-[#1882FF] transition group">
+                            <div class="sm:w-52 border border-gray-200 rounded-xl bg-white p-3 hover:border-[#1882FF] transition group">
                                 <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Class & Travelers</label>
-                                <div class="flex items-center gap-3">
-                                    <select name="class" class="flex-1 border-none p-0 focus:ring-0 text-sm font-bold text-[#1a2b49] bg-transparent cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <select name="class" class="flex-1 min-w-[90px] border-none py-0 pl-0 pr-6 focus:ring-0 text-sm font-bold text-[#1a2b49] bg-transparent cursor-pointer bg-[right_0_center]">
                                         <option value="economy">Economy</option>
                                         <option value="business">Business</option>
                                         <option value="first">First</option>
                                     </select>
                                     <span class="text-gray-300">|</span>
-                                    <select name="passengers" class="w-16 border-none p-0 focus:ring-0 text-sm font-bold text-[#1a2b49] bg-transparent cursor-pointer">
+                                    <select name="passengers" class="w-20 border-none py-0 pl-0 pr-6 focus:ring-0 text-sm font-bold text-[#1a2b49] bg-transparent cursor-pointer bg-[right_0_center]">
                                         <option value="1">1 Pax</option>
                                         <option value="2">2 Pax</option>
                                         <option value="3">3 Pax</option>
