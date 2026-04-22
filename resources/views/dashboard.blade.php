@@ -28,7 +28,7 @@
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @foreach($bookings as $booking)
-                        <div class="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition">
+                        <a href="{{ route('booking.show', $booking->id) }}" class="block bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300">
                             <div class="flex justify-between items-start mb-4">
                                 <div>
                                     <span class="inline-block px-3 py-1 rounded-full text-xs font-bold font-poppins {{ $booking->status == 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
@@ -53,7 +53,7 @@
                                     <p class="font-bold text-xl">{{ number_format($booking->total_amount, 2) }} BDT</p>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             @endif

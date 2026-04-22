@@ -12,7 +12,7 @@
                     @if(($search['trip_type'] ?? 'one_way') == 'round_way' && !empty($search['return_date']))
                         - {{ \Carbon\Carbon::parse($search['return_date'])->format('d M') }}
                     @endif
-                    • {{ $search['passengers'] ?? 1 }} Traveller • Economy
+                    • {{ $search['passengers'] ?? 1 }} Traveller • {{ ucfirst(str_replace('_', ' ', $search['class'] ?? 'economy')) }}
                 </p>
             </div>
             <button class="bg-[#FFEFE5] text-[#FF7A00] hover:bg-[#FFE0CC] font-bold text-sm px-6 py-2 rounded-lg transition">
@@ -126,15 +126,20 @@
                             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                         </div>
                         <div class="p-4 space-y-3">
-                            <template x-for="al in computedAirlines" :key="al.airline">
-                                <label class="flex justify-between items-center cursor-pointer group">
-                                    <div class="flex items-center gap-3">
-                                        <input type="checkbox" :value="al.airline" x-model="selectedAirlines" class="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-600">
-                                        <span class="text-xs font-semibold text-gray-700" x-text="al.airline"></span>
-                                    </div>
-                                    <span class="text-xs font-semibold text-gray-400 group-hover:text-blue-600" x-text="currency + ' ' + formatNumber(al.price)"></span>
-                                </label>
-                            </template>
+                            <label class="flex justify-between items-center cursor-pointer group">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" value="refundable" x-model="refundFilter" class="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-600">
+                                    <span class="text-xs font-semibold text-gray-700">Refundable</span>
+                                </div>
+                                <span class="text-[10px] font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">Refundable</span>
+                            </label>
+                            <label class="flex justify-between items-center cursor-pointer group">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox" value="non_refundable" x-model="refundFilter" class="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-600">
+                                    <span class="text-xs font-semibold text-gray-700">Non Refundable</span>
+                                </div>
+                                <span class="text-[10px] font-semibold text-red-500 bg-red-50 px-1.5 py-0.5 rounded">Non-Refund</span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -270,7 +275,10 @@
 
                                 <!-- Action Pane (Right Side) -->
                                 <div class="w-full md:w-1/4 px-6 flex flex-col justify-center items-end py-4 md:py-0">
-                                    <p class="text-[10px] font-bold text-gray-400 tracking-wider mb-1 uppercase">STLRSID226</p>
+                                    <p class="text-[10px] font-bold text-[#1882FF] tracking-wider mb-1 uppercase flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        Trawex
+                                    </p>
                                     <h3 class="text-2xl font-bold text-gray-800"><span x-text="flight.currency + ' ' + formatNumber(flight.price)"></span></h3>
                                     <template x-if="flight.crossed_price">
                                         <p class="text-xs text-gray-400 line-through mb-3"><span x-text="flight.currency + ' ' + formatNumber(flight.crossed_price)"></span></p>
@@ -369,6 +377,7 @@
                 selectedAirlines: [],
                 sortBy: 'cheapest',
                 currency: '',
+                refundFilter: [], // 'refundable' and/or 'non_refundable'
                 
                 scheduleTab: 'departure',
                 timeFilters: {
@@ -457,6 +466,14 @@
 
                     if (this.selectedMaxPrice !== null) {
                         result = result.filter(f => parseFloat(f.price) <= this.selectedMaxPrice);
+                    }
+
+                    if (this.refundFilter.length > 0) {
+                        result = result.filter(f => {
+                            if (this.refundFilter.includes('refundable') && f.refundable) return true;
+                            if (this.refundFilter.includes('non_refundable') && !f.refundable) return true;
+                            return false;
+                        });
                     }
 
                     if (this.selectedAirlines.length > 0) {

@@ -42,7 +42,15 @@ class AmadeusFlightService implements FlightServiceInterface
     /**
      * Search Flights
      */
-    public function search(string $origin, string $destination, string $date, int $passengers): array
+    public function search(
+        string $origin,
+        string $destination,
+        string $date,
+        int $passengers,
+        string $tripType = 'one_way',
+        ?string $returnDate = null,
+        string $cabinClass = 'economy'
+    ): array
     {
         if (empty($this->clientId)) {
             // Failsafe empty array if user hasn't setup keys yet
@@ -51,13 +59,20 @@ class AmadeusFlightService implements FlightServiceInterface
 
         $token = $this->getToken();
 
-        $response = Http::withToken($token)->get($this->baseUrl . '/v2/shopping/flight-offers', [
+        $query = [
             'originLocationCode' => $origin,
             'destinationLocationCode' => $destination,
             'departureDate' => $date,
             'adults' => $passengers,
+            'travelClass' => strtoupper($cabinClass),
             'max' => 20
-        ]);
+        ];
+
+        if ($tripType === 'round_way' && !empty($returnDate)) {
+            $query['returnDate'] = $returnDate;
+        }
+
+        $response = Http::withToken($token)->get($this->baseUrl . '/v2/shopping/flight-offers', $query);
 
         if ($response->failed()) {
             return []; // Could throw exception in production, returning empty for safety
@@ -73,25 +88,61 @@ class AmadeusFlightService implements FlightServiceInterface
             // Cache the raw offer so we can price/book it later!
             Cache::put('amadeus_offer_' . $flightId, $offer, now()->addHours(2));
 
-            $itinerary = $offer['itineraries'][0]['segments'][0];
-            $airline = $offer['itineraries'][0]['segments'][0]['carrierCode'] ?? 'Unknown';
+            $segments = $offer['itineraries'][0]['segments'] ?? [];
+            if (empty($segments)) {
+                continue;
+            }
+
+            $firstSegment = $segments[0];
+            $lastSegment = end($segments);
+            $airline = $firstSegment['carrierCode'] ?? 'Unknown';
             
             // Getting dictionaries for airline names if provided, otherwise using code
             $airlineDict = $response->json('dictionaries.carriers') ?? [];
             $airlineName = $airlineDict[$airline] ?? $airline;
 
+            $inbound = null;
+            $returnSegments = $offer['itineraries'][1]['segments'] ?? [];
+            if (!empty($returnSegments)) {
+                $firstReturnSegment = $returnSegments[0];
+                $lastReturnSegment = end($returnSegments);
+                $inbound = [
+                    'origin' => $firstReturnSegment['departure']['iataCode'] ?? $destination,
+                    'destination' => $lastReturnSegment['arrival']['iataCode'] ?? $origin,
+                    'departure_time' => $firstReturnSegment['departure']['at'] ?? null,
+                    'arrival_time' => $lastReturnSegment['arrival']['at'] ?? null,
+                    'duration' => $this->formatDuration($offer['itineraries'][1]['duration'] ?? 'PT0M'),
+                    'stops' => max(0, count($returnSegments) - 1),
+                    'layover' => null,
+                ];
+            }
+
             $mappedFlights[] = [
                 'id' => $flightId,
                 'airline' => $airlineName,
-                'flight_number' => $itinerary['number'],
-                'origin' => $itinerary['departure']['iataCode'],
-                'destination' => $itinerary['arrival']['iataCode'],
-                'departure_time' => $itinerary['departure']['at'],
-                'arrival_time' => $itinerary['arrival']['at'],
+                'airline_code' => $airline,
+                'flight_number' => $firstSegment['number'] ?? 'Unknown',
+                'origin' => $firstSegment['departure']['iataCode'] ?? $origin,
+                'destination' => $lastSegment['arrival']['iataCode'] ?? $destination,
+                'departure_time' => $firstSegment['departure']['at'] ?? null,
+                'arrival_time' => $lastSegment['arrival']['at'] ?? null,
                 'duration' => $this->formatDuration($offer['itineraries'][0]['duration']),
-                'stops' => count($offer['itineraries'][0]['segments']) - 1,
-                'price' => $offer['price']['total'],
+                'stops' => max(0, count($segments) - 1),
+                'price' => floatval($offer['price']['total']),
+                'crossed_price' => round(floatval($offer['price']['total']) * 1.06, 2),
                 'currency' => $offer['price']['currency'],
+                'refundable' => true,
+                'points' => 20,
+                'outbound' => [
+                    'origin' => $firstSegment['departure']['iataCode'] ?? $origin,
+                    'destination' => $lastSegment['arrival']['iataCode'] ?? $destination,
+                    'departure_time' => $firstSegment['departure']['at'] ?? null,
+                    'arrival_time' => $lastSegment['arrival']['at'] ?? null,
+                    'duration' => $this->formatDuration($offer['itineraries'][0]['duration']),
+                    'stops' => max(0, count($segments) - 1),
+                    'layover' => null,
+                ],
+                'inbound' => $inbound,
             ];
         }
 

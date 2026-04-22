@@ -13,7 +13,15 @@ interface FlightServiceInterface
      * @param int $passengers
      * @return array
      */
-    public function search(string $origin, string $destination, string $date, int $passengers, string $tripType = 'one_way', ?string $returnDate = null): array;
+    public function search(
+        string $origin,
+        string $destination,
+        string $date,
+        int $passengers,
+        string $tripType = 'one_way',
+        ?string $returnDate = null,
+        string $cabinClass = 'economy'
+    ): array;
 
     /**
      * Retrieve the exact price and availability for a chosen flight.

@@ -7,7 +7,15 @@ use Carbon\Carbon;
 
 class MockFlightService implements FlightServiceInterface
 {
-    public function search(string $origin, string $destination, string $date, int $passengers, string $tripType = 'one_way', ?string $returnDate = null): array
+    public function search(
+        string $origin,
+        string $destination,
+        string $date,
+        int $passengers,
+        string $tripType = 'one_way',
+        ?string $returnDate = null,
+        string $cabinClass = 'economy'
+    ): array
     {
         if ($tripType === 'multi_city') {
             return [];

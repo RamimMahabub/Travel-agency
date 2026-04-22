@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             \App\Services\FlightServiceInterface::class,
-            \App\Services\DuffelFlightService::class
+            \App\Services\TrawexFlightService::class
         );
     }
 

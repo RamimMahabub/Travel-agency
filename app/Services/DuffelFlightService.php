@@ -34,7 +34,15 @@ class DuffelFlightService implements FlightServiceInterface
     /**
      * Search Flights via Duffel
      */
-    public function search(string $origin, string $destination, string $date, int $passengers, string $tripType = 'one_way', ?string $returnDate = null): array
+    public function search(
+        string $origin,
+        string $destination,
+        string $date,
+        int $passengers,
+        string $tripType = 'one_way',
+        ?string $returnDate = null,
+        string $cabinClass = 'economy'
+    ): array
     {
         if (empty($this->accessToken) || $tripType === 'multi_city') {
             return [];
@@ -65,7 +73,7 @@ class DuffelFlightService implements FlightServiceInterface
             'data' => [
                 'slices' => $slices,
                 'passengers' => $passengerArray,
-                'cabin_class' => 'economy', // Reduce load by forcing economy
+                'cabin_class' => $cabinClass,
                 'return_offers' => false,
             ]
         ];
