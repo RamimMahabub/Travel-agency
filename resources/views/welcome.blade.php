@@ -396,7 +396,7 @@
                 
                 init() {
                     if (initialCode) {
-                        fetch(`/api/airports/search?q=${initialCode}`)
+                        fetch(`/ajax/airports/search?q=${initialCode}`)
                             .then(res => res.json())
                             .then(data => {
                                 if(data.length > 0) {
@@ -415,7 +415,7 @@
                         return;
                     }
                     this.loading = true;
-                    fetch(`/api/airports/search?q=${this.search}`)
+                    fetch(`/ajax/airports/search?q=${this.search}`)
                         .then(res => res.json())
                         .then(data => {
                             this.filtered = data;

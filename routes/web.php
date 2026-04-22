@@ -23,13 +23,13 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/flights/search', [\App\Http\Controllers\SearchController::class, 'flights'])->name('flights.search');
-Route::get('/api/airports/search', [\App\Http\Controllers\AirportController::class, 'search'])->name('airports.search');
+Route::get('/ajax/airports/search', [\App\Http\Controllers\AirportController::class, 'search'])->name('airports.search');
 
 Route::get('/trawex-tester', function () {
     return view('trawex-tester');
 });
 
-Route::get('/api/trawex-test-execute', function (\App\Services\FlightServiceInterface $flightService) {
+Route::get('/ajax/trawex-test-execute', function (\App\Services\FlightServiceInterface $flightService) {
     try {
         $logs = [];
 
