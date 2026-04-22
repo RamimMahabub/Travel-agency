@@ -77,7 +77,7 @@ class TrawexFlightService implements FlightServiceInterface
             'infants' => 0,
         ];
 
-        $response = Http::withoutVerifying()->timeout(45)->post($this->baseUrl . '/aeroVE5/availability', $payload);
+        $response = Http::withoutVerifying()->connectTimeout(10)->timeout(25)->post($this->baseUrl . '/aeroVE5/availability', $payload);
 
         if ($response->failed()) {
             Log::error('Trawex Flight Availability Search Failed: ' . $response->body());
@@ -237,7 +237,7 @@ class TrawexFlightService implements FlightServiceInterface
             'fare_source_code' => $fareSourceCode
         ];
 
-        $response = Http::withoutVerifying()->post($this->baseUrl . '/aeroVE5/revalidate', $payload);
+        $response = Http::withoutVerifying()->connectTimeout(10)->timeout(25)->post($this->baseUrl . '/aeroVE5/revalidate', $payload);
 
         if ($response->failed()) {
             Log::error('Trawex Fare Validation Failed: ' . $response->body());
@@ -338,7 +338,7 @@ class TrawexFlightService implements FlightServiceInterface
             'paxInfo' => $paxInfo
         ];
 
-        $response = Http::withoutVerifying()->post($this->baseUrl . '/aeroVE5/booking', $payload);
+        $response = Http::withoutVerifying()->connectTimeout(10)->timeout(25)->post($this->baseUrl . '/aeroVE5/booking', $payload);
 
         if ($response->failed()) {
             Log::error('Trawex Booking Failed: ' . $response->body());

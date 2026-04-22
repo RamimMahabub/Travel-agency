@@ -1,6 +1,11 @@
 {
     "version": 2,
     "framework": null,
+    "functions": {
+        "api/index.php": {
+            "maxDuration": 60
+        }
+    },
     "builds": [
         {
             "src": "api/index.php",
@@ -27,7 +32,7 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
+        "APP_DEBUG": "false",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
         "CACHE_STORE": "array",

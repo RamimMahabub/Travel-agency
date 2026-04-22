@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Airport;
+use Illuminate\Support\Facades\Log;
 
 class AirportController extends Controller
 {
     public function search(Request $request)
     {
         $query = trim((string) $request->input('q'));
-        
+
         if (empty($query)) {
             return response()->json([]);
         }
@@ -21,36 +22,43 @@ class AirportController extends Controller
         $prefixQuery = $query . '%';
         $countryCodes = $this->resolveCountryCodes($query);
 
-        $airports = Airport::where('iata_code', $exactQuery)
-            ->orWhere('iata_code', 'like', $exactQuery . '%')
-            ->orWhere('city', 'like', $prefixQuery)
-            ->orWhere('name', 'like', $likeQuery)
-            ->when(!empty($countryCodes), function ($query) use ($countryCodes) {
-                $query->orWhereIn('country', $countryCodes);
-            })
-            ->orWhere('country', 'like', $exactQuery)
-            ->orderByRaw("
-                CASE 
-                    WHEN iata_code = ? THEN 1 
-                    WHEN city LIKE ? THEN 2
-                    WHEN iata_code LIKE ? THEN 3
-                    WHEN country = ? THEN 4
-                    ELSE 5 
-                END
-            ", [$exactQuery, $prefixQuery, $exactQuery . '%', $exactQuery])
-            ->limit(10)
-            ->get()
-            ->map(function ($airport) {
-                return [
-                    'code' => $airport->iata_code,
-                    'name' => $airport->name,
-                    'city' => $airport->city,
-                    'country' => $airport->country,
-                    'display_name' => $airport->city ? ($airport->city . ' (' . $airport->iata_code . ') - ' . $airport->name) : ($airport->name . ' (' . $airport->iata_code . ')')
-                ];
-            });
+        try {
+            $airports = Airport::where('iata_code', $exactQuery)
+                ->orWhere('iata_code', 'like', $exactQuery . '%')
+                ->orWhere('city', 'like', $prefixQuery)
+                ->orWhere('name', 'like', $likeQuery)
+                ->when(!empty($countryCodes), function ($q) use ($countryCodes) {
+                    $q->orWhereIn('country', $countryCodes);
+                })
+                ->orWhere('country', 'like', $exactQuery)
+                ->orderByRaw("
+                    CASE
+                        WHEN iata_code = ? THEN 1
+                        WHEN city LIKE ? THEN 2
+                        WHEN iata_code LIKE ? THEN 3
+                        WHEN country = ? THEN 4
+                        ELSE 5
+                    END
+                ", [$exactQuery, $prefixQuery, $exactQuery . '%', $exactQuery])
+                ->limit(10)
+                ->get()
+                ->map(function ($airport) {
+                    return [
+                        'code'         => $airport->iata_code,
+                        'name'         => $airport->name,
+                        'city'         => $airport->city,
+                        'country'      => $airport->country,
+                        'display_name' => $airport->city
+                            ? $airport->city . ' (' . $airport->iata_code . ') - ' . $airport->name
+                            : $airport->name . ' (' . $airport->iata_code . ')',
+                    ];
+                });
 
-        return response()->json($airports);
+            return response()->json($airports);
+        } catch (\Throwable $e) {
+            Log::error('Airport search DB error: ' . $e->getMessage());
+            return response()->json([]);
+        }
     }
 
     /**
