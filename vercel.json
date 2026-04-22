@@ -17,7 +17,7 @@
             "dest": "/public/build/$1"
         },
         {
-            "src": "/(hero-video-hd\\.mp4|hero-video\\.mp4|favicon\\.ico|robots\\.txt)",
+            "src": "/(hero-video-hd\\.mp4|hero-video\\.mp4|hero-bg\\.png|HERO PIC\\.png|favicon\\.ico|robots\\.txt|hero-poster\\.jpg)",
             "dest": "/public/$1"
         },
         {
