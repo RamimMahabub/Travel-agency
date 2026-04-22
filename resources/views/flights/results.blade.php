@@ -15,7 +15,7 @@
                     • {{ $search['passengers'] ?? 1 }} Traveller • {{ ucfirst(str_replace('_', ' ', $search['class'] ?? 'economy')) }}
                 </p>
             </div>
-            <button class="bg-[#FFEFE5] text-[#FF7A00] hover:bg-[#FFE0CC] font-bold text-sm px-6 py-2 rounded-lg transition">
+            <button onclick="history.back()" class="bg-[#FFEFE5] text-[#FF7A00] hover:bg-[#FFE0CC] font-bold text-sm px-6 py-2 rounded-lg transition">
                 Modify
             </button>
         </div>
