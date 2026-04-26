@@ -95,3 +95,14 @@ Route::get('/setup-db', function () {
         return 'Error: ' . $e->getMessage();
     }
 });
+
+Route::get('/reseed-airports', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\AirportSeeder', '--force' => true]);
+        $output = \Illuminate\Support\Facades\Artisan::output();
+        return '<pre>' . e($output) . '</pre><br><a href="/">Back to homepage</a>';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});

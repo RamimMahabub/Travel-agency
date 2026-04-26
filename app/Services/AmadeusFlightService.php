@@ -199,7 +199,7 @@ class AmadeusFlightService implements FlightServiceInterface
                 ],
                 'gender' => 'MALE', // Dummy
                 'contact' => [
-                    'emailAddress' => 'test@ramim.dev',
+                    'emailAddress' => 'test@ghuri.travel',
                     'phones' => [[
                         'deviceType' => 'MOBILE',
                         'countryCallingCode' => '880',

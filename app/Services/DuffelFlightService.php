@@ -209,7 +209,7 @@ class DuffelFlightService implements FlightServiceInterface
             $travelers[] = [
                 'id' => $duffelPassengerIds[$index], // Match Duffel's generated passenger ID
                 'phone_number' => '+447781432431', // Sandbox requires valid phone
-                'email' => 'test@ramim.dev',
+                'email' => 'test@ghuri.travel',
                 'title' => 'mr',
                 'gender' => 'm',
                 'family_name' => $p['last_name'],

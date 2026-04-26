@@ -16,7 +16,7 @@
     <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative flex justify-between h-20 items-center">
             <div class="flex items-center gap-2 cursor-pointer">
-                <div class="font-poppins font-extrabold text-3xl tracking-tighter text-[#1a2b49]">
+                <div class="neon-logo font-poppins font-extrabold text-3xl tracking-tighter text-[#1a2b49]">
                     GHURI<span class="text-[#1882FF]">.</span>
                 </div>
             </div>
@@ -39,10 +39,12 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="relative isolate overflow-hidden h-[520px] md:h-[620px] w-full bg-[#F7C6D4]">
-        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.28)_100%)]"></div>
-        <div class="absolute inset-0 hidden md:block w-full h-full bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('hero-bg.png') }}'); background-position: center top;"></div>
-        <div class="absolute inset-0 block md:hidden w-full h-full bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('HERO PIC.png') }}'); background-position: center center;"></div>
+    <div data-hero-3d class="hero-3d relative isolate overflow-hidden h-[520px] md:h-[620px] w-full bg-[#F7C6D4]">
+        <div class="absolute inset-0 hidden md:block w-full h-full bg-cover bg-center bg-no-repeat hero-3d-bg" style="background-image: url('{{ asset('hero-bg.png') }}'); background-position: center top;"></div>
+        <div class="absolute inset-0 block md:hidden w-full h-full bg-cover bg-center bg-no-repeat hero-3d-bg" style="background-image: url('{{ asset('HERO PIC.png') }}'); background-position: center center;"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.28)_100%)] hero-3d-overlay"></div>
+        <div class="hero-3d-glow" aria-hidden="true"></div>
+        <canvas class="hero-3d-canvas" aria-hidden="true"></canvas>
     </div>
 
     <!-- Search Component Container -->
@@ -126,9 +128,9 @@
                                             <template x-if="!loading && search.length >= 2 && filtered.length === 0"><div class="px-4 py-3 text-sm text-gray-500">No airports found.</div></template>
                                             <template x-for="airport in filtered" :key="airport.code">
                                                 <div @click.stop="select(airport)" class="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-b border-gray-50 last:border-0 transition">
-                                                    <div class="flex flex-col truncate">
-                                                        <span class="font-bold text-[#1a2b49] text-sm" x-text="airport.city || airport.name"></span>
-                                                        <span class="text-gray-400 text-[10px]" x-text="airport.name"></span>
+                                                    <div class="flex flex-col truncate min-w-0">
+                                                        <span class="font-bold text-[#1a2b49] text-sm truncate" x-text="airport.display_name"></span>
+                                                        <span class="text-gray-400 text-[10px] truncate" x-text="airport.subtitle || airport.name"></span>
                                                     </div>
                                                     <span class="font-bold text-[#1882FF] bg-blue-50 px-2 py-0.5 rounded text-xs ml-2 shrink-0" x-text="airport.code"></span>
                                                 </div>
@@ -159,9 +161,9 @@
                                             <template x-if="!loading && search.length >= 2 && filtered.length === 0"><div class="px-4 py-3 text-sm text-gray-500">No airports found.</div></template>
                                             <template x-for="airport in filtered" :key="airport.code">
                                                 <div @click.stop="select(airport)" class="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-b border-gray-50 last:border-0 transition">
-                                                    <div class="flex flex-col truncate">
-                                                        <span class="font-bold text-[#1a2b49] text-sm" x-text="airport.city || airport.name"></span>
-                                                        <span class="text-gray-400 text-[10px]" x-text="airport.name"></span>
+                                                    <div class="flex flex-col truncate min-w-0">
+                                                        <span class="font-bold text-[#1a2b49] text-sm truncate" x-text="airport.display_name"></span>
+                                                        <span class="text-gray-400 text-[10px] truncate" x-text="airport.subtitle || airport.name"></span>
                                                     </div>
                                                     <span class="font-bold text-[#1882FF] bg-blue-50 px-2 py-0.5 rounded text-xs ml-2 shrink-0" x-text="airport.code"></span>
                                                 </div>
@@ -409,36 +411,44 @@
                     this.filtered = [];
                     this.loading = false;
                 },
-                
+
                 init() {
                     if (initialCode) {
-                        fetch(`/ajax/airports/search?q=${initialCode}`)
+                        fetch(`/ajax/airports/search?q=${encodeURIComponent(initialCode)}`)
                             .then(res => res.json())
                             .then(data => {
                                 if(data.length > 0) {
                                     this.search = data[0].display_name;
                                     this.selectedDisplay = data[0].display_name;
-                                    this.filtered = data;
+                                    this.selectedCode = data[0].code;
+                                    this.filtered = [];
                                 }
+                            })
+                            .catch(() => {
+                                this.search = initialCode;
                             });
                     }
                 },
-                
+
                 filter() {
                     this.open = true;
-                    if (this.search.length < 2) {
+                    if (this.search.length < 1) {
                         this.filtered = [];
                         return;
                     }
                     this.loading = true;
-                    fetch(`/ajax/airports/search?q=${this.search}`)
+                    fetch(`/ajax/airports/search?q=${encodeURIComponent(this.search)}`)
                         .then(res => res.json())
                         .then(data => {
                             this.filtered = data;
                             this.loading = false;
+                        })
+                        .catch(() => {
+                            this.filtered = [];
+                            this.loading = false;
                         });
                 },
-                
+
                 select(airport) {
                     this.selectedCode = airport.code;
                     this.search = airport.display_name;

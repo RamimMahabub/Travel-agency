@@ -119,9 +119,22 @@ class TrawexFlightService implements FlightServiceInterface
                 'FareItinerary' => $fareItin
             ], now()->addHours(2));
 
-            $totalFares = $fareInfo['ItinTotalFares']['TotalFare'] ?? [];
-            $price = $totalFares['Amount'] ?? 0;
-            $currency = $totalFares['CurrencyCode'] ?? 'USD';
+            $totalFares = $fareInfo['ItinTotalFares'] ?? [];
+            $price = $totalFares['TotalFare']['Amount'] ?? 0;
+            $currency = $totalFares['TotalFare']['CurrencyCode'] ?? 'USD';
+            $baseFare = $totalFares['BaseFare']['Amount'] ?? '0';
+            $totalTax = $totalFares['TotalTax']['Amount'] ?? '0';
+            $serviceTax = $totalFares['ServiceTax']['Amount'] ?? '0';
+            $equivFare = $totalFares['EquivFare']['Amount'] ?? '0';
+
+            // Fare breakdown (first passenger type)
+            $fareBreakdown = $fareInfo['FareBreakdown'][0] ?? [];
+            $passengerFare = $fareBreakdown['PassengerFare'] ?? [];
+            $taxesList = $passengerFare['Taxes'] ?? [];
+            $penaltyDetails = $fareBreakdown['PenaltyDetails'] ?? [];
+            $baggageList = $fareBreakdown['Baggage'] ?? [];
+            $cabinBaggageList = $fareBreakdown['CabinBaggage'] ?? [];
+            $passengerTypeQty = $fareBreakdown['PassengerTypeQuantity'] ?? [];
 
             $options = $fareItin['OriginDestinationOptions'] ?? [];
             $outboundOptions = $options[0]['OriginDestinationOption'] ?? [];
@@ -131,9 +144,20 @@ class TrawexFlightService implements FlightServiceInterface
                 return $segmentData['FlightSegment'] ?? $segmentData;
             };
 
+            $getSegmentWrapper = function ($segmentData): array {
+                if (isset($segmentData['FlightSegment'])) {
+                    return $segmentData;
+                }
+                return [];
+            };
+
             $outboundSegments = collect($outboundOptions)
                 ->map(fn ($opt) => $normalizeSegment($opt))
                 ->filter(fn ($seg) => is_array($seg) && !empty($seg))
+                ->values();
+
+            $outboundWrappers = collect($outboundOptions)
+                ->filter(fn ($opt) => isset($opt['FlightSegment']))
                 ->values();
 
             if ($outboundSegments->isEmpty()) {
@@ -143,6 +167,10 @@ class TrawexFlightService implements FlightServiceInterface
             $inboundSegments = collect($inboundOptions)
                 ->map(fn ($opt) => $normalizeSegment($opt))
                 ->filter(fn ($seg) => is_array($seg) && !empty($seg))
+                ->values();
+
+            $inboundWrappers = collect($inboundOptions)
+                ->filter(fn ($opt) => isset($opt['FlightSegment']))
                 ->values();
 
             $firstOut = $outboundSegments->first();
@@ -163,6 +191,63 @@ class TrawexFlightService implements FlightServiceInterface
             $durationStr = intdiv((int) $outboundDurationMins, 60) . 'h ' . ($outboundDurationMins % 60) . 'm';
             $outboundStops = max(0, count($outboundSegments) - 1);
 
+            $buildSegments = function ($segments, $wrappers) {
+                $result = [];
+                $segmentArray = $segments->values()->all();
+                $wrapperArray = $wrappers->values()->all();
+                foreach ($segmentArray as $i => $seg) {
+                    $wrapper = $wrapperArray[$i] ?? [];
+                    $durMins = (int) ($seg['JourneyDuration'] ?? 0);
+                    $seatsRemaining = $wrapper['SeatsRemaining'] ?? [];
+                    $opAirline = $seg['OperatingAirline'] ?? [];
+                    $stopQtyInfo = $wrapper['StopQuantityInfo'] ?? [];
+                    $segData = [
+                        'departure_airport' => $seg['DepartureAirportLocationCode'] ?? '',
+                        'arrival_airport' => $seg['ArrivalAirportLocationCode'] ?? '',
+                        'departure_time' => $seg['DepartureDateTime'] ?? '',
+                        'arrival_time' => $seg['ArrivalDateTime'] ?? '',
+                        'flight_number' => ($seg['MarketingAirlineCode'] ?? '') . '-' . ($seg['FlightNumber'] ?? ''),
+                        'airline' => $seg['MarketingAirlineName'] ?? ($seg['MarketingAirlineCode'] ?? ''),
+                        'airline_code' => $seg['MarketingAirlineCode'] ?? '',
+                        'duration_mins' => $durMins,
+                        'duration' => $durMins > 0 ? intdiv($durMins, 60) . 'h ' . ($durMins % 60) . 'm' : '',
+                        'cabin_class' => $seg['CabinClassCode'] ?? '',
+                        'cabin_class_text' => $seg['CabinClassText'] ?? '',
+                        'eticket' => (bool) ($seg['Eticket'] ?? false),
+                        'booking_class' => $wrapper['ResBookDesigCode'] ?? '',
+                        'booking_class_text' => $wrapper['ResBookDesigText'] ?? '',
+                        'seats_remaining' => (int) ($seatsRemaining['Number'] ?? 0),
+                        'seats_below_minimum' => (bool) ($seatsRemaining['BelowMinimum'] ?? false),
+                        'stop_quantity' => (int) ($wrapper['StopQuantity'] ?? 0),
+                        'meal_code' => $seg['MealCode'] ?? '',
+                        'marriage_group' => $seg['MarriageGroup'] ?? '',
+                        'operating_airline_code' => $opAirline['Code'] ?? '',
+                        'operating_airline_name' => $opAirline['Name'] ?? '',
+                        'operating_airline_equipment' => $opAirline['Equipment'] ?? '',
+                        'operating_flight_number' => $opAirline['FlightNumber'] ?? '',
+                        'stop_location' => $stopQtyInfo['LocationCode'] ?? '',
+                        'stop_arrival' => $stopQtyInfo['ArrivalDateTime'] ?? '',
+                        'stop_departure' => $stopQtyInfo['DepartureDateTime'] ?? '',
+                        'stop_duration' => $stopQtyInfo['Duration'] ?? '',
+                        'layover_duration' => null,
+                        'layover_airport' => null,
+                    ];
+                    if ($i > 0) {
+                        $prevArrival = $segmentArray[$i - 1]['ArrivalDateTime'] ?? null;
+                        $currDeparture = $seg['DepartureDateTime'] ?? null;
+                        if ($prevArrival && $currDeparture) {
+                            $layoverMins = Carbon::parse($prevArrival)->diffInMinutes(Carbon::parse($currDeparture));
+                            if ($layoverMins > 0) {
+                                $segData['layover_duration'] = intdiv((int)$layoverMins, 60) . 'h ' . ($layoverMins % 60) . 'm';
+                                $segData['layover_airport'] = $segData['departure_airport'];
+                            }
+                        }
+                    }
+                    $result[] = $segData;
+                }
+                return $result;
+            };
+
             $inbound = null;
             if ($journeyType === 'Return' && $inboundSegments->isNotEmpty()) {
                 $firstIn = $inboundSegments->first();
@@ -182,6 +267,7 @@ class TrawexFlightService implements FlightServiceInterface
                     'duration' => intdiv((int) $inDurationMins, 60) . 'h ' . ($inDurationMins % 60) . 'm',
                     'stops' => max(0, count($inboundSegments) - 1),
                     'layover' => null,
+                    'segments' => $buildSegments($inboundSegments, $inboundWrappers),
                 ];
             }
 
@@ -199,7 +285,25 @@ class TrawexFlightService implements FlightServiceInterface
                 'price' => floatval($price),
                 'currency' => $currency,
                 'crossed_price' => round(floatval($price) * 1.08, 2),
-                'refundable' => strtolower((string) ($fareItin['FareType'] ?? '')) !== 'non_refundable',
+                'base_fare' => floatval($baseFare),
+                'total_tax' => floatval($totalTax),
+                'service_tax' => floatval($serviceTax),
+                'equiv_fare' => floatval($equivFare),
+                'taxes' => $taxesList,
+                'refundable' => (strtolower((string) ($fareInfo['IsRefundable'] ?? '')) === 'yes') || (strtolower((string) ($fareItin['FareType'] ?? '')) !== 'non_refundable'),
+                'fare_type' => $fareInfo['FareType'] ?? ($fareItin['FareType'] ?? ''),
+                'is_refundable_text' => $fareInfo['IsRefundable'] ?? '',
+                'penalty_details' => [
+                    'currency' => $penaltyDetails['Currency'] ?? $currency,
+                    'refund_allowed' => (bool) ($penaltyDetails['RefundAllowed'] ?? false),
+                    'refund_penalty_amount' => floatval($penaltyDetails['RefundPenaltyAmount'] ?? 0),
+                    'change_allowed' => (bool) ($penaltyDetails['ChangeAllowed'] ?? false),
+                    'change_penalty_amount' => floatval($penaltyDetails['ChangePenaltyAmount'] ?? 0),
+                ],
+                'baggage' => $baggageList,
+                'cabin_baggage' => $cabinBaggageList,
+                'passenger_type' => $passengerTypeQty['Code'] ?? 'ADT',
+                'passenger_quantity' => (int) ($passengerTypeQty['Quantity'] ?? 1),
                 'points' => 25,
                 'outbound' => [
                     'origin' => $firstOut['DepartureAirportLocationCode'] ?? $origin,
@@ -209,6 +313,7 @@ class TrawexFlightService implements FlightServiceInterface
                     'duration' => $durationStr,
                     'stops' => $outboundStops,
                     'layover' => null,
+                    'segments' => $buildSegments($outboundSegments, $outboundWrappers),
                 ],
                 'inbound' => $inbound,
             ];
@@ -314,7 +419,7 @@ class TrawexFlightService implements FlightServiceInterface
 
         $paxInfo = [
             'clientRef' => 'SYS_GEN_' . strtoupper(Str::random(6)),
-            'customerEmail' => $passengerDetails[0]['email'] ?? 'test@ramim.dev',
+            'customerEmail' => $passengerDetails[0]['email'] ?? 'test@ghuri.travel',
             'customerPhone' => $passengerDetails[0]['phone'] ?? '1234567890',
             'paxDetails' => [
                 [

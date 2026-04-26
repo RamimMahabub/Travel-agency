@@ -1,4 +1,5 @@
 import './bootstrap';
+import './hero3d';
 
 import Alpine from 'alpinejs';
 
