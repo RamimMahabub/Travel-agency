@@ -18,7 +18,7 @@ class DuffelFlightService implements FlightServiceInterface
     }
 
     /**
-     * Get pre-configured HTTP client for Duffel
+     * Get pre-configured HTTP client for flight provider
      */
     protected function client()
     {
@@ -32,7 +32,7 @@ class DuffelFlightService implements FlightServiceInterface
     }
 
     /**
-     * Search Flights via Duffel
+     * Search Flights via provider
      */
     public function search(
         string $origin,
@@ -81,7 +81,7 @@ class DuffelFlightService implements FlightServiceInterface
         $response = $this->client()->post($this->baseUrl . '/air/offer_requests', $payload);
 
         if ($response->failed()) {
-            \Log::error("Duffel API Search Error: " . $response->body());
+            \Log::error("GHURI flight engine search error: " . $response->body());
             return [];
         }
 
@@ -98,7 +98,7 @@ class DuffelFlightService implements FlightServiceInterface
         ]);
 
         if ($offersResponse->failed()) {
-            \Log::error("Duffel API Offers Error: " . $offersResponse->body());
+            \Log::error("GHURI flight engine offers error: " . $offersResponse->body());
             return [];
         }
 
@@ -191,7 +191,7 @@ class DuffelFlightService implements FlightServiceInterface
     }
 
     /**
-     * Book the Flight via Duffel
+     * Book the Flight via provider
      */
     public function book(string $flightId, array $passengerDetails): array
     {
@@ -207,7 +207,7 @@ class DuffelFlightService implements FlightServiceInterface
         $travelers = [];
         foreach ($passengerDetails as $index => $p) {
             $travelers[] = [
-                'id' => $duffelPassengerIds[$index], // Match Duffel's generated passenger ID
+                'id' => $duffelPassengerIds[$index], // Match provider-generated passenger ID
                 'phone_number' => '+447781432431', // Sandbox requires valid phone
                 'email' => 'test@ghuri.travel',
                 'title' => 'mr',
@@ -239,7 +239,7 @@ class DuffelFlightService implements FlightServiceInterface
             return [
                 'api_reference_id' => 'PNR' . strtoupper(Str::random(6)),
                 'status' => 'mock_confirmed',
-                'error' => "Duffel API Failed: " . $response->body()
+                'error' => "GHURI flight engine request failed: " . $response->body()
             ];
         }
 

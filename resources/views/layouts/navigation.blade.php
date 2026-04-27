@@ -1,3 +1,9 @@
+@php
+    $authUser = Auth::user();
+    $isInternalUser = $authUser && $authUser->isInternalUser();
+    $dashboardRoute = $isInternalUser ? 'admin.dashboard' : 'dashboard';
+@endphp
+
 <nav x-data="{ open: false }" class="sticky top-0 z-50 border-b border-white/70 bg-white/92 backdrop-blur-xl shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex h-20 items-center justify-between">
@@ -8,7 +14,7 @@
                 </a>
 
                 <div class="hidden sm:flex items-center gap-8">
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center border-b-2 pt-1 text-sm font-semibold transition {{ request()->routeIs('dashboard') ? 'border-[#1882FF] text-[#1882FF]' : 'border-transparent text-slate-500 hover:border-[#1882FF]/40 hover:text-[#1a2b49]' }}">
+                    <a href="{{ route($dashboardRoute) }}" class="inline-flex items-center border-b-2 pt-1 text-sm font-semibold transition {{ request()->routeIs($dashboardRoute) ? 'border-[#1882FF] text-[#1882FF]' : 'border-transparent text-slate-500 hover:border-[#1882FF]/40 hover:text-[#1a2b49]' }}">
                         {{ __('Dashboard') }}
                     </a>
                 </div>
@@ -27,9 +33,11 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profile') }}
-                            </x-dropdown-link>
+                            @if (! $isInternalUser)
+                                <x-dropdown-link :href="route('profile.edit')">
+                                    {{ __('Profile') }}
+                                </x-dropdown-link>
+                            @endif
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -58,7 +66,7 @@
 
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden border-t border-slate-100 bg-white/98">
         <div class="space-y-1 px-4 py-3">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-slate-700">
+            <x-responsive-nav-link :href="route($dashboardRoute)" :active="request()->routeIs($dashboardRoute)" class="text-slate-700">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
@@ -71,9 +79,11 @@
                 </div>
 
                 <div class="space-y-1">
-                    <x-responsive-nav-link :href="route('profile.edit')" class="text-slate-700 hover:text-[#1882FF]">
-                        {{ __('Profile') }}
-                    </x-responsive-nav-link>
+                    @if (! $isInternalUser)
+                        <x-responsive-nav-link :href="route('profile.edit')" class="text-slate-700 hover:text-[#1882FF]">
+                            {{ __('Profile') }}
+                        </x-responsive-nav-link>
+                    @endif
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

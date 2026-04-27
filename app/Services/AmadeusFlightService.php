@@ -32,7 +32,7 @@ class AmadeusFlightService implements FlightServiceInterface
             ]);
 
             if ($response->failed()) {
-                throw new \Exception('Failed to authenticate with Amadeus: ' . $response->body());
+                throw new \Exception('Failed to authenticate with GHURI flight engine: ' . $response->body());
             }
 
             return $response->json('access_token');
@@ -83,7 +83,7 @@ class AmadeusFlightService implements FlightServiceInterface
 
         $mappedFlights = [];
         foreach ($data as $offer) {
-            $flightId = $offer['id']; // Amadeus string ID
+            $flightId = $offer['id']; // Provider offer string ID
             
             // Cache the raw offer so we can price/book it later!
             Cache::put('amadeus_offer_' . $flightId, $offer, now()->addHours(2));
@@ -186,7 +186,7 @@ class AmadeusFlightService implements FlightServiceInterface
 
         $token = $this->getToken();
 
-        // Format passengers for Amadeus specification
+        // Format passengers for provider specification
         $travelers = [];
         $idCounter = 1;
         foreach ($passengerDetails as $p) {
@@ -221,7 +221,7 @@ class AmadeusFlightService implements FlightServiceInterface
         $response = Http::withToken($token)->post($this->baseUrl . '/v1/booking/flight-orders', $payload);
 
         if ($response->failed()) {
-            // Amadeus Sandbox sometimes fails arbitrarily for booking on certain airlines.
+            // Sandbox may fail arbitrarily for booking on certain airlines.
             // As a fallback for UX stability on the demo, we generate a mock PNR if it fails.
             return [
                 'api_reference_id' => 'PNR' . strtoupper(Str::random(6)),
@@ -239,7 +239,7 @@ class AmadeusFlightService implements FlightServiceInterface
     }
 
     /**
-     * Helper to format Amadeus PT1H23M duration format.
+     * Helper to format PT1H23M duration format.
      */
     private function formatDuration($duration)
     {

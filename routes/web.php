@@ -9,10 +9,18 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'role:customer'])->name('dashboard');
+
+Route::get('/admin', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin,manager,support_agent,ticketing_officer,accounts_officer',
+    ])
+    ->name('admin.dashboard');
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -25,11 +33,11 @@ Route::middleware('auth')->group(function () {
 Route::get('/flights/search', [\App\Http\Controllers\SearchController::class, 'flights'])->name('flights.search');
 Route::get('/ajax/airports/search', [\App\Http\Controllers\AirportController::class, 'search'])->name('airports.search');
 
-Route::get('/trawex-tester', function () {
-    return view('trawex-tester');
+Route::get('/integration-tester', function () {
+    return view('integration-tester');
 });
 
-Route::get('/ajax/trawex-test-execute', function (\App\Services\FlightServiceInterface $flightService) {
+Route::get('/ajax/integration-test-execute', function (\App\Services\FlightServiceInterface $flightService) {
     try {
         $logs = [];
 
@@ -67,7 +75,7 @@ Route::get('/ajax/trawex-test-execute', function (\App\Services\FlightServiceInt
             'last_name' => 'Richard',
             'dob' => '1990-01-01',
             'title' => 'Mr',
-            'email' => 'test@trawex.com',
+            'email' => 'test@ghuri.travel',
             'phone' => '1234567890',
             'nationality' => 'IN'
         ]];

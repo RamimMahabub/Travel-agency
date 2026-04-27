@@ -9,6 +9,24 @@
         </div>
     @endif
 
+    @if(app()->environment(['local', 'testing']) && auth()->check())
+        @php
+            $devVerificationUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                'verification.verify',
+                now()->addMinutes(60),
+                [
+                    'id' => auth()->id(),
+                    'hash' => sha1(auth()->user()->getEmailForVerification()),
+                ]
+            );
+        @endphp
+
+        <div class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            <p class="mb-2"><strong>Local mode:</strong> click below to verify instantly.</p>
+            <a href="{{ $devVerificationUrl }}" class="underline font-medium">Verify email now</a>
+        </div>
+    @endif
+
     <div class="mt-4 flex items-center justify-between">
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
