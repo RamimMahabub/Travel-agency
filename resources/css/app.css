@@ -10,8 +10,28 @@
 
 .neon-logo {
 	position: relative;
-	text-shadow: 0 0 8px rgba(24, 130, 255, 0.22), 0 0 16px rgba(24, 130, 255, 0.12);
-	animation: neon-logo-pulse 5s ease-in-out infinite;
+	text-shadow: 0 0 8px rgba(24, 130, 255, 0.24), 0 0 16px rgba(24, 130, 255, 0.14), 0 0 28px rgba(57, 244, 255, 0.16);
+	animation: neon-logo-pulse 10s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+}
+
+.neon-navbar {
+	position: relative;
+	border-bottom: 1px solid rgba(24, 130, 255, 0.32);
+	overflow: visible;
+}
+
+.neon-navbar::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -1px;
+	height: 2px;
+	background: linear-gradient(90deg, rgba(24, 130, 255, 0.78), rgba(57, 244, 255, 0.94), rgba(255, 79, 216, 0.72), rgba(24, 130, 255, 0.78));
+	background-size: 240% 240%;
+	box-shadow: 0 0 10px rgba(24, 130, 255, 0.45), 0 0 18px rgba(57, 244, 255, 0.3);
+	animation: neon-navbar-flow 16s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+	pointer-events: none;
 }
 
 @keyframes neon-logo-pulse {
@@ -20,7 +40,17 @@
 		text-shadow: 0 0 8px rgba(24, 130, 255, 0.22), 0 0 16px rgba(24, 130, 255, 0.12);
 	}
 	50% {
-		text-shadow: 0 0 10px rgba(24, 130, 255, 0.35), 0 0 24px rgba(24, 130, 255, 0.22);
+		text-shadow: 0 0 10px rgba(24, 130, 255, 0.36), 0 0 24px rgba(24, 130, 255, 0.24), 0 0 34px rgba(57, 244, 255, 0.24);
+	}
+}
+
+@keyframes neon-navbar-flow {
+	0% {
+		background-position: 0% 50%;
+	}
+
+	100% {
+		background-position: 240% 50%;
 	}
 }
 
@@ -53,7 +83,7 @@
 		radial-gradient(circle at 50% 72%, rgba(255, 79, 216, 0.14) 0%, rgba(255, 79, 216, 0) 66%);
 	z-index: 10;
 	mix-blend-mode: screen;
-	animation: neon-glow-drift 7s ease-in-out infinite;
+	animation: neon-glow-drift 14s cubic-bezier(0.42, 0, 0.2, 1) infinite;
 }
 
 .hero-3d-bg {

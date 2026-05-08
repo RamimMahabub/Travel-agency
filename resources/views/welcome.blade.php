@@ -4,12 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GHURI - OTA Platform</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="{{ asset('hero-bg.webp') }}" media="(min-width: 768px)">
-    <link rel="preload" as="image" href="{{ asset('hero-mobile.webp') }}" media="(max-width: 767px)">
+    <link rel="preload" as="image" href="{{ asset('hero-pic-optimized.jpg') }}" media="(min-width: 768px)">
+    <link rel="preload" as="image" href="{{ asset('hero-pic-mobile.jpg') }}" media="(max-width: 767px)">
     <style>
         .search-overlap {
             margin-top: -11rem;
@@ -17,7 +20,130 @@
 
         @media (min-width: 768px) {
             .search-overlap {
-                margin-top: -7rem;
+                margin-top: -11rem;
+            }
+        }
+
+        .neon-search-card {
+            border: 2px solid transparent;
+            background-image:
+                linear-gradient(#fff, #fff),
+                linear-gradient(120deg, #1882ff, #39f4ff, #ff4fd8, #1882ff, #39f4ff);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            background-size: 100% 100%, 300% 300%;
+            animation: neon-border-flow 18s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+        }
+
+        .neon-search-card::before {
+            content: "";
+            position: absolute;
+            inset: -3px;
+            border-radius: inherit;
+            background: linear-gradient(120deg, rgba(24, 130, 255, 0.45), rgba(57, 244, 255, 0.35), rgba(255, 79, 216, 0.4), rgba(24, 130, 255, 0.45));
+            background-size: 300% 300%;
+            filter: blur(22px);
+            opacity: 0.28;
+            z-index: -1;
+            animation: neon-border-flow 18s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes neon-border-flow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+
+        .neon-navbar {
+            position: relative;
+            border-bottom: 1px solid rgba(24, 130, 255, 0.45) !important;
+            box-shadow:
+                0 1px 0 rgba(24, 130, 255, 0.35),
+                0 10px 26px rgba(24, 130, 255, 0.12);
+            overflow: visible;
+        }
+
+        .neon-navbar::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -2px;
+            height: 10px;
+            background: linear-gradient(90deg, rgba(24, 130, 255, 0.48), rgba(57, 244, 255, 0.6), rgba(255, 79, 216, 0.42), rgba(24, 130, 255, 0.48));
+            filter: blur(8px);
+            opacity: 0.9;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .neon-navbar::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, #1882ff, #39f4ff, #ff4fd8, #1882ff);
+            background-size: 240% 100%;
+            box-shadow: 0 0 12px rgba(24, 130, 255, 0.8), 0 0 24px rgba(57, 244, 255, 0.45);
+            animation: neon-navbar-flow-strong 14s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .neon-logo {
+            position: relative;
+            display: inline-block;
+            line-height: 1;
+            isolation: isolate;
+            text-shadow: none !important;
+            filter: none !important;
+            animation: none !important;
+        }
+
+        .neon-logo::before {
+            content: attr(data-text);
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            transform: scale(1.055);
+            transform-origin: center;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            background: linear-gradient(90deg, #1882ff, #39f4ff, #ff4fd8, #1882ff);
+            background-size: 240% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: logo-border-flow 11s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+        }
+
+        .neon-logo .logo-dot {
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes neon-navbar-flow-strong {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 240% 50%;
+            }
+        }
+
+        @keyframes logo-border-flow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 240% 50%;
             }
         }
     </style>
@@ -26,11 +152,11 @@
 </head>
 <body class="font-sans antialiased bg-white text-dark selection:bg-[#1882FF] selection:text-white">
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
+    <nav class="neon-navbar sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative flex justify-between h-20 items-center">
             <div class="flex items-center gap-2 cursor-pointer">
-                <div class="neon-logo font-poppins font-extrabold text-3xl tracking-tighter text-[#1a2b49]">
-                    GHURI<span class="text-[#1882FF]">.</span>
+                <div class="neon-logo font-poppins font-extrabold text-3xl tracking-tighter text-[#1a2b49]" data-text="GHURI">
+                    GHURI<span class="logo-dot text-[#1882FF]">.</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
@@ -96,15 +222,14 @@
     </nav>
 
     <!-- Hero Section -->
-    <div data-hero-3d class="hero-3d relative isolate overflow-hidden h-[520px] md:h-[620px] w-full bg-[#F7C6D4]">
+    <div data-hero-3d class="hero-3d relative isolate overflow-hidden h-[380px] md:h-[500px] w-full bg-[#F7C6D4]">
         <picture class="absolute inset-0 w-full h-full hero-3d-bg">
-            <source media="(min-width: 768px)" srcset="{{ asset('hero-bg.webp') }}" type="image/webp">
-            <source media="(min-width: 768px)" srcset="{{ asset('hero-bg.png') }}" type="image/png">
-            <source srcset="{{ asset('hero-mobile.webp') }}" type="image/webp">
+            <source media="(min-width: 768px)" srcset="{{ asset('hero-pic-optimized.jpg') }}" type="image/jpeg">
+            <source srcset="{{ asset('hero-pic-mobile.jpg') }}" type="image/jpeg">
             <img
-                src="{{ asset('HERO PIC.png') }}"
+                src="{{ asset('HERO PIC.png') }}?v={{ time() }}"
                 alt="Travel hero background"
-                class="w-full h-full object-cover object-center md:object-top"
+                class="w-full h-full object-cover object-top md:object-bottom"
                 loading="eager"
                 fetchpriority="high"
                 decoding="async"
@@ -117,7 +242,7 @@
 
     <!-- Search Component Container -->
     <div class="search-overlap max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-40 pb-8">
-        <div class="bg-white rounded-[28px] shadow-[0_24px_70px_rgba(15,23,42,0.14)] relative p-3 md:p-5" x-data="{ tab: 'flights', tripType: 'one_way' }">
+        <div class="neon-search-card bg-white rounded-[28px] shadow-[0_24px_70px_rgba(15,23,42,0.14)] relative isolate p-3 md:p-5" x-data="{ tab: 'flights', tripType: 'one_way' }">
             
             <!-- Tabs inside the box like image -->
             <div class="flex justify-center -mt-8 md:-mt-9 mb-4">
@@ -583,4 +708,3 @@
     </script>
 </body>
 </html>
-

@@ -8,15 +8,61 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .neon-logo {
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.35), 0 0 18px rgba(57, 244, 255, 0.32), 0 0 28px rgba(255, 79, 216, 0.24);
+            animation: neon-logo-pulse 10s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+        }
+
+        .neon-nav {
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.26);
+        }
+
+        .neon-nav::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(57, 244, 255, 0.82), rgba(255, 79, 216, 0.76), rgba(57, 244, 255, 0.82));
+            background-size: 220% 220%;
+            box-shadow: 0 0 10px rgba(57, 244, 255, 0.44), 0 0 20px rgba(255, 79, 216, 0.3);
+            animation: neon-border-flow 16s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+            pointer-events: none;
+        }
+
+        @keyframes neon-border-flow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 220% 50%;
+            }
+        }
+
+        @keyframes neon-logo-pulse {
+            0%,
+            100% {
+                text-shadow: 0 0 8px rgba(255, 255, 255, 0.35), 0 0 18px rgba(57, 244, 255, 0.32), 0 0 28px rgba(255, 79, 216, 0.24);
+            }
+
+            50% {
+                text-shadow: 0 0 12px rgba(255, 255, 255, 0.5), 0 0 24px rgba(57, 244, 255, 0.46), 0 0 34px rgba(255, 79, 216, 0.36);
+            }
+        }
+    </style>
     <!-- Scripts -->
     <link rel="preload" as="style" href="http://travel-agency-omega-pearl.vercel.app/build/assets/app-CS8wSBEE.css" /><link rel="modulepreload" as="script" href="http://travel-agency-omega-pearl.vercel.app/build/assets/app-Due1s3iS.js" /><link rel="stylesheet" href="http://travel-agency-omega-pearl.vercel.app/build/assets/app-CS8wSBEE.css" /><script type="module" src="http://travel-agency-omega-pearl.vercel.app/build/assets/app-Due1s3iS.js"></script></head>
 <body class="font-sans antialiased bg-light text-dark selection:bg-primary selection:text-white">
     <!-- Navigation -->
-    <nav class="bg-primary shadow-md sticky top-0 z-50">
+    <nav class="neon-nav bg-primary shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative flex justify-between h-20 items-center">
             <div class="flex items-center gap-2 cursor-pointer">
                 <svg class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M22 16.5l-2-2v-4a9 9 0 00-11.45-8.66l2.12 2.12c.98-.3 2.05-.46 3.19-.46 3.5 0 6.64 1.35 8.99 3.55a12.51 12.51 0 011.15 1.35v6l-2 2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
-                <div class="font-poppins font-bold text-2xl tracking-tight text-white">GHURI<span class="text-red-200">.</span></div>
+                <div class="neon-logo font-poppins font-bold text-2xl tracking-tight text-white">GHURI<span class="text-red-200">.</span></div>
             </div>
             <div class="flex items-center space-x-6">
                                                             <a href="http://travel-agency-omega-pearl.vercel.app/login" class="font-semibold text-white/90 hover:text-white transition">Log in</a>
