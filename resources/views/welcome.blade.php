@@ -443,67 +443,49 @@
 
     <!-- GHURI Service Banners -->
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Banner 1: Availability Search -->
-            <div class="rounded-2xl overflow-hidden shadow-sm relative group cursor-pointer aspect-[2.5/1]">
-                <div class="absolute inset-0 bg-gradient-to-r from-[#1A365D] to-[#2B6CB0]"></div>
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Promo 1 - Flight -->
+            <div class="rounded-2xl overflow-hidden shadow-md relative group cursor-pointer h-56 md:h-72 bg-[#0f172a]">
+                <img src="/flight card.jpg" alt="Airplane wing in the sky" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-[70%_50%] transition-transform duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-r from-[#0f172a]/20 via-transparent to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
-                        <div class="text-white/80 text-[10px] font-bold tracking-widest uppercase mb-1">GHURI · Step 01</div>
-                        <h3 class="text-white font-bold text-lg md:text-xl leading-tight">AVAILABILITY<br>SEARCH</h3>
-                        <p class="text-white/70 text-[10px] mt-1">aeroVE5/availability endpoint</p>
+                        <h3 class="text-white text-xl md:text-3xl font-extrabold mb-1 drop-shadow-lg">Fly to Your Dream Destinations</h3>
+                        <p class="text-white/95 text-sm md:text-base font-bold drop-shadow-md">Explore hundreds of routes at the best prices.</p>
                     </div>
-                    <div class="mt-auto">
-                        <span class="inline-block bg-[#FFB700] text-[#1a2b49] text-[10px] font-black px-3 py-1 rounded">ACTIVE</span>
+                    <div>
+                        <a href="#" class="inline-block bg-white text-[#1a2b49] px-5 py-2.5 rounded-full font-semibold shadow-sm">Book Flights</a>
                     </div>
-                </div>
-                <!-- Plane Graphic -->
-                <div class="absolute right-[-10%] bottom-0 w-2/3 h-full opacity-60 mix-blend-screen transition-transform duration-500 group-hover:translate-x-2 group-hover:-translate-y-2">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" class="w-full h-full object-contain"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.8" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                 </div>
             </div>
 
-            <!-- Banner 2: Fare Revalidation -->
-            <div class="rounded-2xl overflow-hidden shadow-sm relative group cursor-pointer aspect-[2.5/1]">
-                <div class="absolute inset-0 bg-gradient-to-r from-[#065F46] to-[#059669]"></div>
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+            <!-- Promo 2 - Hotel -->
+            <div class="rounded-2xl overflow-hidden shadow-md relative group cursor-pointer h-56 md:h-72 bg-[#0f172a]">
+                <img src="/hotel card.jpg" alt="Comfortable hotel room" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-r from-[#0f172a]/25 via-transparent to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
-                        <div class="text-white/80 text-[10px] font-bold tracking-widest uppercase mb-1">GHURI · Step 02</div>
-                        <h3 class="text-white font-bold text-lg md:text-xl leading-tight">FARE<br>REVALIDATION</h3>
-                        <p class="text-white/70 text-[10px] mt-1">aeroVE5/revalidate endpoint</p>
+                        <h3 class="text-white text-xl md:text-3xl font-extrabold mb-1 drop-shadow-lg">Comfortable Stays, Unforgettable Memories</h3>
+                        <p class="text-white text-sm md:text-base font-bold drop-shadow-md">Find the perfect hotel for every trip.</p>
                     </div>
-                    <div class="mt-auto">
-                        <span class="inline-block bg-white text-[#065F46] text-[10px] font-black px-3 py-1 rounded">LIVE</span>
+                    <div>
+                        <a href="#" class="inline-block bg-white text-[#1a2b49] px-5 py-2.5 rounded-full font-semibold shadow-sm">Book Hotels</a>
                     </div>
-                </div>
-                <!-- Check icon graphic -->
-                <div class="absolute right-4 bottom-4 w-20 h-20 opacity-20 mix-blend-screen transition-transform duration-500 group-hover:scale-110">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
             </div>
 
-            <!-- Banner 3: Flight Booking -->
-            <div class="rounded-2xl overflow-hidden shadow-sm relative group cursor-pointer aspect-[2.5/1]">
-                <div class="absolute inset-0 bg-gradient-to-r from-[#581C87] to-[#7C3AED]"></div>
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-20 mix-blend-overlay"></div>
+            <!-- Promo 3 - Discount -->
+            <div class="rounded-2xl overflow-hidden shadow-md relative group cursor-pointer h-56 md:h-72 bg-[#dbeafe]">
+                <img src="/discount card.png" alt="Discount ticket illustration" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-r from-white/30 via-white/10 to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
-                        <div class="text-white/80 text-[10px] font-bold tracking-widest uppercase mb-1">GHURI · Step 03</div>
-                        <h3 class="text-white font-bold text-lg md:text-xl leading-tight">FLIGHT<br>BOOKING</h3>
-                        <p class="text-white/70 text-[10px] mt-1">aeroVE5/booking endpoint</p>
+                        <h3 class="text-[#1a2b49] text-xl md:text-3xl font-extrabold mb-1">Best Prices Every Time</h3>
+                        <p class="text-[#1a2b49]/80 text-sm md:text-base">We bring you the best deals so you can travel more.</p>
                     </div>
-                    <div class="mt-auto flex justify-between items-center">
-                        <span class="inline-block bg-[#FFB700] text-[#1a2b49] text-[10px] font-black px-3 py-1 rounded">CONNECTED</span>
-                        <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </div>
+                    <div>
+                        <span class="inline-block bg-white text-[#1a2b49] px-5 py-2.5 rounded-full font-semibold shadow-sm">Learn More</span>
                     </div>
-                </div>
-                <!-- Ticket graphic -->
-                <div class="absolute right-4 bottom-4 w-20 h-20 opacity-20 mix-blend-screen transition-transform duration-500 group-hover:scale-110">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
                 </div>
             </div>
         </div>

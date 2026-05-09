@@ -71,6 +71,7 @@ class MockFlightService implements FlightServiceInterface
                 'refundable' => true,
                 'points' => 55,
                 'is_best_deal' => true,
+                'is_mock' => true,
                 'outbound' => [
                     'origin' => $origin,
                     'destination' => $destination,
@@ -92,6 +93,7 @@ class MockFlightService implements FlightServiceInterface
                 'refundable' => true,
                 'points' => 61,
                 'is_preferred' => true,
+                'is_mock' => true,
                 'outbound' => [
                     'origin' => $origin,
                     'destination' => $destination,
@@ -112,6 +114,7 @@ class MockFlightService implements FlightServiceInterface
                 'currency' => '৳',
                 'refundable' => false,
                 'points' => 30,
+                'is_mock' => true,
                 'outbound' => [
                     'origin' => $origin,
                     'destination' => $destination,

@@ -2,6 +2,8 @@
 
 return [
 
+    'flight_provider' => env('FLIGHT_PROVIDER', 'sabre'),
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
