@@ -28,13 +28,7 @@
         </div>
     </div>
 
-    @if(!empty($providerNotice))
-        <div class="relative z-10 px-4 pt-4 sm:px-6 lg:px-8">
-            <div class="mx-auto max-w-7xl rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900 shadow-sm">
-                {{ $providerNotice }}
-            </div>
-        </div>
-    @endif
+
 
     @if(!empty($debugData))
         <div class="relative z-10 px-4 pt-4 sm:px-6 lg:px-8">
@@ -54,13 +48,7 @@
         </div>
     @endif
 
-    @if(collect($flights)->contains(fn ($flight) => data_get($flight, 'is_mock')))
-        <div class="relative z-10 px-4 pt-4 sm:px-6 lg:px-8">
-            <div class="mx-auto max-w-7xl rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm font-medium text-sky-900 shadow-sm">
-                Demo fares are being shown for this search.
-            </div>
-        </div>
-    @endif
+
 
     <div class="relative z-10 min-h-screen pb-12 pt-6">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -11,8 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="{{ asset('hero-pic-optimized.jpg') }}" media="(min-width: 768px)">
-    <link rel="preload" as="image" href="{{ asset('hero-pic-mobile.jpg') }}" media="(max-width: 767px)">
+    <link rel="preload" as="image" href="{{ asset('hero-pic-optimized.webp') }}" media="(min-width: 768px)">
+    <link rel="preload" as="image" href="{{ asset('hero-pic-mobile.webp') }}" media="(max-width: 767px)">
     <style>
         .search-overlap {
             margin-top: -11rem;
@@ -224,10 +224,10 @@
     <!-- Hero Section -->
     <div data-hero-3d class="hero-3d relative isolate overflow-hidden h-[380px] md:h-[500px] w-full bg-[#F7C6D4]">
         <picture class="absolute inset-0 w-full h-full hero-3d-bg">
-            <source media="(min-width: 768px)" srcset="{{ asset('hero-pic-optimized.jpg') }}" type="image/jpeg">
-            <source srcset="{{ asset('hero-pic-mobile.jpg') }}" type="image/jpeg">
+            <source media="(min-width: 768px)" srcset="{{ asset('hero-pic-optimized.webp') }}" type="image/webp">
+            <source srcset="{{ asset('hero-pic-mobile.webp') }}" type="image/webp">
             <img
-                src="{{ asset('HERO PIC.png') }}?v={{ time() }}"
+                src="{{ asset('hero-pic.webp') }}?v={{ time() }}"
                 alt="Travel hero background"
                 class="w-full h-full object-cover object-top md:object-bottom"
                 loading="eager"
@@ -446,7 +446,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Promo 1 - Flight -->
             <div class="rounded-2xl overflow-hidden shadow-md relative group cursor-pointer h-56 md:h-72 bg-[#0f172a]">
-                <img src="/flight card.jpg" alt="Airplane wing in the sky" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-[70%_50%] transition-transform duration-700 group-hover:scale-105">
+                <img src="/flight-card.webp" alt="Airplane wing in the sky" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-[70%_50%] transition-transform duration-700 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-r from-[#0f172a]/20 via-transparent to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
@@ -461,7 +461,7 @@
 
             <!-- Promo 2 - Hotel -->
             <div class="rounded-2xl overflow-hidden shadow-md relative group cursor-pointer h-56 md:h-72 bg-[#0f172a]">
-                <img src="/hotel card.jpg" alt="Comfortable hotel room" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105">
+                <img src="/hotel-card.webp" alt="Comfortable hotel room" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-r from-[#0f172a]/25 via-transparent to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
@@ -476,7 +476,7 @@
 
             <!-- Promo 3 - Discount -->
             <div class="rounded-2xl overflow-hidden shadow-md relative group cursor-pointer h-56 md:h-72 bg-[#dbeafe]">
-                <img src="/discount card.png" alt="Discount ticket illustration" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105">
+                <img src="/discount-card.webp" alt="Discount ticket illustration" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105">
                 <div class="absolute inset-0 bg-gradient-to-r from-white/30 via-white/10 to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
