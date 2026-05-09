@@ -465,7 +465,7 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-[#0f172a]/25 via-transparent to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
-                        <h3 class="text-white text-xl md:text-3xl font-extrabold mb-1 drop-shadow-lg">Comfortable Stays, Unforgettable Memories</h3>
+                        <h3 class="text-white text-xl md:text-3xl font-extrabold mb-1 drop-shadow-lg">Comfortable Stays, <span class="bg-[#1882FF] text-white px-2 py-1 rounded">Unforgettable</span> Memories</h3>
                         <p class="text-white text-sm md:text-base font-bold drop-shadow-md">Find the perfect hotel for every trip.</p>
                     </div>
                     <div>
@@ -480,8 +480,8 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-white/30 via-white/10 to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
-                        <h3 class="text-[#1a2b49] text-xl md:text-3xl font-extrabold mb-1">Best Prices Every Time</h3>
-                        <p class="text-[#1a2b49]/80 text-sm md:text-base">We bring you the best deals so you can travel more.</p>
+                        <h3 class="text-[#1a2b49] text-xl md:text-3xl font-extrabold mb-1 drop-shadow-2xl">Best Prices Every Time</h3>
+                        <p class="text-[#1a2b49] text-sm md:text-base font-bold drop-shadow-lg">We bring you the best deals so you can travel more.</p>
                     </div>
                     <div>
                         <span class="inline-block bg-white text-[#1a2b49] px-5 py-2.5 rounded-full font-semibold shadow-sm">Learn More</span>
