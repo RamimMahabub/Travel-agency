@@ -10,156 +10,37 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="preload" as="image" href="{{ asset('hero-pic-optimized.webp') }}" media="(min-width: 768px)">
     <link rel="preload" as="image" href="{{ asset('hero-pic-mobile.webp') }}" media="(max-width: 767px)">
-    <style>
-        .search-overlap {
-            margin-top: -11rem;
-        }
 
-        @media (min-width: 768px) {
-            .search-overlap {
-                margin-top: -11rem;
-            }
-        }
-
-        .neon-search-card {
-            border: 2px solid transparent;
-            background-image:
-                linear-gradient(#fff, #fff),
-                linear-gradient(120deg, #1882ff, #39f4ff, #ff4fd8, #1882ff, #39f4ff);
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            background-size: 100% 100%, 300% 300%;
-            animation: neon-border-flow 18s cubic-bezier(0.42, 0, 0.2, 1) infinite;
-        }
-
-        .neon-search-card::before {
-            content: "";
-            position: absolute;
-            inset: -3px;
-            border-radius: inherit;
-            background: linear-gradient(120deg, rgba(24, 130, 255, 0.45), rgba(57, 244, 255, 0.35), rgba(255, 79, 216, 0.4), rgba(24, 130, 255, 0.45));
-            background-size: 300% 300%;
-            filter: blur(22px);
-            opacity: 0.28;
-            z-index: -1;
-            animation: neon-border-flow 18s cubic-bezier(0.42, 0, 0.2, 1) infinite;
-        }
-
-        @keyframes neon-border-flow {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            100% {
-                background-position: 300% 50%;
-            }
-        }
-
-        .neon-navbar {
-            position: relative;
-            border-bottom: 1px solid rgba(24, 130, 255, 0.45) !important;
-            box-shadow:
-                0 1px 0 rgba(24, 130, 255, 0.35),
-                0 10px 26px rgba(24, 130, 255, 0.12);
-            overflow: visible;
-        }
-
-        .neon-navbar::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -2px;
-            height: 10px;
-            background: linear-gradient(90deg, rgba(24, 130, 255, 0.48), rgba(57, 244, 255, 0.6), rgba(255, 79, 216, 0.42), rgba(24, 130, 255, 0.48));
-            filter: blur(8px);
-            opacity: 0.9;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .neon-navbar::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -1px;
-            height: 2px;
-            background: linear-gradient(90deg, #1882ff, #39f4ff, #ff4fd8, #1882ff);
-            background-size: 240% 100%;
-            box-shadow: 0 0 12px rgba(24, 130, 255, 0.8), 0 0 24px rgba(57, 244, 255, 0.45);
-            animation: neon-navbar-flow-strong 14s cubic-bezier(0.42, 0, 0.2, 1) infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .neon-logo {
-            position: relative;
-            display: inline-block;
-            line-height: 1;
-            isolation: isolate;
-            text-shadow: none !important;
-            filter: none !important;
-            animation: none !important;
-        }
-
-        .neon-logo::before {
-            content: attr(data-text);
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-            transform: scale(1.055);
-            transform-origin: center;
-            color: transparent;
-            -webkit-text-fill-color: transparent;
-            background: linear-gradient(90deg, #1882ff, #39f4ff, #ff4fd8, #1882ff);
-            background-size: 240% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: logo-border-flow 11s cubic-bezier(0.42, 0, 0.2, 1) infinite;
-        }
-
-        .neon-logo .logo-dot {
-            position: relative;
-            z-index: 2;
-        }
-
-        @keyframes neon-navbar-flow-strong {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            100% {
-                background-position: 240% 50%;
-            }
-        }
-
-        @keyframes logo-border-flow {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            100% {
-                background-position: 240% 50%;
-            }
-        }
-    </style>
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-white text-dark selection:bg-[#1882FF] selection:text-white">
+<body class="font-sans antialiased bg-white text-dark selection:bg-[#d00e15] selection:text-white">
     <!-- Navigation -->
-    <nav class="neon-navbar sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
+    <nav x-data="{ scrolled: false }" 
+         @scroll.window="scrolled = (window.pageYOffset > 20)"
+         :class="scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100' : 'bg-transparent border-transparent'"
+         class="fixed top-0 inset-x-0 z-50 transition-colors duration-300">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative flex justify-between h-20 items-center">
             <div class="flex items-center gap-2 cursor-pointer">
-                <div class="neon-logo font-poppins font-extrabold text-3xl tracking-tighter text-[#1a2b49]" data-text="GHURI">
-                    GHURI<span class="logo-dot text-[#1882FF]">.</span>
+                <div class="font-poppins font-extrabold text-3xl tracking-tighter text-[#d00e15]" data-text="GHURI">
+                    GHURI<span class="logo-dot text-[#d00e15]">.</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
+
+                {{-- ✦ List your Property Link — shown when Hotel tab is active --}}
+                <a
+                    href="{{ route('list-your-property') }}"
+                    id="nav-list-property-link"
+                    class="hidden items-center gap-1.5 text-sm font-semibold text-[#d00e15] hover:text-[#A90B16] px-3 py-2 rounded-xl border border-[#d00e15]/30 hover:bg-[#d00e15]/5 transition"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    List your Property
+                </a>
+
                 @if (Route::has('login'))
                     @auth
                         @php
@@ -167,18 +48,18 @@
                             $isInternalUser = $user && $user->isInternalUser();
                         @endphp
                         @if ($isInternalUser)
-                            <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold text-gray-600 hover:text-[#1882FF] px-4 py-2 transition border border-gray-200 rounded-md">Dashboard</a>
+                            <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold text-[#d00e15] hover:text-[#A90B16] px-4 py-2 transition border border-[#d00e15]/30 rounded-md">Dashboard</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="text-sm font-semibold text-gray-600 hover:text-[#1882FF] px-4 py-2 transition border border-gray-200 rounded-md">Logout</button>
+                                <button type="submit" class="text-sm font-semibold text-[#d00e15] hover:text-[#A90B16] px-4 py-2 transition border border-[#d00e15]/30 rounded-md">Logout</button>
                             </form>
                         @else
                             <div x-data="{ open:false }" class="relative">
-                                <button @click="open = !open" type="button" class="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm hover:border-[#1882FF]/40 transition">
-                                    <span class="w-8 h-8 rounded-full bg-[#EAF3FF] text-[#1a2b49] font-bold text-sm flex items-center justify-center">
+                                <button @click="open = !open" type="button" class="flex items-center gap-2 rounded-full border border-[#d00e15]/30 bg-[#d00e15]/5 px-2 py-1.5 shadow-sm hover:border-[#d00e15]/60 transition">
+                                    <span class="w-8 h-8 rounded-full bg-[#d00e15] text-white font-bold text-sm flex items-center justify-center">
                                         {{ strtoupper(substr($user->name, 0, 1)) }}
                                     </span>
-                                    <svg class="w-4 h-4 text-[#1882FF] transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-[#d00e15] transition" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
@@ -191,11 +72,15 @@
                                     class="absolute right-0 mt-2 w-64 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden"
                                 >
                                     <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
-                                        <p class="text-sm font-bold text-[#1a2b49] truncate">{{ $user->name }}</p>
+                                        <p class="text-sm font-bold text-[#19100F] truncate">{{ $user->name }}</p>
                                         <p class="text-xs text-gray-500 truncate">{{ $user->email }}</p>
                                     </div>
 
-                                    <a href="{{ route('dashboard') }}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Booking History</a>
+                                    @if($user->isPropertyOwner())
+                                        <a href="{{ route('property-owner.dashboard') }}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">PMS Dashboard</a>
+                                    @else
+                                        <a href="{{ route('my-bookings.index') }}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Booking History</a>
+                                    @endif
                                     <a href="{{ route('profile.edit') }}" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Account</a>
                                     <button type="button" class="w-full text-left px-4 py-2.5 text-sm text-gray-400 cursor-default">My Wishlist</button>
                                     <button type="button" class="w-full text-left px-4 py-2.5 text-sm text-gray-400 cursor-default">Settings</button>
@@ -209,9 +94,9 @@
                         @endif
                     @else
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="text-sm font-semibold text-gray-600 hover:text-[#1882FF] px-4 py-2 transition border border-gray-200 rounded-md">Sign Up</a>
+                            <a href="{{ route('register') }}" class="text-sm font-bold text-[#d00e15] hover:bg-red-50 px-6 py-2 transition border border-[#d00e15] rounded-xl">Sign Up</a>
                         @endif
-                        <a href="{{ route('login') }}" class="bg-[#1a2b49] hover:bg-[#2a3b59] text-white text-sm font-semibold py-2 px-6 rounded-md transition shadow-sm flex items-center gap-2">
+                        <a href="{{ route('login') }}" class="bg-[#d00e15] hover:bg-[#A90B16] text-white text-sm font-bold py-2 px-6 rounded-xl transition shadow-sm flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
                             Login
                         </a>
@@ -222,42 +107,41 @@
     </nav>
 
     <!-- Hero Section -->
-    <div data-hero-3d class="hero-3d relative isolate overflow-hidden h-[380px] md:h-[500px] w-full bg-[#F7C6D4]">
-        <picture class="absolute inset-0 w-full h-full hero-3d-bg">
-            <source media="(min-width: 768px)" srcset="{{ asset('hero-pic-optimized.webp') }}" type="image/webp">
-            <source srcset="{{ asset('hero-pic-mobile.webp') }}" type="image/webp">
+    <div class="relative isolate overflow-hidden w-full bg-[#fafafa]" style="aspect-ratio: 21/9; min-height: 450px; max-height: 750px;">
+        <picture class="absolute inset-0 w-full h-full">
+            <source srcset="{{ asset('hero-optimized.webp') }}" type="image/webp">
             <img
-                src="{{ asset('hero-pic.webp') }}?v={{ time() }}"
+                src="{{ asset('hero.png') }}"
                 alt="Travel hero background"
-                class="w-full h-full object-cover object-top md:object-bottom"
+                class="w-full h-full object-cover object-center"
                 loading="eager"
                 fetchpriority="high"
                 decoding="async"
             >
         </picture>
-        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.28)_100%)] hero-3d-overlay"></div>
-        <div class="hero-3d-glow" aria-hidden="true"></div>
-        <canvas class="hero-3d-canvas" aria-hidden="true"></canvas>
     </div>
 
     <!-- Search Component Container -->
-    <div class="search-overlap max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-40 pb-8">
-        <div class="neon-search-card bg-white rounded-[28px] shadow-[0_24px_70px_rgba(15,23,42,0.14)] relative isolate p-3 md:p-5" x-data="{ tab: 'flights', tripType: 'one_way' }">
+    <div class="-mt-16 md:-mt-24 lg:-mt-32 mb-8 md:mb-12 lg:mb-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-40">
+        <div class="neon-search-container" x-data="{ tab: 'hotels', tripType: 'one_way' }" id="search-box">
+
+            <div class="neon-search-bg"></div>
+            <div class="neon-search-inner pt-12 pb-6 px-4 md:px-8">
             
-            <!-- Tabs inside the box like image -->
-            <div class="flex justify-center -mt-8 md:-mt-9 mb-4">
-                <div class="flex bg-white rounded-full shadow-lg border border-gray-100 overflow-hidden text-sm font-bold px-1 py-1">
-                    <button @click="tab = 'flights'" :class="tab === 'flights' ? 'text-[#1882FF] bg-blue-50/70' : 'text-gray-500 hover:bg-gray-50'" class="px-6 py-3 rounded-full transition flex items-center gap-2 border-b-2" :class="tab === 'flights' ? 'border-[#1882FF]' : 'border-transparent'">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 104 0 2 2 0 012-2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Flight
+            <!-- Tabs floating on top border -->
+            <div class="absolute left-1/2 -translate-x-1/2 -top-6">
+                <div class="flex bg-white rounded-full shadow-md border border-gray-100 text-sm font-bold p-1 gap-1">
+                    <button @click="tab = 'hotels'; $dispatch('tab-changed', { tab: 'hotels' })" :class="tab === 'hotels' ? 'text-[#d00e15] bg-red-50/50' : 'text-gray-500 hover:bg-gray-50'" class="px-6 py-2.5 rounded-full transition flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> Hotel
                     </button>
-                    <button @click="tab = 'hotels'" :class="tab === 'hotels' ? 'text-[#1882FF] bg-blue-50/70' : 'text-gray-500 hover:bg-gray-50'" class="px-6 py-3 rounded-full transition flex items-center gap-2 border-b-2" :class="tab === 'hotels' ? 'border-[#1882FF]' : 'border-transparent'">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> Hotel
+                    <button @click="tab = 'flights'; $dispatch('tab-changed', { tab: 'flights' })" :class="tab === 'flights' ? 'text-[#d00e15] bg-red-50/50' : 'text-gray-500 hover:bg-gray-50'" class="px-6 py-2.5 rounded-full transition flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 104 0 2 2 0 012-2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Flight
                     </button>
                 </div>
             </div>
 
             <!-- Tab Contents -->
-            <div class="p-4 md:p-6 pt-0">
+            <div>
                 <!-- Flights Search Form -->
                 <div x-show="tab === 'flights'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                     @if($errors->any())
@@ -282,16 +166,16 @@
                         
                         <!-- Trip Options (Pill shaped) -->
                         <div class="flex items-center gap-2 mb-6">
-                            <div class="flex bg-[#1E204A] text-white rounded-md p-1 text-[11px] font-bold">
-                                <label class="flex items-center px-4 py-1.5 cursor-pointer rounded transition-colors" :class="tripType === 'one_way' ? 'bg-[#3A3C6B]' : 'hover:bg-[#2A2C5B]'">
+                            <div class="flex bg-gray-50 border border-gray-100 text-gray-500 rounded-lg p-1 text-[11px] font-bold shadow-sm">
+                                <label class="flex items-center px-4 py-1.5 cursor-pointer rounded-md transition-all duration-200" :class="tripType === 'one_way' ? 'bg-[#d00e15] text-white shadow-sm' : 'hover:bg-gray-200/50 hover:text-gray-900'">
                                     <input type="radio" name="trip_type" value="one_way" x-model="tripType" class="hidden">
                                     <span>One Way</span>
                                 </label>
-                                <label class="flex items-center px-4 py-1.5 cursor-pointer rounded transition-colors" :class="tripType === 'round_way' ? 'bg-[#3A3C6B]' : 'hover:bg-[#2A2C5B]'">
+                                <label class="flex items-center px-4 py-1.5 cursor-pointer rounded-md transition-all duration-200" :class="tripType === 'round_way' ? 'bg-[#d00e15] text-white shadow-sm' : 'hover:bg-gray-200/50 hover:text-gray-900'">
                                     <input type="radio" name="trip_type" value="round_way" x-model="tripType" class="hidden">
                                     <span>Round Way</span>
                                 </label>
-                                <label class="flex items-center px-4 py-1.5 cursor-pointer rounded transition-colors" :class="tripType === 'multi_city' ? 'bg-[#3A3C6B]' : 'hover:bg-[#2A2C5B]'">
+                                <label class="flex items-center px-4 py-1.5 cursor-pointer rounded-md transition-all duration-200" :class="tripType === 'multi_city' ? 'bg-[#d00e15] text-white shadow-sm' : 'hover:bg-gray-200/50 hover:text-gray-900'">
                                     <input type="radio" name="trip_type" value="multi_city" x-model="tripType" class="hidden">
                                     <span>Multi Way</span>
                                 </label>
@@ -299,64 +183,57 @@
                         </div>
 
                         <!-- Row 1: From & To & Dates & Search -->
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-2 relative z-10 mb-2">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 relative z-10 mb-2">
                             
-                            <!-- From/To Group (takes up more space) -->
-                            <div class="col-span-1 lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-2 relative">
+                            <!-- From/To Group -->
+                            <div class="col-span-1 lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 gap-4 relative">
                                 <!-- From -->
-                                <div class="relative border border-gray-200 rounded-xl bg-white p-3 hover:border-[#1882FF] transition group" x-data="airportSearch('DAC')" @click="$refs.inputFrom.focus()">
-                                    <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">From</label>
+                                <div class="relative border border-[#d00e15]/40 rounded-2xl bg-white p-3 hover:border-[#d00e15] focus-within:border-[#d00e15] focus-within:ring-1 focus-within:ring-[#d00e15] transition-all group" x-data="airportSearch('DAC')" @click="$refs.inputFrom.focus()">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">From</label>
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-[#1882FF] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                        <svg class="w-4 h-4 text-gray-400 group-focus-within:text-[#d00e15] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                                         <div class="flex-1 min-w-0">
                                             <input type="hidden" name="origin" x-model="selectedCode">
-                                            <input x-ref="inputFrom" type="text" x-model="search" @focus="clearSelection()" @input.debounce.300ms="filter" @click.away="open = false" placeholder="City or airport" class="w-full border-none p-0 focus:ring-0 font-bold text-[11px] xl:text-[12px] text-[#1a2b49] bg-transparent truncate" required autocomplete="off">
-                                            <div class="text-[9px] text-gray-400 truncate mt-0.5" x-text="selectedCode ? '(' + selectedCode + ') ' + selectedDisplay : 'Select departure'"></div>
-
+                                            <input x-ref="inputFrom" type="text" x-model="search" @focus="clearSelection()" @input.debounce.300ms="filter" @click.away="open = false" placeholder="City or airport" class="w-full border-none p-0 focus:ring-0 font-bold text-[13px] text-[#19100F] bg-transparent truncate" required autocomplete="off">
+                                            
                                             <!-- Dropdown -->
                                             <div x-show="open" style="display:none;" class="absolute z-50 left-0 top-full min-w-[300px] mt-1 bg-white rounded-xl shadow-2xl border border-gray-100 max-h-72 overflow-y-auto">
                                                 <template x-if="loading"><div class="px-4 py-3 text-sm text-gray-500">Searching...</div></template>
                                                 <template x-if="!loading && search.length >= 2 && filtered.length === 0"><div class="px-4 py-3 text-sm text-gray-500">No airports found.</div></template>
                                                 <template x-for="airport in filtered" :key="airport.code">
-                                                    <div @click.stop="select(airport)" class="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-b border-gray-50 last:border-0 transition">
+                                                    <div @click.stop="select(airport)" class="px-4 py-3 hover:bg-red-50 cursor-pointer flex items-center justify-between border-b border-gray-50 last:border-0 transition">
                                                         <div class="flex flex-col truncate min-w-0">
-                                                            <span class="font-bold text-[#1a2b49] text-sm truncate" x-text="airport.display_name"></span>
+                                                            <span class="font-bold text-[#19100F] text-sm truncate" x-text="airport.display_name"></span>
                                                             <span class="text-gray-400 text-[10px] truncate" x-text="airport.subtitle || airport.name"></span>
                                                         </div>
-                                                        <span class="font-bold text-[#1882FF] bg-blue-50 px-2 py-0.5 rounded text-xs ml-2 shrink-0" x-text="airport.code"></span>
+                                                        <span class="font-bold text-[#d00e15] bg-red-50 px-2 py-0.5 rounded text-xs ml-2 shrink-0" x-text="airport.code"></span>
                                                     </div>
                                                 </template>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- Swap Icon -->
-                                    <div class="absolute -right-3 top-1/2 -translate-y-1/2 z-20 hidden sm:flex items-center justify-center w-6 h-6 bg-white rounded-full shadow-md text-[#1882FF] cursor-pointer hover:bg-blue-50 border border-blue-100 transition">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M16 7l-3-3m3 3l-3 3M16 17H8m0 0l3 3m-3-3l3-3"></path></svg>
-                                    </div>
                                 </div>
 
                                 <!-- To -->
-                                <div class="relative border border-gray-200 rounded-xl bg-white p-3 hover:border-[#1882FF] transition group sm:ml-1" x-data="airportSearch('DXB')" @click="$refs.inputTo.focus()">
-                                    <label class="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">To</label>
+                                <div class="relative border border-[#d00e15]/40 rounded-2xl bg-white p-3 hover:border-[#d00e15] focus-within:border-[#d00e15] focus-within:ring-1 focus-within:ring-[#d00e15] transition-all group" x-data="airportSearch('DXB')" @click="$refs.inputTo.focus()">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">To</label>
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-[#1882FF] shrink-0 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                        <svg class="w-4 h-4 text-gray-400 group-focus-within:text-[#d00e15] shrink-0 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                                         <div class="flex-1 min-w-0">
                                             <input type="hidden" name="destination" x-model="selectedCode">
-                                            <input x-ref="inputTo" type="text" x-model="search" @focus="clearSelection()" @input.debounce.300ms="filter" @click.away="open = false" placeholder="City or airport" class="w-full border-none p-0 focus:ring-0 font-bold text-[11px] xl:text-[12px] text-[#1a2b49] bg-transparent truncate" required autocomplete="off">
-                                            <div class="text-[9px] text-gray-400 truncate mt-0.5" x-text="selectedCode ? '(' + selectedCode + ') ' + selectedDisplay : 'Select destination'"></div>
-
+                                            <input x-ref="inputTo" type="text" x-model="search" @focus="clearSelection()" @input.debounce.300ms="filter" @click.away="open = false" placeholder="City or airport" class="w-full border-none p-0 focus:ring-0 font-bold text-[13px] text-[#19100F] bg-transparent truncate" required autocomplete="off">
+                                            
                                             <!-- Dropdown -->
                                             <div x-show="open" style="display:none;" class="absolute z-50 left-0 top-full min-w-[300px] mt-1 bg-white rounded-xl shadow-2xl border border-gray-100 max-h-72 overflow-y-auto">
                                                 <template x-if="loading"><div class="px-4 py-3 text-sm text-gray-500">Searching...</div></template>
                                                 <template x-if="!loading && search.length >= 2 && filtered.length === 0"><div class="px-4 py-3 text-sm text-gray-500">No airports found.</div></template>
                                                 <template x-for="airport in filtered" :key="airport.code">
-                                                    <div @click.stop="select(airport)" class="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between border-b border-gray-50 last:border-0 transition">
+                                                    <div @click.stop="select(airport)" class="px-4 py-3 hover:bg-red-50 cursor-pointer flex items-center justify-between border-b border-gray-50 last:border-0 transition">
                                                         <div class="flex flex-col truncate min-w-0">
-                                                            <span class="font-bold text-[#1a2b49] text-sm truncate" x-text="airport.display_name"></span>
+                                                            <span class="font-bold text-[#19100F] text-sm truncate" x-text="airport.display_name"></span>
                                                             <span class="text-gray-400 text-[10px] truncate" x-text="airport.subtitle || airport.name"></span>
                                                         </div>
-                                                        <span class="font-bold text-[#1882FF] bg-blue-50 px-2 py-0.5 rounded text-xs ml-2 shrink-0" x-text="airport.code"></span>
+                                                        <span class="font-bold text-[#d00e15] bg-red-50 px-2 py-0.5 rounded text-xs ml-2 shrink-0" x-text="airport.code"></span>
                                                     </div>
                                                 </template>
                                             </div>
@@ -366,75 +243,123 @@
                             </div>
 
                             <!-- Dates Group -->
-                            <div class="col-span-1 lg:col-span-3 grid grid-cols-2 gap-2 relative z-[9]">
+                            <div class="col-span-1 lg:col-span-4 grid grid-cols-2 gap-4 relative z-[9]">
                                 <!-- Departure Date -->
-                                <div class="col-span-1 border border-gray-200 rounded-xl bg-white p-2 hover:border-[#1882FF] transition group cursor-text" @click="$refs.inputDep.showPicker ? $refs.inputDep.showPicker() : $refs.inputDep.focus()">
-                                    <label class="block text-[9px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Journey Date</label>
-                                    <div class="flex items-center gap-1">
-                                        <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-[#1882FF] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                        <input x-ref="inputDep" type="date" name="date" class="w-full border-none p-0 focus:ring-0 font-bold text-[10px] xl:text-[11px] text-[#1a2b49] bg-transparent leading-none [&::-webkit-calendar-picker-indicator]:hidden" required value="{{ \Carbon\Carbon::tomorrow()->toDateString() }}">
+                                <div class="col-span-1 border border-[#d00e15]/40 rounded-2xl bg-white p-3 hover:border-[#d00e15] focus-within:border-[#d00e15] focus-within:ring-1 focus-within:ring-[#d00e15] transition-all group cursor-text" @click="$refs.inputDep.showPicker ? $refs.inputDep.showPicker() : $refs.inputDep.focus()">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Journey Date</label>
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-gray-400 group-hover:text-[#d00e15] group-focus-within:text-[#d00e15] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        <input x-ref="inputDep" type="date" name="date" class="w-full border-none p-0 focus:ring-0 font-bold text-[13px] text-[#19100F] bg-transparent leading-none [&::-webkit-calendar-picker-indicator]:hidden" required value="{{ \Carbon\Carbon::tomorrow()->toDateString() }}">
                                     </div>
                                 </div>
 
                                 <!-- Return Date -->
-                                <div class="col-span-1 border border-gray-200 rounded-xl p-2 transition group cursor-pointer flex flex-col justify-center" :class="tripType === 'one_way' ? 'bg-gray-50 border-gray-100' : 'bg-white hover:border-[#1882FF]'" @click="if(tripType === 'one_way') tripType = 'round_way'; setTimeout(() => { if($refs.inputRet && $refs.inputRet.showPicker) $refs.inputRet.showPicker(); else if($refs.inputRet) $refs.inputRet.focus(); }, 50)">
-                                    <div class="flex items-center gap-1.5" x-show="tripType === 'one_way'">
-                                        <svg class="w-4 h-4 text-[#1882FF] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                        <span class="font-bold text-[10px] xl:text-[11px] text-[#1a2b49]">Add Return</span>
+                                <div class="col-span-1 border border-[#d00e15]/40 rounded-2xl p-3 transition group cursor-pointer flex flex-col justify-center" :class="tripType === 'one_way' ? 'bg-gray-50 border-gray-100' : 'bg-white hover:border-[#d00e15]'" @click="if(tripType === 'one_way') tripType = 'round_way'; setTimeout(() => { if($refs.inputRet && $refs.inputRet.showPicker) $refs.inputRet.showPicker(); else if($refs.inputRet) $refs.inputRet.focus(); }, 50)">
+                                    <div class="flex items-center gap-2 h-full lg:mt-3" x-show="tripType === 'one_way'">
+                                        <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        <span class="font-bold text-[13px] text-gray-400">Add Return</span>
                                     </div>
                                     <div x-show="tripType !== 'one_way'" style="display:none;" class="w-full">
-                                        <label class="block text-[9px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Return Date</label>
-                                        <div class="flex items-center gap-1">
-                                            <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-[#1882FF] shrink-0 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            <input x-ref="inputRet" type="date" name="return_date" class="w-full border-none p-0 focus:ring-0 font-bold text-[10px] xl:text-[11px] text-[#1a2b49] bg-transparent leading-none [&::-webkit-calendar-picker-indicator]:hidden" :required="tripType === 'round_way'" :disabled="tripType === 'one_way'" :value="'{{ \Carbon\Carbon::tomorrow()->addDays(2)->toDateString() }}'">
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Return Date</label>
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-gray-400 group-hover:text-[#d00e15] shrink-0 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <input x-ref="inputRet" type="date" name="return_date" class="w-full border-none p-0 focus:ring-0 font-bold text-[13px] text-[#19100F] bg-transparent leading-none [&::-webkit-calendar-picker-indicator]:hidden" :required="tripType === 'round_way'" :disabled="tripType === 'one_way'" :value="'{{ \Carbon\Carbon::tomorrow()->addDays(2)->toDateString() }}'">
                                         </div>
                                     </div>
                                 </div>
-                            </div> <!-- Close Dates Group -->
+                            </div> 
 
-                            <!-- Class & Travelers + Search Button -->
-                            <div class="col-span-1 lg:col-span-4 flex gap-2 w-full">
+                            <!-- Class & Travelers & Search -->
+                            <div class="col-span-1 lg:col-span-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
                                 <!-- Class & Travelers -->
-                                <div class="flex-1 border border-gray-200 rounded-xl bg-white p-2 xl:p-3 hover:border-[#1882FF] transition group flex flex-col justify-center">
-                                    <div class="flex flex-col gap-1">
-                                        <div class="flex items-center gap-1">
-                                            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                            <select name="class" class="flex-1 border-none p-0 focus:ring-0 text-[11px] xl:text-[12px] font-bold text-gray-500 bg-transparent cursor-pointer bg-none">
-                                                <option value="economy">Economy</option>
-                                                <option value="business">Business</option>
-                                                <option value="first">First</option>
-                                            </select>
-                                        </div>
-                                        <div class="h-px w-full bg-gray-100 my-0.5"></div>
-                                        <div class="flex items-center gap-1">
-                                            <svg class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                                            <select name="passengers" class="flex-1 border-none p-0 focus:ring-0 text-[11px] xl:text-[12px] font-bold text-[#1a2b49] bg-transparent cursor-pointer bg-none">
-                                                <option value="1">1 Traveler</option>
-                                                <option value="2">2 Travelers</option>
-                                                <option value="3">3 Travelers</option>
-                                                <option value="4">4 Travelers</option>
-                                                <option value="5">5 Travelers</option>
-                                                <option value="6">6+ Travelers</option>
-                                            </select>
-                                        </div>
+                                <div class="border border-[#d00e15]/40 rounded-2xl bg-white p-3 hover:border-[#d00e15] focus-within:border-[#d00e15] focus-within:ring-1 focus-within:ring-[#d00e15] transition-all group flex flex-col justify-center gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                        <select name="class" class="flex-1 border-none p-0 focus:ring-0 text-[11px] font-bold text-gray-500 bg-transparent cursor-pointer bg-none">
+                                            <option value="economy">Economy</option>
+                                            <option value="business">Business</option>
+                                            <option value="first">First</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                        <select name="passengers" class="flex-1 border-none p-0 focus:ring-0 text-[13px] font-bold text-[#19100F] bg-transparent cursor-pointer bg-none">
+                                            <option value="1">1 Traveler</option>
+                                            <option value="2">2 Travelers</option>
+                                            <option value="3">3 Travelers</option>
+                                            <option value="4">4 Travelers</option>
+                                            <option value="5">5 Travelers</option>
+                                            <option value="6">6+ Travelers</option>
+                                        </select>
                                     </div>
                                 </div>
 
                                 <!-- Search Button -->
-                                <button type="submit" class="w-[90px] lg:w-[110px] bg-[#1a2b49] hover:bg-[#2a3b59] text-white font-bold text-[13px] tracking-wide rounded-xl transition shadow-md flex flex-col items-center justify-center gap-1 p-2">
-                                    <span class="tracking-widest">SEARCH</span>
-                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                <button type="submit" class="w-full h-full bg-[#d00e15] hover:bg-[#A90B16] text-white font-bold text-[14px] rounded-2xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 p-3">
+                                    <span>SEARCH</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                 </button>
                             </div>
                         </div>
                     </form>
                 </div>
-                <!-- Hotel Stubs -->
-                <div x-show="tab !== 'flights'" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                    <div class="text-center py-12 text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                        <svg class="h-10 w-10 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                        <h3 class="text-lg font-bold text-gray-700">Coming Soon</h3>
-                        <p class="text-xs mt-1">Hotel booking facilities will be available soon.</p>
+                <!-- Hotel Search Form -->
+                <div x-show="tab === 'hotels'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                    <form action="{{ route('hotels.search') }}" method="GET">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 relative z-10">
+                            
+                            <!-- Destination -->
+                            <div class="col-span-1 lg:col-span-4 relative border border-[#d00e15]/40 rounded-2xl bg-white p-3 hover:border-[#d00e15] focus-within:border-[#d00e15] focus-within:ring-1 focus-within:ring-[#d00e15] transition-all group flex flex-col justify-center">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Destination</label>
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-gray-400 group-focus-within:text-[#d00e15] shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    <input type="text" name="destination" placeholder="City, region, or specific hotel" class="w-full border-none p-0 focus:ring-0 font-bold text-[13px] text-[#19100F] bg-transparent truncate" required autocomplete="off">
+                                </div>
+                            </div>
+
+                            <!-- Check-in Date -->
+                            <div class="col-span-1 lg:col-span-2 border border-[#d00e15]/40 rounded-2xl bg-white p-3 hover:border-[#d00e15] focus-within:border-[#d00e15] focus-within:ring-1 focus-within:ring-[#d00e15] transition-all group cursor-text" @click="$refs.inputCheckIn.showPicker ? $refs.inputCheckIn.showPicker() : $refs.inputCheckIn.focus()">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Check-in</label>
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-[#d00e15] group-focus-within:text-[#d00e15] shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <input x-ref="inputCheckIn" type="date" name="check_in" class="w-full border-none p-0 focus:ring-0 font-bold text-[13px] text-[#19100F] bg-transparent leading-none [&::-webkit-calendar-picker-indicator]:hidden" required value="{{ \Carbon\Carbon::tomorrow()->toDateString() }}">
+                                </div>
+                            </div>
+
+                            <!-- Check-out Date -->
+                            <div class="col-span-1 lg:col-span-2 border border-[#d00e15]/40 rounded-2xl bg-white p-3 hover:border-[#d00e15] focus-within:border-[#d00e15] focus-within:ring-1 focus-within:ring-[#d00e15] transition-all group cursor-text" @click="$refs.inputCheckOut.showPicker ? $refs.inputCheckOut.showPicker() : $refs.inputCheckOut.focus()">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Check-out</label>
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-[#d00e15] group-focus-within:text-[#d00e15] shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <input x-ref="inputCheckOut" type="date" name="check_out" class="w-full border-none p-0 focus:ring-0 font-bold text-[13px] text-[#19100F] bg-transparent leading-none [&::-webkit-calendar-picker-indicator]:hidden" required value="{{ \Carbon\Carbon::tomorrow()->addDays(2)->toDateString() }}">
+                                </div>
+                            </div>
+
+                            <!-- Guests -->
+                            <div class="col-span-1 lg:col-span-2 border border-[#d00e15]/40 rounded-2xl bg-white p-3 hover:border-[#d00e15] focus-within:border-[#d00e15] focus-within:ring-1 focus-within:ring-[#d00e15] transition-all group flex flex-col justify-center">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 hidden lg:block opacity-0">&nbsp;</label>
+                                <div class="flex items-center gap-2 h-full lg:mt-3">
+                                    <svg class="w-4 h-4 text-gray-400 group-focus-within:text-[#d00e15] shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                    <select name="guests" class="flex-1 border-none p-0 focus:ring-0 text-[13px] font-bold text-[#19100F] bg-transparent cursor-pointer bg-none">
+                                        <option value="1">1 Guest</option>
+                                        <option value="2" selected>2 Guests</option>
+                                        <option value="3">3 Guests</option>
+                                        <option value="4">4 Guests</option>
+                                        <option value="5">5 Guests</option>
+                                        <option value="6">6+ Guests</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Search Button -->
+                            <div class="col-span-1 lg:col-span-2 flex">
+                                <button type="submit" class="w-full bg-[#d00e15] hover:bg-[#A90B16] text-white font-bold text-[14px] rounded-2xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 p-3">
+                                    <span>SEARCH</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                     </div>
                 </div>
             </div>
@@ -454,7 +379,7 @@
                         <p class="text-white/95 text-sm md:text-base font-bold drop-shadow-md">Explore hundreds of routes at the best prices.</p>
                     </div>
                     <div>
-                        <a href="#" class="inline-block bg-white text-[#1a2b49] px-5 py-2.5 rounded-full font-semibold shadow-sm">Book Flights</a>
+                        <a href="#" class="inline-block bg-white text-[#19100F] px-5 py-2.5 rounded-full font-semibold shadow-sm">Book Flights</a>
                     </div>
                 </div>
             </div>
@@ -465,11 +390,11 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-[#0f172a]/25 via-transparent to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
-                        <h3 class="text-white text-xl md:text-3xl font-extrabold mb-1 drop-shadow-lg">Comfortable Stays, <span class="bg-[#1882FF] text-white px-2 py-1 rounded">Unforgettable</span> Memories</h3>
+                        <h3 class="text-white text-xl md:text-3xl font-extrabold mb-1 drop-shadow-lg">Comfortable Stays, <span class="bg-[#d00e15] text-white px-2 py-1 rounded">Unforgettable</span> Memories</h3>
                         <p class="text-white text-sm md:text-base font-bold drop-shadow-md">Find the perfect hotel for every trip.</p>
                     </div>
                     <div>
-                        <a href="#" class="inline-block bg-white text-[#1a2b49] px-5 py-2.5 rounded-full font-semibold shadow-sm">Book Hotels</a>
+                        <a href="#" class="inline-block bg-white text-[#19100F] px-5 py-2.5 rounded-full font-semibold shadow-sm">Book Hotels</a>
                     </div>
                 </div>
             </div>
@@ -480,11 +405,11 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-white/30 via-white/10 to-transparent"></div>
                 <div class="relative p-6 h-full flex flex-col justify-between">
                     <div>
-                        <h3 class="text-[#1a2b49] text-xl md:text-3xl font-extrabold mb-1 drop-shadow-2xl">Best Prices Every Time</h3>
-                        <p class="text-[#1a2b49] text-sm md:text-base font-bold drop-shadow-lg">We bring you the best deals so you can travel more.</p>
+                        <h3 class="text-[#19100F] text-xl md:text-3xl font-extrabold mb-1 drop-shadow-2xl">Best Prices Every Time</h3>
+                        <p class="text-[#19100F] text-sm md:text-base font-bold drop-shadow-lg">We bring you the best deals so you can travel more.</p>
                     </div>
                     <div>
-                        <span class="inline-block bg-white text-[#1a2b49] px-5 py-2.5 rounded-full font-semibold shadow-sm">Learn More</span>
+                        <span class="inline-block bg-white text-[#19100F] px-5 py-2.5 rounded-full font-semibold shadow-sm">Learn More</span>
                     </div>
                 </div>
             </div>
@@ -495,7 +420,7 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div class="bg-white rounded-[28px] shadow-[0_4px_30px_rgba(15,23,42,0.04)] border border-gray-50 p-8 md:p-12">
             <div class="text-center max-w-3xl mx-auto mb-10">
-                <h2 class="text-2xl md:text-[28px] font-poppins font-bold text-[#1a2b49] mb-4 tracking-tight">Search Top Airlines</h2>
+                <h2 class="text-2xl md:text-[28px] font-poppins font-bold text-[#19100F] mb-4 tracking-tight">Search Top Airlines</h2>
                 <p class="text-sm text-gray-500 leading-relaxed font-medium">
                     GHURI's user-friendly platform, powered by GHURI technology, connects you to top airlines instantly. Enjoy a comfortable and hassle-free journey on any destination and get tickets of top airlines easily.
                 </p>
@@ -531,9 +456,9 @@
                 <a href="javascript:void(0)" class="flex items-center justify-between py-2 px-1 hover:bg-gray-50/50 rounded-lg transition-colors group">
                     <div class="flex items-center gap-4">
                         <img src="https://images.kiwi.com/airlines/64/{{ $airline['iata'] }}.png" alt="{{ $airline['name'] }}" class="w-8 h-8 object-contain">
-                        <span class="text-sm font-bold text-[#1a2b49] group-hover:text-[#1882FF] transition-colors">{{ $airline['name'] }}</span>
+                        <span class="text-sm font-bold text-[#19100F] group-hover:text-[#d00e15] transition-colors">{{ $airline['name'] }}</span>
                     </div>
-                    <svg class="w-3.5 h-3.5 text-gray-300 group-hover:text-[#1882FF] transition-colors shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                    <svg class="w-3.5 h-3.5 text-gray-300 group-hover:text-[#d00e15] transition-colors shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                 </a>
                 @endforeach
             </div>
@@ -544,41 +469,41 @@
     <div class="pb-24 bg-gray-50 relative overflow-hidden">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-poppins font-bold text-[#1a2b49] mb-2">Why Choose Us</h2>
+                <h2 class="text-2xl md:text-3xl font-poppins font-bold text-[#19100F] mb-2">Why Choose Us</h2>
                 <p class="text-sm text-gray-500">Powered exclusively by GHURI technology - global content, real-time pricing, and seamless booking.</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Feature 1 -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 group text-center">
-                    <div class="w-12 h-12 mx-auto text-[#1882FF] mb-4 transform group-hover:scale-110 transition duration-300">
+                    <div class="w-12 h-12 mx-auto text-[#d00e15] mb-4 transform group-hover:scale-110 transition duration-300">
                         <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 104 0 2 2 0 012-2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3 class="text-base font-bold mb-2 text-[#1a2b49]">Global Flight Content</h3>
+                    <h3 class="text-base font-bold mb-2 text-[#19100F]">Global Flight Content</h3>
                     <p class="text-gray-500 text-xs leading-relaxed">Access worldwide airline inventory through GHURI's GDS-connected availability search.</p>
                 </div>
                 <!-- Feature 2 -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 group text-center">
-                    <div class="w-12 h-12 mx-auto text-[#1882FF] mb-4 transform group-hover:scale-110 transition duration-300">
+                    <div class="w-12 h-12 mx-auto text-[#d00e15] mb-4 transform group-hover:scale-110 transition duration-300">
                         <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3 class="text-base font-bold mb-2 text-[#1a2b49]">Real-Time Revalidation</h3>
+                    <h3 class="text-base font-bold mb-2 text-[#19100F]">Real-Time Revalidation</h3>
                     <p class="text-gray-500 text-xs leading-relaxed">GHURI revalidates fares before payment, ensuring price accuracy and reducing failed bookings.</p>
                 </div>
                 <!-- Feature 3 -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 group text-center">
-                    <div class="w-12 h-12 mx-auto text-[#1882FF] mb-4 transform group-hover:scale-110 transition duration-300">
+                    <div class="w-12 h-12 mx-auto text-[#d00e15] mb-4 transform group-hover:scale-110 transition duration-300">
                         <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
                     </div>
-                    <h3 class="text-base font-bold mb-2 text-[#1a2b49]">Instant E-Ticketing</h3>
+                    <h3 class="text-base font-bold mb-2 text-[#19100F]">Instant E-Ticketing</h3>
                     <p class="text-gray-500 text-xs leading-relaxed">Book and receive PNR/UniqueID confirmation via GHURI's booking endpoint instantly.</p>
                 </div>
                 <!-- Feature 4 -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300 group text-center">
-                    <div class="w-12 h-12 mx-auto text-[#1882FF] mb-4 transform group-hover:scale-110 transition duration-300">
+                    <div class="w-12 h-12 mx-auto text-[#d00e15] mb-4 transform group-hover:scale-110 transition duration-300">
                         <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     </div>
-                    <h3 class="text-base font-bold mb-2 text-[#1a2b49]">Sandbox + Production</h3>
+                    <h3 class="text-base font-bold mb-2 text-[#19100F]">Sandbox + Production</h3>
                     <p class="text-gray-500 text-xs leading-relaxed">GHURI supports both sandbox testing and live production environments for safer deployments.</p>
                 </div>
             </div>
@@ -586,11 +511,11 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-[#2B2B68] text-white py-12">
+    <footer class="bg-[#d00e15] text-white py-12">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex flex-col items-center md:items-start gap-1">
                 <div class="flex items-center gap-2">
-                    <div class="font-poppins font-extrabold text-2xl tracking-tight text-white">GHURI<span class="text-[#FFB700]">.</span></div>
+                    <div class="font-poppins font-extrabold text-2xl tracking-tight text-white">GHURI<span class="text-white">.</span></div>
                 </div>
                 <p class="text-xs text-white/60 max-w-xs text-center md:text-left mt-2 leading-relaxed">
                     Smart bookings, competitive deals, and reliable support - all in one platform.
@@ -604,7 +529,7 @@
                 <div class="flex flex-col items-center gap-2">
                     <span class="text-[9px] text-white/50 uppercase tracking-widest font-bold">Verified By</span>
                     <div class="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-full border border-white/5">
-                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                         <span class="font-bold text-xs">DigiCert</span>
                     </div>
                 </div>
@@ -688,5 +613,32 @@
             }));
         });
     </script>
+    <script>
+        // Show/hide "List your Property" link based on active search tab
+        (function () {
+            var link = document.getElementById('nav-list-property-link');
+            if (!link) return;
+
+            function showLink(tab) {
+                if (tab === 'hotels') {
+                    link.classList.remove('hidden');
+                    link.classList.add('inline-flex');
+                } else {
+                    link.classList.add('hidden');
+                    link.classList.remove('inline-flex');
+                }
+            }
+
+            // Show on page load (default tab is hotels)
+            showLink('hotels');
+
+            // Listen for tab change events dispatched by Alpine.js
+            window.addEventListener('tab-changed', function (e) {
+                showLink(e.detail.tab);
+            });
+        })();
+    </script>
 </body>
 </html>
+</html>
+

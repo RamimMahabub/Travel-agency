@@ -54,9 +54,24 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Booking::class);
     }
 
+    public function properties()
+    {
+        return $this->hasMany(Property::class, 'owner_id');
+    }
+
+    public function hotelBookings()
+    {
+        return $this->hasMany(HotelBooking::class, 'guest_id');
+    }
+
     public function isCustomer(): bool
     {
         return $this->role === 'customer';
+    }
+
+    public function isPropertyOwner(): bool
+    {
+        return $this->role === 'property_owner';
     }
 
     public function isInternalUser(): bool
@@ -68,5 +83,18 @@ class User extends Authenticatable implements MustVerifyEmail
             'ticketing_officer',
             'accounts_officer',
         ], true);
+    }
+
+    public function getDashboardRoute(): string
+    {
+        if ($this->isPropertyOwner()) {
+            return 'property-owner.dashboard';
+        }
+
+        if ($this->isInternalUser()) {
+            return 'admin.dashboard';
+        }
+
+        return 'dashboard';
     }
 }

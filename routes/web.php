@@ -7,6 +7,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/list-your-property', function () {
+    return view('list-your-property');
+})->name('list-your-property');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified', 'role:customer'])->name('dashboard');
@@ -113,4 +117,100 @@ Route::get('/reseed-airports', function () {
     } catch (\Exception $e) {
         return 'Error: ' . $e->getMessage();
     }
+});
+
+/* ================================================================
+   HOTEL BOOKING MODULE — PROPERTY OWNER PMS ROUTES
+   ================================================================ */
+Route::middleware(['auth', 'verified', 'role:property_owner'])->prefix('property-owner')->name('property-owner.')->group(function () {
+
+    // Dashboard
+    Route::get('/dashboard', [\App\Http\Controllers\PropertyOwner\DashboardController::class, 'index'])->name('dashboard');
+
+    // Properties (Hotels)
+    Route::resource('hotels', \App\Http\Controllers\PropertyOwner\HotelController::class);
+    Route::post('hotels/{hotel}/submit-approval', [\App\Http\Controllers\PropertyOwner\HotelController::class, 'submitForApproval'])->name('hotels.submit-approval');
+
+    // Room Types (nested under hotels)
+    Route::resource('hotels.rooms', \App\Http\Controllers\PropertyOwner\RoomController::class);
+    Route::post('hotels/{hotel}/rooms/{room}/toggle-status', [\App\Http\Controllers\PropertyOwner\RoomController::class, 'toggleStatus'])->name('hotels.rooms.toggle-status');
+    Route::post('hotels/{hotel}/rooms/{room}/duplicate', [\App\Http\Controllers\PropertyOwner\RoomController::class, 'duplicate'])->name('hotels.rooms.duplicate');
+
+    // Rate Rules (nested under hotels)
+    Route::resource('hotels.rate-rules', \App\Http\Controllers\PropertyOwner\RateRuleController::class);
+
+    // Availability & Calendar
+    Route::get('hotels/{hotel}/availability', [\App\Http\Controllers\PropertyOwner\AvailabilityController::class, 'index'])->name('availability.index');
+    Route::post('hotels/{hotel}/availability/bulk-update', [\App\Http\Controllers\PropertyOwner\AvailabilityController::class, 'bulkUpdate'])->name('availability.bulk-update');
+
+    // Bookings
+    Route::resource('bookings', \App\Http\Controllers\PropertyOwner\BookingController::class)->only(['index', 'show', 'create', 'store']);
+    Route::post('bookings/{booking}/confirm', [\App\Http\Controllers\PropertyOwner\BookingController::class, 'confirm'])->name('bookings.confirm');
+    Route::post('bookings/{booking}/cancel', [\App\Http\Controllers\PropertyOwner\BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::post('bookings/{booking}/check-in', [\App\Http\Controllers\PropertyOwner\BookingController::class, 'checkIn'])->name('bookings.check-in');
+    Route::post('bookings/{booking}/check-out', [\App\Http\Controllers\PropertyOwner\BookingController::class, 'checkOut'])->name('bookings.check-out');
+    Route::post('bookings/{booking}/no-show', [\App\Http\Controllers\PropertyOwner\BookingController::class, 'noShow'])->name('bookings.no-show');
+
+    // Guests
+    Route::resource('guests', \App\Http\Controllers\PropertyOwner\GuestController::class)->only(['index', 'show']);
+
+    // Promotions
+    Route::resource('promotions', \App\Http\Controllers\PropertyOwner\PromotionController::class);
+
+    // Reviews
+    Route::get('reviews', [\App\Http\Controllers\PropertyOwner\ReviewController::class, 'index'])->name('reviews.index');
+    Route::post('reviews/{review}/respond', [\App\Http\Controllers\PropertyOwner\ReviewController::class, 'respond'])->name('reviews.respond');
+
+    // Settings
+    Route::get('settings', [\App\Http\Controllers\PropertyOwner\SettingsController::class, 'index'])->name('settings');
+    Route::put('settings', [\App\Http\Controllers\PropertyOwner\SettingsController::class, 'update'])->name('settings.update');
+});
+
+/* ================================================================
+   HOTEL BOOKING MODULE — GUEST-FACING ROUTES
+   ================================================================ */
+
+// Public hotel browsing
+Route::get('/hotels/search', [\App\Http\Controllers\HotelSearchController::class, 'index'])->name('hotels.search');
+Route::get('/hotels/{property}', [\App\Http\Controllers\HotelController::class, 'show'])->name('hotels.show');
+
+// Authenticated guest booking
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/hotels/book/{property}/{roomType}', [\App\Http\Controllers\HotelBookingController::class, 'step1'])->name('hotels.book.step1');
+    Route::post('/hotels/book/step2', [\App\Http\Controllers\HotelBookingController::class, 'step2'])->name('hotels.book.step2');
+    Route::post('/hotels/book/step3', [\App\Http\Controllers\HotelBookingController::class, 'step3'])->name('hotels.book.step3');
+    Route::post('/hotels/book/confirm', [\App\Http\Controllers\HotelBookingController::class, 'confirm'])->name('hotels.book.confirm');
+    Route::get('/hotels/booking/confirmation/{booking}', [\App\Http\Controllers\HotelBookingController::class, 'confirmation'])->name('hotels.book.confirmation');
+
+    Route::get('/my-bookings', [\App\Http\Controllers\MyBookingsController::class, 'index'])->name('my-bookings.index');
+    Route::get('/my-bookings/{booking}', [\App\Http\Controllers\MyBookingsController::class, 'show'])->name('my-bookings.show');
+    Route::post('/my-bookings/{booking}/cancel', [\App\Http\Controllers\MyBookingsController::class, 'cancel'])->name('my-bookings.cancel');
+    Route::get('/my-bookings/{booking}/voucher', [\App\Http\Controllers\MyBookingsController::class, 'voucher'])->name('my-bookings.voucher');
+});
+
+/* ================================================================
+   HOTEL BOOKING MODULE — ADMIN ROUTES
+   ================================================================ */
+Route::middleware(['auth', 'verified', 'role:admin,manager'])->prefix('admin')->name('admin.')->group(function () {
+    // Property Approval
+    Route::get('/properties', [\App\Http\Controllers\Admin\PropertyApprovalController::class, 'index'])->name('properties.index');
+    Route::get('/properties/{property}/review', [\App\Http\Controllers\Admin\PropertyApprovalController::class, 'review'])->name('properties.review');
+    Route::post('/properties/{property}/approve', [\App\Http\Controllers\Admin\PropertyApprovalController::class, 'approve'])->name('properties.approve');
+    Route::post('/properties/{property}/reject', [\App\Http\Controllers\Admin\PropertyApprovalController::class, 'reject'])->name('properties.reject');
+    Route::post('/properties/{property}/request-changes', [\App\Http\Controllers\Admin\PropertyApprovalController::class, 'requestChanges'])->name('properties.request-changes');
+
+    // Commissions & Payouts
+    Route::get('/commissions', [\App\Http\Controllers\Admin\CommissionController::class, 'index'])->name('commissions.index');
+    Route::post('/commissions', [\App\Http\Controllers\Admin\CommissionController::class, 'updateGlobal'])->name('commissions.update-global');
+    Route::post('/commissions/property/{property}', [\App\Http\Controllers\Admin\CommissionController::class, 'updateProperty'])->name('commissions.update-property');
+    
+    Route::get('/payouts', [\App\Http\Controllers\Admin\PayoutController::class, 'index'])->name('payouts.index');
+    Route::post('/payouts/{property}', [\App\Http\Controllers\Admin\PayoutController::class, 'process'])->name('payouts.process');
+
+    // Global Bookings
+    Route::get('/bookings', [\App\Http\Controllers\Admin\BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/{booking}', [\App\Http\Controllers\Admin\BookingController::class, 'show'])->name('bookings.show');
+
+    // User Management
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['create', 'store', 'show']);
 });

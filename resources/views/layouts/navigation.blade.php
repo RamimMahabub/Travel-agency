@@ -17,6 +17,9 @@
                     <a href="{{ route($dashboardRoute) }}" class="inline-flex items-center border-b-2 pt-1 text-sm font-semibold transition {{ request()->routeIs($dashboardRoute) ? 'border-[#1882FF] text-[#1882FF]' : 'border-transparent text-slate-500 hover:border-[#1882FF]/40 hover:text-[#1a2b49]' }}">
                         {{ __('Dashboard') }}
                     </a>
+                    <a href="{{ route('hotels.search') }}" class="inline-flex items-center border-b-2 pt-1 text-sm font-semibold transition {{ request()->routeIs('hotels.*') ? 'border-[#1882FF] text-[#1882FF]' : 'border-transparent text-slate-500 hover:border-[#1882FF]/40 hover:text-[#1a2b49]' }}">
+                        {{ __('Hotels') }}
+                    </a>
                 </div>
             </div>
 
@@ -36,6 +39,12 @@
                             @if (! $isInternalUser)
                                 <x-dropdown-link :href="route('profile.edit')">
                                     {{ __('Profile') }}
+                                </x-dropdown-link>
+                            @endif
+
+                            @if (Auth::user() && Auth::user()->isPropertyOwner())
+                                <x-dropdown-link :href="route('property-owner.dashboard')">
+                                    {{ __('PMS Dashboard') }}
                                 </x-dropdown-link>
                             @endif
 

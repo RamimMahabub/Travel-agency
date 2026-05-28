@@ -1,76 +1,121 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Internal Portal
-        </h2>
-    </x-slot>
+<x-admin-layout>
+    <x-slot name="pageTitle">OTA Dashboard</x-slot>
+    <x-slot name="pageSubtitle">Platform Overview & Operations</x-slot>
 
-    <div class="py-8 bg-gray-50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-800">Welcome, {{ auth()->user()->name }}</h3>
-                <p class="text-sm text-gray-500 mt-1">Role: {{ str_replace('_', ' ', auth()->user()->role) }}</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Total Sales</p>
-                    <p class="text-2xl font-bold mt-1">{{ number_format($stats['total_sales'], 2) }}</p>
+    <div class="space-y-6">
+        <!-- Key Metrics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white rounded-xl p-5 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Total Sales</p>
+                    <p class="text-2xl font-black text-slate-800 mt-1">${{ number_format($stats['total_sales'], 2) }}</p>
                 </div>
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Bookings</p>
-                    <p class="text-2xl font-bold mt-1">{{ number_format($stats['bookings']) }}</p>
-                </div>
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Profit</p>
-                    <p class="text-2xl font-bold mt-1">{{ number_format($stats['profit'], 2) }}</p>
-                </div>
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Refunds</p>
-                    <p class="text-2xl font-bold mt-1">{{ number_format($stats['refunds'], 2) }}</p>
+                <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                    <i class="fas fa-dollar-sign text-xl"></i>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                    <h4 class="font-semibold text-gray-800">Operations</h4>
-                    <ul class="mt-3 text-sm text-gray-600 space-y-2">
-                        <li>Manage users/customers</li>
-                        <li>Manage bookings and ticket issuance</li>
-                        <li>Supplier/API monitoring</li>
-                        <li>Coupon and markup management</li>
-                    </ul>
+            <div class="bg-white rounded-xl p-5 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Est. Commission</p>
+                    <p class="text-2xl font-black text-slate-800 mt-1">${{ number_format($stats['total_commission'], 2) }}</p>
                 </div>
-
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                    <h4 class="font-semibold text-gray-800">Finance</h4>
-                    <ul class="mt-3 text-sm text-gray-600 space-y-2">
-                        <li>Payment verification and failed payments</li>
-                        <li>Refund approval and processing</li>
-                        <li>Daily sales and profit reporting</li>
-                        <li>Wallet/credit controls</li>
-                    </ul>
-                </div>
-
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                    <h4 class="font-semibold text-gray-800">Security</h4>
-                    <ul class="mt-3 text-sm text-gray-600 space-y-2">
-                        <li>2FA/OTP for internal login</li>
-                        <li>Role-based access and audit logs</li>
-                        <li>Suspicious login monitoring</li>
-                        <li>Device/session tracking</li>
-                    </ul>
+                <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                    <i class="fas fa-hand-holding-dollar text-xl"></i>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                <h4 class="font-semibold text-gray-800">Live Counters</h4>
-                <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-700">
-                    <div>Pending Tickets: <strong>{{ number_format($stats['pending_tickets']) }}</strong></div>
-                    <div>Failed Payments: <strong>{{ number_format($stats['failed_payments']) }}</strong></div>
-                    <div>Customers: <strong>{{ number_format($stats['active_customers']) }}</strong></div>
+            <div class="bg-white rounded-xl p-5 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Total Bookings</p>
+                    <p class="text-2xl font-black text-slate-800 mt-1">{{ number_format($stats['bookings']) }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <i class="fas fa-calendar-check text-xl"></i>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-5 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Pending Properties</p>
+                    <p class="text-2xl font-black text-slate-800 mt-1">{{ number_format($stats['pending_properties']) }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+                    <i class="fas fa-building-circle-exclamation text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Pending Approvals -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <h3 class="font-bold text-slate-800">Action Required: Pending Properties</h3>
+                        <a href="{{ route('admin.properties.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-800">View All</a>
+                    </div>
+                    <div class="p-0">
+                        @if(count($pendingPropertiesList) > 0)
+                            <div class="divide-y divide-gray-100">
+                                @foreach($pendingPropertiesList as $prop)
+                                    <div class="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center shrink-0">
+                                                <i class="fas fa-hotel text-gray-400"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-slate-800 text-sm">{{ $prop->name }}</h4>
+                                                <p class="text-xs text-gray-500 mt-0.5"><i class="fas fa-map-marker-alt mr-1"></i> {{ $prop->city }}, {{ $prop->country }}</p>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('admin.properties.review', $prop->id) }}" class="px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-lg text-sm font-medium transition-colors">
+                                            Review & Approve
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="p-12 text-center">
+                                <div class="w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-check-double text-2xl"></i>
+                                </div>
+                                <h4 class="font-bold text-slate-800">All caught up!</h4>
+                                <p class="text-sm text-gray-500 mt-1">There are no properties pending approval at the moment.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: User Stats -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                        <h3 class="font-bold text-slate-800">Platform Users</h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                    <i class="fas fa-users text-sm"></i>
+                                </div>
+                                <span class="text-sm font-medium text-slate-700">Customers</span>
+                            </div>
+                            <span class="font-bold text-slate-800">{{ number_format($stats['active_customers']) }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                                    <i class="fas fa-user-tie text-sm"></i>
+                                </div>
+                                <span class="text-sm font-medium text-slate-700">Property Owners</span>
+                            </div>
+                            <span class="font-bold text-slate-800">{{ number_format($stats['active_partners']) }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>
