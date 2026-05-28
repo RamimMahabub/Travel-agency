@@ -99,25 +99,86 @@ Route::get('/ajax/integration-test-execute', function (\App\Services\FlightServi
 
 require __DIR__.'/auth.php';
 
-Route::get('/setup-db', function () {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
-        return 'Database mounted and migrated successfully! You can now <a href="/">go to the homepage</a>.';
-    } catch (\Exception $e) {
-        return 'Error: ' . $e->getMessage();
-    }
-});
+/* ================================================================
+   VERCEL SETUP PANEL — Protected by SETUP_TOKEN env variable
+   Access: yourdomain.vercel.app/setup?token=YOUR_SECRET_TOKEN
+   ================================================================ */
 
-Route::get('/reseed-airports', function () {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\AirportSeeder', '--force' => true]);
-        $output = \Illuminate\Support\Facades\Artisan::output();
-        return '<pre>' . e($output) . '</pre><br><a href="/">Back to homepage</a>';
-    } catch (\Exception $e) {
-        return 'Error: ' . $e->getMessage();
+Route::get('/setup', function (\Illuminate\Http\Request $request) {
+    $token = config('app.setup_token', env('SETUP_TOKEN', ''));
+
+    // ── Token check ───────────────────────────────────────────────
+    if (empty($token) || $request->query('token') !== $token) {
+        abort(403, 'Invalid or missing setup token. Add ?token=YOUR_SETUP_TOKEN to the URL.');
     }
-});
+
+    $action = $request->query('action');
+    $logs   = [];
+    $error  = null;
+
+    // ── Execute requested action ──────────────────────────────────
+    if ($action) {
+        try {
+            set_time_limit(120);
+
+            switch ($action) {
+
+                case 'fresh':
+                    \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
+                    $logs[] = '✅ migrate:fresh — all tables dropped & recreated.';
+                    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\DemoSeeder', '--force' => true]);
+                    $logs[] = '✅ DemoSeeder — all demo accounts seeded.';
+                    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\AirportSeeder', '--force' => true]);
+                    $logs[] = '✅ AirportSeeder — airports seeded.';
+                    break;
+
+                case 'migrate':
+                    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                    $logs[] = '✅ migrate — pending migrations run.';
+                    break;
+
+                case 'seed-demo':
+                    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\DemoSeeder', '--force' => true]);
+                    $logs[] = '✅ DemoSeeder — demo accounts seeded.';
+                    break;
+
+                case 'seed-airports':
+                    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\AirportSeeder', '--force' => true]);
+                    $logs[] = '✅ AirportSeeder — airports seeded.';
+                    break;
+
+                case 'seed-all':
+                    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\DemoSeeder', '--force' => true]);
+                    $logs[] = '✅ DemoSeeder — demo accounts seeded.';
+                    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\AirportSeeder', '--force' => true]);
+                    $logs[] = '✅ AirportSeeder — airports seeded.';
+                    break;
+
+                default:
+                    $error = 'Unknown action: ' . htmlspecialchars($action);
+            }
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+        }
+    }
+
+    // ── Demo accounts table ───────────────────────────────────────
+    $accounts = [
+        ['Admin',             'admin@ghuri.travel',      'Admin@1234',     '/admin'],
+        ['Manager',           'manager@ghuri.travel',    'Manager@1234',   '/admin'],
+        ['Support Agent',     'support@ghuri.travel',    'Support@1234',   '/admin'],
+        ['Ticketing Officer', 'ticketing@ghuri.travel',  'Ticket@1234',    '/admin'],
+        ['Accounts Officer',  'accounts@ghuri.travel',   'Accounts@1234',  '/admin'],
+        ['Property Owner',    'owner@ghuri.travel',      'Owner@1234',     '/property-owner/dashboard'],
+        ['Customer',          'customer@ghuri.travel',   'Customer@1234',  '/'],
+    ];
+
+    $t = $request->query('token');
+
+    return response()->make(view('setup-panel', compact('logs','error','accounts','t'))->render());
+
+})->name('setup');
+
 
 /* ================================================================
    HOTEL BOOKING MODULE — PROPERTY OWNER PMS ROUTES
