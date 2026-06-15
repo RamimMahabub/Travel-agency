@@ -191,6 +191,27 @@ class HotelController extends Controller
             ->with('success', 'Property deleted successfully.');
     }
 
+    public function destroyPhoto(Property $hotel, PropertyPhoto $photo)
+    {
+        $this->authorizeProperty($hotel);
+
+        if ($photo->property_id !== $hotel->id) {
+            abort(404);
+        }
+
+        // Delete from storage if not using full url, or just rely on cloudinary directly.
+        // For now, we'll just remove the DB record, meaning it's unlinked from the property.
+        if (!str_starts_with($photo->file_path, 'http')) {
+            Storage::disk('public')->delete($photo->file_path);
+        } else {
+            // Optional: Cloudinary cleanup could be implemented here
+        }
+
+        $photo->delete();
+
+        return back()->with('success', 'Photo removed successfully.');
+    }
+
     public function submitForApproval(Property $hotel)
     {
         $this->authorizeProperty($hotel);

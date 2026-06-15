@@ -188,6 +188,7 @@ Route::middleware(['auth', 'role:property_owner'])->prefix('property-owner')->na
     // Properties (Hotels)
     Route::resource('hotels', \App\Http\Controllers\PropertyOwner\HotelController::class);
     Route::post('hotels/{hotel}/submit-approval', [\App\Http\Controllers\PropertyOwner\HotelController::class, 'submitForApproval'])->name('hotels.submit-approval');
+    Route::delete('hotels/{hotel}/photos/{photo}', [\App\Http\Controllers\PropertyOwner\HotelController::class, 'destroyPhoto'])->name('hotels.photos.destroy');
 
     // Room Types (nested under hotels)
     Route::resource('hotels.rooms', \App\Http\Controllers\PropertyOwner\RoomController::class);
