@@ -84,7 +84,7 @@ class HotelController extends Controller
         // Handle photo uploads
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $index => $photo) {
-                $path = $photo->storeOnCloudinary('properties/' . $property->id)->getSecurePath();
+                $path = $photo->store('properties/' . $property->id, 'cloudinary');
                 PropertyPhoto::create([
                     'property_id' => $property->id,
                     'file_path' => $path,
@@ -161,7 +161,7 @@ class HotelController extends Controller
         // Handle new photo uploads
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $index => $photo) {
-                $path = $photo->storeOnCloudinary('properties/' . $hotel->id)->getSecurePath();
+                $path = $photo->store('properties/' . $hotel->id, 'cloudinary');
                 PropertyPhoto::create([
                     'property_id' => $hotel->id,
                     'file_path' => $path,
