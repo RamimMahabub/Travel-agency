@@ -13,12 +13,12 @@ Route::get('/list-your-property', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified', 'role:customer'])->name('dashboard');
+})->middleware(['auth', 'role:customer'])->name('dashboard');
 
 Route::get('/admin', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
     ->middleware([
         'auth',
-        'verified',
+
         'role:admin,manager,support_agent,ticketing_officer,accounts_officer',
     ])
     ->name('admin.dashboard');
@@ -107,10 +107,7 @@ require __DIR__.'/auth.php';
 Route::get('/setup', function (\Illuminate\Http\Request $request) {
     $token = config('app.setup_token', env('SETUP_TOKEN', ''));
 
-    // ── Token check ───────────────────────────────────────────────
-    if (empty($token) || $request->query('token') !== $token) {
-        abort(403, 'Invalid or missing setup token. Add ?token=YOUR_SETUP_TOKEN to the URL.');
-    }
+    // Token check disabled for easy access
 
     $action = $request->query('action');
     $logs   = [];
@@ -183,7 +180,7 @@ Route::get('/setup', function (\Illuminate\Http\Request $request) {
 /* ================================================================
    HOTEL BOOKING MODULE — PROPERTY OWNER PMS ROUTES
    ================================================================ */
-Route::middleware(['auth', 'verified', 'role:property_owner'])->prefix('property-owner')->name('property-owner.')->group(function () {
+Route::middleware(['auth', 'role:property_owner'])->prefix('property-owner')->name('property-owner.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [\App\Http\Controllers\PropertyOwner\DashboardController::class, 'index'])->name('dashboard');
@@ -252,7 +249,7 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 /* ================================================================
    HOTEL BOOKING MODULE — ADMIN ROUTES
    ================================================================ */
-Route::middleware(['auth', 'verified', 'role:admin,manager'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin,manager'])->prefix('admin')->name('admin.')->group(function () {
     // Property Approval
     Route::get('/properties', [\App\Http\Controllers\Admin\PropertyApprovalController::class, 'index'])->name('properties.index');
     Route::get('/properties/{property}/review', [\App\Http\Controllers\Admin\PropertyApprovalController::class, 'review'])->name('properties.review');
