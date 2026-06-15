@@ -92,10 +92,24 @@
         {{-- Step 2: Location --}}
         <div x-show="currentStep === 1" x-transition:enter="animate-slide-right" class="card card-body space-y-6" x-data="mapPicker({{ old('latitude', 23.8103) }}, {{ old('longitude', 90.4125) }})">
             {{-- Search Bar --}}
-            <div class="relative">
+            <div class="relative" @click.away="searchResults = []">
                 <div class="flex items-center w-full bg-gray-50 border border-gray-200 focus-within:border-brand-primary focus-within:bg-white focus-within:ring-1 focus-within:ring-brand-primary/20 rounded-lg px-4 py-3 transition-all">
                     <i class="fas fa-search text-gray-500 mr-3 text-lg"></i>
-                    <input type="text" x-ref="searchInput" class="flex-grow bg-transparent border-none outline-none focus:ring-0 text-brand-black placeholder-gray-500 text-sm p-0" placeholder="Search for your property location">
+                    <input type="text" x-model="searchQuery" @input.debounce.500ms="searchLocation()" class="flex-grow bg-transparent border-none outline-none focus:ring-0 text-brand-black placeholder-gray-500 text-sm p-0" placeholder="Search for your property location">
+                    <i class="fas fa-spinner fa-spin text-brand-primary ml-2" x-show="isSearching" style="display: none;"></i>
+                </div>
+                
+                {{-- Search Results Dropdown --}}
+                <div x-show="searchResults.length > 0" style="display: none;" x-transition class="absolute z-[100] w-full bg-white mt-2 rounded-xl shadow-xl border border-gray-100 max-h-64 overflow-y-auto custom-scrollbar">
+                    <template x-for="result in searchResults" :key="result.place_id">
+                        <div @click="selectLocation(result)" class="px-5 py-3 hover:bg-brand-primary/10 cursor-pointer border-b border-gray-50 last:border-0 transition-colors text-left flex items-start gap-3">
+                            <i class="fas fa-map-marker-alt text-brand-primary mt-1"></i>
+                            <div>
+                                <div class="font-bold text-sm text-brand-black" x-text="result.display_name.split(',')[0]"></div>
+                                <div class="text-xs text-gray-500 mt-0.5" x-text="result.display_name"></div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -526,7 +540,8 @@ function roomManager() {
 </script>
 
 @push('scripts')
-<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('mapPicker', (initialLat, initialLng) => ({
@@ -534,113 +549,94 @@ document.addEventListener('alpine:init', () => {
         lng: initialLng,
         map: null,
         marker: null,
-        initAutocomplete() {
-            if (typeof google === 'undefined' || !google.maps.places) return;
-            
-            const autocomplete = new google.maps.places.Autocomplete(this.$refs.searchInput, {
-                fields: ["address_components", "geometry", "name"],
-            });
-            
-            autocomplete.addListener("place_changed", () => {
-                const place = autocomplete.getPlace();
-                if (!place.geometry || !place.geometry.location) return;
-                
-                // Update map
-                this.lat = place.geometry.location.lat().toFixed(7);
-                this.lng = place.geometry.location.lng().toFixed(7);
-                
-                if (this.map && this.marker) {
-                    this.map.setCenter(place.geometry.location);
-                    this.map.setZoom(17);
-                    this.marker.setPosition(place.geometry.location);
-                }
-                
-                // Parse address components
-                let streetNumber = '';
-                let route = '';
-                let city = '';
-                let state = '';
-                let country = '';
-                let postalCode = '';
-                let neighborhood = '';
+        searchQuery: '',
+        searchResults: [],
+        isSearching: false,
+        
+        async searchLocation() {
+            if (this.searchQuery.length < 3) {
+                this.searchResults = [];
+                return;
+            }
+            this.isSearching = true;
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(this.searchQuery)}&limit=5&addressdetails=1`);
+                this.searchResults = await response.json();
+            } catch (e) {
+                console.error('Search failed', e);
+            } finally {
+                this.isSearching = false;
+            }
+        },
 
-                for (const component of place.address_components) {
-                    const componentType = component.types[0];
-                    switch (componentType) {
-                        case "street_number":
-                            streetNumber = component.long_name;
-                            break;
-                        case "route":
-                            route = component.long_name;
-                            break;
-                        case "locality":
-                        case "postal_town":
-                            city = component.long_name;
-                            break;
-                        case "administrative_area_level_1":
-                            state = component.long_name;
-                            break;
-                        case "country":
-                            country = component.long_name;
-                            break;
-                        case "postal_code":
-                            postalCode = component.long_name;
-                            break;
-                        case "neighborhood":
-                        case "sublocality":
-                            neighborhood = component.long_name;
-                            break;
-                    }
-                }
-
+        selectLocation(result) {
+            this.searchQuery = result.display_name.split(',')[0];
+            this.searchResults = [];
+            
+            const lat = parseFloat(result.lat);
+            const lng = parseFloat(result.lon);
+            
+            this.lat = lat.toFixed(7);
+            this.lng = lng.toFixed(7);
+            
+            if (this.map && this.marker) {
+                this.map.setView([lat, lng], 17);
+                this.marker.setLatLng([lat, lng]);
+            }
+            
+            if (result.address) {
+                const addr = result.address;
                 const elCity = document.querySelector('input[name="city"]');
                 const elState = document.querySelector('input[name="state"]');
                 const elCountry = document.querySelector('input[name="country"]');
                 const elPostal = document.querySelector('input[name="postal_code"]');
                 const elAddress1 = document.querySelector('input[name="address_line_1"]');
                 const elNeighborhood = document.querySelector('input[name="neighborhood"]');
-
-                if (elCity) elCity.value = city;
-                if (elState) elState.value = state;
-                if (elCountry) elCountry.value = country;
-                if (elPostal) elPostal.value = postalCode;
-                if (elAddress1) elAddress1.value = `${streetNumber} ${route}`.trim();
-                if (elNeighborhood) elNeighborhood.value = neighborhood;
-            });
+                
+                if (elCity) elCity.value = addr.city || addr.town || addr.village || addr.county || '';
+                if (elState) elState.value = addr.state || addr.region || '';
+                if (elCountry) elCountry.value = addr.country || '';
+                if (elPostal) elPostal.value = addr.postcode || '';
+                
+                const street = addr.road || '';
+                const houseNumber = addr.house_number || '';
+                if (elAddress1 && street) elAddress1.value = `${houseNumber} ${street}`.trim();
+                
+                if (elNeighborhood) elNeighborhood.value = addr.neighbourhood || addr.suburb || '';
+            }
         },
 
-        initGoogleMap() {
-            if (typeof google === 'undefined') {
-                console.error('Google Maps API not loaded.');
+        initMap() {
+            if (typeof L === 'undefined') {
+                console.error('Leaflet API not loaded.');
                 return;
             }
             
-            const position = { lat: parseFloat(this.lat) || 23.8103, lng: parseFloat(this.lng) || 90.4125 };
+            const position = [parseFloat(this.lat) || 23.8103, parseFloat(this.lng) || 90.4125];
             
-            this.map = new google.maps.Map(this.$refs.mapContainer, {
+            this.map = L.map(this.$refs.mapContainer, {
                 center: position,
                 zoom: 13,
-                mapTypeControl: false,
-                streetViewControl: false,
+                zoomControl: true,
+                scrollWheelZoom: true
             });
 
-            this.marker = new google.maps.Marker({
-                position: position,
-                map: this.map,
-                draggable: true,
-                animation: google.maps.Animation.DROP
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(this.map);
+
+            this.marker = L.marker(position, { draggable: true }).addTo(this.map);
+
+            this.marker.on("dragend", (e) => {
+                const pos = e.target.getLatLng();
+                this.lat = pos.lat.toFixed(7);
+                this.lng = pos.lng.toFixed(7);
             });
 
-            this.marker.addListener("dragend", () => {
-                const pos = this.marker.getPosition();
-                this.lat = pos.lat().toFixed(7);
-                this.lng = pos.lng().toFixed(7);
-            });
-
-            this.map.addListener("click", (e) => {
-                this.marker.setPosition(e.latLng);
-                this.lat = e.latLng.lat().toFixed(7);
-                this.lng = e.latLng.lng().toFixed(7);
+            this.map.on("click", (e) => {
+                this.marker.setLatLng(e.latlng);
+                this.lat = e.latlng.lat.toFixed(7);
+                this.lng = e.latlng.lng.toFixed(7);
             });
         },
 
@@ -650,38 +646,34 @@ document.addEventListener('alpine:init', () => {
                 const el = this.$refs.mapContainer;
                 if (el && el.offsetHeight > 0) {
                     if (!this.map) {
-                        this.initGoogleMap();
-                        this.initAutocomplete();
+                        this.initMap();
                     } else {
-                        google.maps.event.trigger(this.map, 'resize');
-                        this.map.setCenter({ lat: parseFloat(this.lat), lng: parseFloat(this.lng) });
+                        this.map.invalidateSize();
+                        this.map.setView([parseFloat(this.lat), parseFloat(this.lng)]);
                     }
-                    // We don't clear the interval because they might go back and forth between steps,
-                    // but we can throttle it or just clear it if we only need it to init once.
-                    // Actually, if we only need to init once and resize handles the rest, we can clear it.
                 }
             }, 250);
 
             // Also listen to window resize just in case
             window.addEventListener('resize', () => {
                 if (this.map && this.$refs.mapContainer.offsetHeight > 0) {
-                    google.maps.event.trigger(this.map, 'resize');
+                    this.map.invalidateSize();
                 }
             });
 
             this.$watch('lat', value => {
                 if (this.marker && !isNaN(value) && value !== '') {
-                    const pos = new google.maps.LatLng(parseFloat(value), parseFloat(this.lng));
-                    this.marker.setPosition(pos);
-                    this.map.setCenter(pos);
+                    const pos = [parseFloat(value), parseFloat(this.lng)];
+                    this.marker.setLatLng(pos);
+                    this.map.setView(pos);
                 }
             });
 
             this.$watch('lng', value => {
                 if (this.marker && !isNaN(value) && value !== '') {
-                    const pos = new google.maps.LatLng(parseFloat(this.lat), parseFloat(value));
-                    this.marker.setPosition(pos);
-                    this.map.setCenter(pos);
+                    const pos = [parseFloat(this.lat), parseFloat(value)];
+                    this.marker.setLatLng(pos);
+                    this.map.setView(pos);
                 }
             });
         }
