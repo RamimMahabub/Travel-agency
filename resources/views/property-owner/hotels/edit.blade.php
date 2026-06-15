@@ -129,7 +129,7 @@
                             <img src="{{ $photo->url }}" class="w-full h-full object-cover">
                             <button type="button" 
                                 onclick="if(confirm('Are you sure you want to remove this photo?')) { let f = document.getElementById('delete-photo-form'); f.action = '{{ route('property-owner.hotels.photos.destroy', [$hotel, $photo]) }}'; f.submit(); }" 
-                                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-md">
+                                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md">
                                 <i class="fas fa-times text-sm"></i>
                             </button>
                         </div>

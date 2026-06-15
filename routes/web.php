@@ -192,7 +192,8 @@ Route::middleware(['auth', 'role:property_owner'])->prefix('property-owner')->na
 
     // Room Types (nested under hotels)
     Route::resource('hotels.rooms', \App\Http\Controllers\PropertyOwner\RoomController::class);
-    Route::post('hotels/{hotel}/rooms/{room}/toggle-status', [\App\Http\Controllers\PropertyOwner\RoomController::class, 'toggleStatus'])->name('hotels.rooms.toggle-status');
+    Route::patch('hotels/{hotel}/rooms/{room}/toggle-status', [\App\Http\Controllers\PropertyOwner\RoomController::class, 'toggleStatus'])->name('hotels.rooms.toggle-status');
+    Route::delete('hotels/{hotel}/rooms/{room}/photos/{photo}', [\App\Http\Controllers\PropertyOwner\RoomController::class, 'destroyPhoto'])->name('hotels.rooms.photos.destroy');
     Route::post('hotels/{hotel}/rooms/{room}/duplicate', [\App\Http\Controllers\PropertyOwner\RoomController::class, 'duplicate'])->name('hotels.rooms.duplicate');
 
     // Rate Rules (nested under hotels)

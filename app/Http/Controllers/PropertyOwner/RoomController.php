@@ -128,9 +128,63 @@ class RoomController extends Controller
             'amenities' => 'nullable|array',
             'base_price_per_night' => 'required|numeric|min:0',
             'inventory_count' => 'required|integer|min:1',
+            'photos' => 'nullable|array',
+            'photos.*' => 'image|max:5120',
+            'rate_plans' => 'nullable|array',
         ]);
 
-        $room->update($validated);
+        $room->update([
+            'name' => $validated['name'],
+            'size_sqm' => $validated['size_sqm'] ?? null,
+            'floor_level' => $validated['floor_level'] ?? null,
+            'max_adults' => $validated['max_adults'],
+            'max_children' => $validated['max_children'],
+            'max_infants' => $validated['max_infants'],
+            'bed_config' => $validated['bed_config'] ?? null,
+            'amenities' => $validated['amenities'] ?? null,
+            'base_price_per_night' => $validated['base_price_per_night'],
+            'inventory_count' => $validated['inventory_count'],
+        ]);
+
+        // Sync Rate Plans
+        if (isset($validated['rate_plans'])) {
+            $planNames = RatePlan::getPlanCodes();
+            foreach (['BB', 'HB', 'FB', 'AI'] as $code) {
+                $planData = $validated['rate_plans'][$code] ?? null;
+                $existingPlan = $room->ratePlans()->where('plan_code', $code)->first();
+
+                if (!empty($planData['enabled'])) {
+                    if ($existingPlan) {
+                        $existingPlan->update([
+                            'price_supplement_per_adult' => $planData['supplement'] ?? 0,
+                            'is_active' => true,
+                        ]);
+                    } else {
+                        $room->ratePlans()->create([
+                            'plan_code' => $code,
+                            'plan_name' => $planNames[$code] ?? $code,
+                            'price_supplement_per_adult' => $planData['supplement'] ?? 0,
+                            'is_active' => true,
+                        ]);
+                    }
+                } else if ($existingPlan) {
+                    $existingPlan->delete();
+                }
+            }
+        }
+
+        // Handle new photos
+        if ($request->hasFile('photos')) {
+            $maxSortOrder = $room->photos()->max('sort_order') ?? -1;
+            foreach ($request->file('photos') as $index => $photo) {
+                $path = $photo->store('rooms/' . $room->id, 'cloudinary');
+                RoomTypePhoto::create([
+                    'room_type_id' => $room->id,
+                    'file_path' => $path,
+                    'sort_order' => $maxSortOrder + 1 + $index,
+                ]);
+            }
+        }
 
         return redirect()->route('property-owner.hotels.rooms.index', $hotel)
             ->with('success', 'Room type updated.');

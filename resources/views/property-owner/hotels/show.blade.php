@@ -53,7 +53,7 @@
                         @foreach($hotel->photos as $photo)
                             <div class="aspect-[4/3] rounded-lg overflow-hidden bg-brand-surface relative group">
                                 <img src="{{ $photo->url }}" class="w-full h-full object-cover">
-                                <form method="POST" action="{{ route('property-owner.hotels.photos.destroy', [$hotel, $photo]) }}" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <form method="POST" action="{{ route('property-owner.hotels.photos.destroy', [$hotel, $photo]) }}" class="absolute top-2 right-2 transition-opacity">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 shadow-md" onclick="return confirm('Are you sure you want to remove this photo?')">

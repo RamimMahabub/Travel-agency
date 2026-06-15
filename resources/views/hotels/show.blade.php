@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-body antialiased bg-brand-surface">
@@ -43,14 +44,18 @@
         <div class="grid grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden h-[420px] mb-8 animate-fade-in">
             @if($property->photos->isNotEmpty())
                 {{-- Hero Image --}}
-                <div class="col-span-2 row-span-2 relative group cursor-pointer">
+                <a href="{{ $property->photos[0]->url }}" class="glightbox col-span-2 row-span-2 relative group cursor-pointer overflow-hidden block" data-gallery="hotel-gallery">
                     <img src="{{ $property->photos[0]->url }}" alt="{{ $property->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
+                </a>
                 @foreach($property->photos->skip(1)->take(4) as $photo)
-                    <div class="relative group cursor-pointer overflow-hidden">
+                    <a href="{{ $photo->url }}" class="glightbox relative group cursor-pointer overflow-hidden block" data-gallery="hotel-gallery">
                         <img src="{{ $photo->url }}" alt="{{ $property->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
+                    </a>
+                @endforeach
+                {{-- Hidden Remaining Photos --}}
+                @foreach($property->photos->skip(5) as $photo)
+                    <a href="{{ $photo->url }}" class="glightbox hidden" data-gallery="hotel-gallery"></a>
                 @endforeach
             @else
                 <div class="col-span-4 row-span-2 bg-gradient-to-br from-brand-light to-white flex items-center justify-center">
@@ -133,7 +138,12 @@
                                     {{-- Room Photo --}}
                                     <div class="md:w-56 h-40 md:h-auto flex-shrink-0 bg-brand-surface relative overflow-hidden">
                                         @if($roomType->photos->isNotEmpty())
-                                            <img src="{{ $roomType->photos[0]->url }}" alt="{{ $roomType->name }}" class="w-full h-full object-cover">
+                                            <a href="{{ $roomType->photos[0]->url }}" class="glightbox block w-full h-full" data-gallery="room-gallery-{{ $roomType->id }}">
+                                                <img src="{{ $roomType->photos[0]->url }}" alt="{{ $roomType->name }}" class="w-full h-full object-cover hover:scale-105 transition-transform">
+                                            </a>
+                                            @foreach($roomType->photos->skip(1) as $photo)
+                                                <a href="{{ $photo->url }}" class="glightbox hidden" data-gallery="room-gallery-{{ $roomType->id }}"></a>
+                                            @endforeach
                                         @else
                                             <div class="w-full h-full flex items-center justify-center">
                                                 <i class="fas fa-bed text-3xl text-brand-border"></i>
@@ -367,5 +377,15 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const lightbox = GLightbox({
+                selector: '.glightbox',
+                touchNavigation: true,
+                loop: true,
+            });
+        });
+    </script>
 </body>
 </html>
