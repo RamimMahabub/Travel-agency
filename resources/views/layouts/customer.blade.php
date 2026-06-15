@@ -16,31 +16,106 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-body antialiased bg-[#F8F9FA] text-brand-text">
-    
-    {{-- Top Navigation --}}
-    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="/" class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
-                            <i class="fas fa-plane text-white text-sm"></i>
-                        </div>
-                        <span class="font-heading font-bold text-xl text-brand-black tracking-tight">GhuriTravel</span>
-                    </a>
-                    
-                    {{-- Desktop Menu --}}
-                    <div class="hidden sm:ml-10 sm:flex sm:space-x-8">
-                        <a href="{{ route('dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('dashboard') ? 'border-brand-primary text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} text-sm font-medium transition-colors">
-                            Dashboard
-                        </a>
-                        <a href="{{ route('my-bookings.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('my-bookings.*') ? 'border-brand-primary text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} text-sm font-medium transition-colors">
-                            My Trips
-                        </a>
-                        <a href="/" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 text-sm font-medium transition-colors">
-                            Offers
-                        </a>
+<body class="font-body antialiased bg-[#F8F9FA] text-[#19100F] overflow-hidden">
+    <div class="flex h-screen w-full" x-data="{ sidebarOpen: true }">
+        
+        {{-- ── Sidebar ─────────────────────────────── --}}
+        <aside 
+            :class="sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full w-0 lg:w-20 lg:translate-x-0'"
+            class="fixed inset-y-0 left-0 z-50 bg-[#19100F] text-white transition-all duration-300 ease-in-out flex flex-col shadow-2xl lg:static lg:flex-shrink-0"
+        >
+            {{-- Logo --}}
+            <div class="flex items-center gap-3 px-6 h-20 border-b border-white/10 shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center shadow-lg shadow-brand-primary/20 shrink-0">
+                    <i class="fas fa-plane text-white"></i>
+                </div>
+                <div x-show="sidebarOpen" x-transition.opacity.duration.300ms class="truncate">
+                    <span class="font-heading font-bold text-lg tracking-tight text-white block leading-tight">GhuriTravel</span>
+                    <span class="text-[10px] text-brand-primary uppercase tracking-widest font-bold">Traveler</span>
+                </div>
+            </div>
+
+            {{-- Navigation --}}
+            <nav class="flex-1 py-6 px-3 space-y-1 overflow-y-auto scrollbar-hide">
+                <div x-show="sidebarOpen" class="px-3 text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2 mt-4 first:mt-0">Overview</div>
+
+                <a href="{{ route('dashboard') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group {{ request()->routeIs('dashboard') ? 'bg-brand-primary/10 text-brand-primary' : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+                    <i class="fas fa-chart-pie w-5 text-center {{ request()->routeIs('dashboard') ? 'text-brand-primary' : 'text-white/50 group-hover:text-white/80' }}"></i>
+                    <span x-show="sidebarOpen" class="font-medium text-sm">Dashboard</span>
+                </a>
+
+                <div x-show="sidebarOpen" class="px-3 text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2 mt-6">Book a Trip</div>
+
+                <a href="{{ route('flights.search') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group {{ request()->routeIs('flights.*') ? 'bg-brand-primary/10 text-brand-primary' : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+                    <i class="fas fa-plane-departure w-5 text-center {{ request()->routeIs('flights.*') ? 'text-brand-primary' : 'text-white/50 group-hover:text-white/80' }}"></i>
+                    <span x-show="sidebarOpen" class="font-medium text-sm flex-1">Search Flights</span>
+                </a>
+
+                <a href="{{ route('hotels.search') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group {{ request()->routeIs('hotels.*') ? 'bg-brand-primary/10 text-brand-primary' : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+                    <i class="fas fa-bed w-5 text-center {{ request()->routeIs('hotels.*') ? 'text-brand-primary' : 'text-white/50 group-hover:text-white/80' }}"></i>
+                    <span x-show="sidebarOpen" class="font-medium text-sm">Browse Hotels</span>
+                </a>
+
+                <div x-show="sidebarOpen" class="px-3 text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2 mt-6">My Activity</div>
+
+                <a href="{{ route('my-bookings.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group {{ request()->routeIs('my-bookings.*') ? 'bg-brand-primary/10 text-brand-primary' : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+                    <i class="fas fa-suitcase-rolling w-5 text-center {{ request()->routeIs('my-bookings.*') ? 'text-brand-primary' : 'text-white/50 group-hover:text-white/80' }}"></i>
+                    <span x-show="sidebarOpen" class="font-medium text-sm">My Trips</span>
+                </a>
+
+                <a href="#"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-white/70 hover:bg-white/5 hover:text-white">
+                    <i class="fas fa-heart w-5 text-center text-white/50 group-hover:text-white/80"></i>
+                    <span x-show="sidebarOpen" class="font-medium text-sm">Wishlist</span>
+                </a>
+
+                <div x-show="sidebarOpen" class="px-3 text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2 mt-6">Account</div>
+
+                <a href="{{ route('profile.edit') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group {{ request()->routeIs('profile.edit') ? 'bg-brand-primary/10 text-brand-primary' : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
+                    <i class="fas fa-user-cog w-5 text-center {{ request()->routeIs('profile.edit') ? 'text-brand-primary' : 'text-white/50 group-hover:text-white/80' }}"></i>
+                    <span x-show="sidebarOpen" class="font-medium text-sm">Profile Settings</span>
+                </a>
+            </nav>
+
+            {{-- User Profile --}}
+            <div class="p-4 border-t border-white/10 shrink-0">
+                <div class="flex items-center gap-3" :class="sidebarOpen ? 'px-2' : 'justify-center'">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center border-2 border-white/10 shrink-0 shadow-lg">
+                        <span class="text-sm font-bold text-white">{{ substr(Auth::user()->name ?? 'C', 0, 1) }}</span>
+                    </div>
+                    <div x-show="sidebarOpen" class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-white truncate">{{ Auth::user()->name ?? 'Customer' }}</p>
+                        <p class="text-[11px] text-white/50 truncate">Traveler</p>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}" x-show="sidebarOpen">
+                        @csrf
+                        <button type="submit" class="text-white/50 hover:text-brand-primary transition-colors p-2 rounded-lg hover:bg-white/5" title="Logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        {{-- ── Main Content Area ────────────────────────── --}}
+        <div class="flex-1 flex flex-col h-full min-w-0 bg-[#F8F9FA] overflow-hidden relative">
+            
+            {{-- Header --}}
+            <header class="h-20 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-6 shrink-0 z-40">
+                <div class="flex items-center gap-4">
+                    <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-brand-primary transition-colors p-2 rounded-lg hover:bg-gray-100 focus:outline-none">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                    <div class="hidden md:block">
+                        <h1 class="text-xl font-heading font-bold text-brand-black">{{ $pageTitle ?? 'Dashboard' }}</h1>
+                        @isset($pageSubtitle)
+                            <p class="text-xs text-gray-500">{{ $pageSubtitle }}</p>
+                        @endisset
                     </div>
                 </div>
 
@@ -51,43 +126,55 @@
                         <span class="text-sm font-bold text-gray-700">1,250 Pts</span>
                     </div>
 
-                    {{-- Profile Dropdown (Simplified for layout) --}}
-                    <div class="flex items-center gap-3 pl-4 border-l border-gray-100">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-bold text-brand-black leading-none">{{ Auth::user()->name ?? 'Traveler' }}</p>
-                            <p class="text-[11px] text-gray-500 mt-1 leading-none">Silver Member</p>
-                        </div>
-                        <div class="w-9 h-9 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold">
-                            {{ substr(Auth::user()->name ?? 'T', 0, 1) }}
-                        </div>
-                        <form method="POST" action="{{ route('logout') }}" class="ml-2">
-                            @csrf
-                            <button type="submit" class="text-gray-400 hover:text-brand-primary transition-colors">
-                                <i class="fas fa-sign-out-alt"></i>
-                            </button>
-                        </form>
-                    </div>
+                    <a href="/" class="text-sm font-semibold text-gray-600 hover:text-brand-primary transition-colors px-3">
+                        Back to Home
+                    </a>
+
+                    <button class="relative p-2 text-gray-400 hover:text-brand-primary transition-colors rounded-full hover:bg-gray-50">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-brand-primary rounded-full ring-2 ring-white"></span>
+                    </button>
                 </div>
-            </div>
+            </header>
+
+            {{-- Main Scrollable Content --}}
+            <main class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
+                
+                {{-- Flash Messages --}}
+                @if(session('success'))
+                    <div class="mb-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm animate-fade-in">
+                        <i class="fas fa-check-circle text-green-600 text-lg"></i>
+                        <p class="text-sm font-medium">{{ session('success') }}</p>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="mb-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm animate-fade-in">
+                        <i class="fas fa-exclamation-circle text-red-600 text-lg"></i>
+                        <p class="text-sm font-medium">{{ session('error') }}</p>
+                    </div>
+                @endif
+
+                {{ $slot }}
+            </main>
         </div>
-    </nav>
-
-    {{-- Main Layout Content --}}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {{-- Flash Messages --}}
-        @if(session('success'))
-            <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3 animate-fade-in">
-                <i class="fas fa-check-circle text-lg"></i>
-                <p class="font-medium text-sm">{{ session('success') }}</p>
-            </div>
-        @endif
-
-        {{-- Slot Content --}}
-        <main>
-            {{ $slot }}
-        </main>
     </div>
 
     @stack('scripts')
+    
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #E5E7EB;
+            border-radius: 20px;
+        }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+            background-color: #D1D5DB;
+        }
+    </style>
 </body>
 </html>
