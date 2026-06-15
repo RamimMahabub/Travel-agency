@@ -119,9 +119,30 @@
                 <p class="text-[13px] text-gray-500 mt-3">Is this the correct location of your property? If not, drag the pin to the correct location.</p>
             </div>
         </div>
-        <div class="card card-body">
-            <h2 class="section-heading text-base">Add More Photos</h2>
-            <input type="file" name="photos[]" multiple accept="image/*" class="form-input-styled">
+        <div class="card card-body space-y-4">
+            <h2 class="section-heading text-base">Manage Photos</h2>
+            
+            @if($hotel->photos->isNotEmpty())
+                <div class="grid grid-cols-4 gap-3 mb-4">
+                    @foreach($hotel->photos as $photo)
+                        <div class="aspect-[4/3] rounded-lg overflow-hidden bg-brand-surface relative group border border-gray-200">
+                            <img src="{{ $photo->url }}" class="w-full h-full object-cover">
+                            <button type="button" 
+                                onclick="if(confirm('Are you sure you want to remove this photo?')) { let f = document.getElementById('delete-photo-form'); f.action = '{{ route('property-owner.hotels.photos.destroy', [$hotel, $photo]) }}'; f.submit(); }" 
+                                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-md">
+                                <i class="fas fa-times text-sm"></i>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-sm text-brand-muted">No photos uploaded yet.</p>
+            @endif
+
+            <div>
+                <label class="form-label text-sm font-semibold mb-2 block">Upload New Photos</label>
+                <input type="file" name="photos[]" multiple accept="image/*" class="form-input-styled">
+            </div>
         </div>
         <div class="flex justify-end gap-3">
             <a href="{{ route('property-owner.hotels.show', $hotel) }}" class="btn-ghost">Cancel</a>
@@ -129,6 +150,12 @@
         </div>
     </form>
 </div>
+
+{{-- Hidden form for photo deletion --}}
+<form id="delete-photo-form" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 
 @push('scripts')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
