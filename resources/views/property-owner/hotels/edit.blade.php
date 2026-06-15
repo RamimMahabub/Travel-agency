@@ -197,6 +197,35 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
+        async reverseGeocode(lat, lng) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`);
+                const result = await response.json();
+                if (result && result.address) {
+                    const addr = result.address;
+                    const elCity = document.querySelector('input[name="city"]');
+                    const elState = document.querySelector('input[name="state"]');
+                    const elCountry = document.querySelector('input[name="country"]');
+                    const elPostal = document.querySelector('input[name="postal_code"]');
+                    const elAddress1 = document.querySelector('input[name="address_line_1"]');
+                    const elNeighborhood = document.querySelector('input[name="neighborhood"]');
+                    
+                    if (elCity) elCity.value = addr.city || addr.town || addr.village || addr.county || '';
+                    if (elState) elState.value = addr.state || addr.region || '';
+                    if (elCountry) elCountry.value = addr.country || '';
+                    if (elPostal) elPostal.value = addr.postcode || '';
+                    
+                    const street = addr.road || '';
+                    const houseNumber = addr.house_number || '';
+                    if (elAddress1 && street) elAddress1.value = `${houseNumber} ${street}`.trim();
+                    
+                    if (elNeighborhood) elNeighborhood.value = addr.neighbourhood || addr.suburb || '';
+                }
+            } catch (e) {
+                console.error('Reverse geocoding failed', e);
+            }
+        },
+
         init() {
             this.$nextTick(() => {
                 if (typeof L === 'undefined') {
@@ -219,16 +248,18 @@ document.addEventListener('alpine:init', () => {
 
                 this.marker = L.marker(position, { draggable: true }).addTo(this.map);
 
-                this.marker.on("dragend", (e) => {
+                this.marker.on("dragend", async (e) => {
                     const pos = e.target.getLatLng();
                     this.lat = pos.lat.toFixed(7);
                     this.lng = pos.lng.toFixed(7);
+                    await this.reverseGeocode(this.lat, this.lng);
                 });
 
-                this.map.on("click", (e) => {
+                this.map.on("click", async (e) => {
                     this.marker.setLatLng(e.latlng);
                     this.lat = e.latlng.lat.toFixed(7);
                     this.lng = e.latlng.lng.toFixed(7);
+                    await this.reverseGeocode(this.lat, this.lng);
                 });
 
                 this.$watch('lat', value => {
