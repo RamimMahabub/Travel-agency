@@ -44,12 +44,12 @@
             @if($property->photos->isNotEmpty())
                 {{-- Hero Image --}}
                 <div class="col-span-2 row-span-2 relative group cursor-pointer">
-                    <img src="{{ asset('storage/' . $property->photos[0]->file_path) }}" alt="{{ $property->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ $property->photos[0]->url }}" alt="{{ $property->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                 </div>
                 @foreach($property->photos->skip(1)->take(4) as $photo)
                     <div class="relative group cursor-pointer overflow-hidden">
-                        <img src="{{ asset('storage/' . $photo->file_path) }}" alt="{{ $property->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <img src="{{ $photo->url }}" alt="{{ $property->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                 @endforeach
             @else
@@ -133,7 +133,7 @@
                                     {{-- Room Photo --}}
                                     <div class="md:w-56 h-40 md:h-auto flex-shrink-0 bg-brand-surface relative overflow-hidden">
                                         @if($roomType->photos->isNotEmpty())
-                                            <img src="{{ asset('storage/' . $roomType->photos[0]->file_path) }}" alt="{{ $roomType->name }}" class="w-full h-full object-cover">
+                                            <img src="{{ $roomType->photos[0]->url }}" alt="{{ $roomType->name }}" class="w-full h-full object-cover">
                                         @else
                                             <div class="w-full h-full flex items-center justify-center">
                                                 <i class="fas fa-bed text-3xl text-brand-border"></i>

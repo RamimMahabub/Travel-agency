@@ -16,7 +16,7 @@
                 <div class="card overflow-hidden animate-slide-up" style="animation-delay: {{ $loop->index * 0.05 }}s">
                     <div class="h-40 bg-brand-surface relative overflow-hidden">
                         @if($room->photos_count > 0 && $room->photos->isNotEmpty())
-                            <img src="{{ asset('storage/' . $room->photos->first()->file_path) }}" class="w-full h-full object-cover">
+                            <img src="{{ $room->photos->first()->url }}" class="w-full h-full object-cover">
                         @else
                             <div class="w-full h-full flex items-center justify-center"><i class="fas fa-bed text-4xl text-brand-border"></i></div>
                         @endif

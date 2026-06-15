@@ -144,7 +144,7 @@
                             {{-- Image --}}
                             <div class="property-card-image">
                                 @if($property->photos->isNotEmpty())
-                                    <img src="{{ asset('storage/' . $property->photos->first()->file_path) }}" alt="{{ $property->name }}">
+                                    <img src="{{ $property->photos->first()->url }}" alt="{{ $property->name }}">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-brand-light to-white flex items-center justify-center">
                                         <i class="fas fa-hotel text-5xl text-brand-border"></i>

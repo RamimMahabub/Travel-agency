@@ -52,7 +52,7 @@
                     <div class="grid grid-cols-4 gap-2">
                         @foreach($hotel->photos as $photo)
                             <div class="aspect-[4/3] rounded-lg overflow-hidden bg-brand-surface">
-                                <img src="{{ asset('storage/' . $photo->file_path) }}" class="w-full h-full object-cover">
+                                <img src="{{ $photo->url }}" class="w-full h-full object-cover">
                             </div>
                         @endforeach
                     </div>

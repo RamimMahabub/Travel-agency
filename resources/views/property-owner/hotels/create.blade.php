@@ -304,10 +304,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="relative flex items-center">
+                                <div class="relative">
                                     <label class="absolute -top-2.5 left-3 bg-white px-1.5 text-[11px] font-medium text-gray-500 z-10">Room size</label>
-                                    <input type="number" :name="'rooms['+index+'][size_sqm]'" x-model="room.size" min="1" class="block w-full pl-4 pr-12 py-3.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition-colors">
-                                    <span class="absolute right-4 text-gray-400 text-sm pointer-events-none">sqm</span>
+                                    <div class="relative">
+                                        <input type="number" :name="'rooms['+index+'][size_sqm]'" x-model="room.size" min="1" class="block w-full pl-4 pr-16 py-3.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 text-sm">sqm</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

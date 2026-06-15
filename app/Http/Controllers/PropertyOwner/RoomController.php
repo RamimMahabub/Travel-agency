@@ -92,7 +92,7 @@ class RoomController extends Controller
         // Handle photos
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $index => $photo) {
-                $path = $photo->store('rooms/' . $roomType->id, 'public');
+                $path = $photo->storeOnCloudinary('rooms/' . $roomType->id)->getSecurePath();
                 RoomTypePhoto::create([
                     'room_type_id' => $roomType->id,
                     'file_path' => $path,
