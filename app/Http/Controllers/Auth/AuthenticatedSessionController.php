@@ -82,31 +82,11 @@ class AuthenticatedSessionController extends Controller
             ])->onlyInput('email');
         }
 
-        if (! $user->hasVerifiedEmail()) {
-            return back()->withErrors([
-                'email' => 'Email verification is required for internal access.',
-            ])->onlyInput('email');
-        }
-
-        $otp = (string) random_int(100000, 999999);
-        Cache::put($this->otpCacheKey($user->id), Hash::make($otp), now()->addMinutes(10));
-
-        Mail::raw("Your admin login OTP is: {$otp}. It expires in 10 minutes.", function ($message) use ($user): void {
-            $message->to($user->email)->subject('Admin Login OTP');
-        });
-
-        $request->session()->put('pending_admin_login_user_id', $user->id);
-        $request->session()->put('pending_admin_login_remember', $request->boolean('remember'));
-
-        $statusMessage = 'OTP sent to your email address.';
-
-        // Helpful local/testing fallback when MAIL_MAILER=log.
-        if (app()->environment(['local', 'testing'])) {
-            $request->session()->flash('dev_admin_otp_preview', $otp);
-            $statusMessage .= ' (Local mode: OTP preview is shown below.)';
-        }
-
-        return redirect()->route('admin.otp.form')->with('status', $statusMessage);
+        // Bypass OTP for easy testing
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+        
+        return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 
     /**

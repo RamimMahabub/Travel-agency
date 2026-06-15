@@ -52,24 +52,10 @@
             </div>
 
             {{-- Search Bar --}}
-            <div class="relative" @click.away="searchResults = []">
+            <div class="relative">
                 <div class="flex items-center w-full bg-gray-50 border border-gray-200 focus-within:border-brand-primary focus-within:bg-white focus-within:ring-1 focus-within:ring-brand-primary/20 rounded-lg px-4 py-3 transition-all">
                     <i class="fas fa-search text-gray-500 mr-3 text-lg"></i>
-                    <input type="text" x-model="searchQuery" @input.debounce.500ms="searchLocation()" class="flex-grow bg-transparent border-none outline-none focus:ring-0 text-brand-black placeholder-gray-500 text-sm p-0" placeholder="Search for your property location">
-                    <i class="fas fa-spinner fa-spin text-brand-primary ml-2" x-show="isSearching" style="display: none;"></i>
-                </div>
-                
-                {{-- Search Results Dropdown --}}
-                <div x-show="searchResults.length > 0" style="display: none;" x-transition class="absolute z-[100] w-full bg-white mt-2 rounded-xl shadow-xl border border-gray-100 max-h-64 overflow-y-auto custom-scrollbar">
-                    <template x-for="result in searchResults" :key="result.place_id">
-                        <div @click="selectLocation(result)" class="px-5 py-3 hover:bg-brand-primary/10 cursor-pointer border-b border-gray-50 last:border-0 transition-colors text-left flex items-start gap-3">
-                            <i class="fas fa-map-marker-alt text-brand-primary mt-1"></i>
-                            <div>
-                                <div class="font-bold text-sm text-brand-black" x-text="result.display_name.split(',')[0]"></div>
-                                <div class="text-xs text-gray-500 mt-0.5" x-text="result.display_name"></div>
-                            </div>
-                        </div>
-                    </template>
+                    <input type="text" x-ref="searchInput" class="flex-grow bg-transparent border-none outline-none focus:ring-0 text-brand-black placeholder-gray-500 text-sm p-0" placeholder="Search for your property location">
                 </div>
             </div>
 
@@ -131,7 +117,7 @@
 </div>
 
 @push('scripts')
-<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places"></script>
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('mapPicker', (initialLat, initialLng) => ({
@@ -139,63 +125,79 @@ document.addEventListener('alpine:init', () => {
         lng: initialLng,
         map: null,
         marker: null,
-        searchQuery: '',
-        searchResults: [],
-        isSearching: false,
-        
-        async searchLocation() {
-            if (this.searchQuery.length < 3) {
-                this.searchResults = [];
-                return;
-            }
-            this.isSearching = true;
-            try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(this.searchQuery)}&limit=5&addressdetails=1`);
-                this.searchResults = await response.json();
-            } catch (e) {
-                console.error('Search failed', e);
-            } finally {
-                this.isSearching = false;
-            }
-        },
+        initAutocomplete() {
+            if (typeof google === 'undefined' || !google.maps.places) return;
+            
+            const autocomplete = new google.maps.places.Autocomplete(this.$refs.searchInput, {
+                fields: ["address_components", "geometry", "name"],
+            });
+            
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry || !place.geometry.location) return;
+                
+                // Update map
+                this.lat = place.geometry.location.lat().toFixed(7);
+                this.lng = place.geometry.location.lng().toFixed(7);
+                
+                if (this.map && this.marker) {
+                    this.map.setCenter(place.geometry.location);
+                    this.map.setZoom(17);
+                    this.marker.setPosition(place.geometry.location);
+                }
+                
+                // Parse address components
+                let streetNumber = '';
+                let route = '';
+                let city = '';
+                let state = '';
+                let country = '';
+                let postalCode = '';
+                let neighborhood = '';
 
-        selectLocation(result) {
-            this.searchQuery = result.display_name.split(',')[0];
-            this.searchResults = [];
-            
-            const lat = parseFloat(result.lat);
-            const lng = parseFloat(result.lon);
-            
-            this.lat = lat.toFixed(7);
-            this.lng = lng.toFixed(7);
-            
-            if (this.map && this.marker) {
-                const pos = new google.maps.LatLng(lat, lng);
-                this.map.setCenter(pos);
-                this.map.setZoom(17);
-                this.marker.setPosition(pos);
-            }
-            
-            if (result.address) {
-                const addr = result.address;
+                for (const component of place.address_components) {
+                    const componentType = component.types[0];
+                    switch (componentType) {
+                        case "street_number":
+                            streetNumber = component.long_name;
+                            break;
+                        case "route":
+                            route = component.long_name;
+                            break;
+                        case "locality":
+                        case "postal_town":
+                            city = component.long_name;
+                            break;
+                        case "administrative_area_level_1":
+                            state = component.long_name;
+                            break;
+                        case "country":
+                            country = component.long_name;
+                            break;
+                        case "postal_code":
+                            postalCode = component.long_name;
+                            break;
+                        case "neighborhood":
+                        case "sublocality":
+                            neighborhood = component.long_name;
+                            break;
+                    }
+                }
+
                 const elCity = document.querySelector('input[name="city"]');
                 const elState = document.querySelector('input[name="state"]');
                 const elCountry = document.querySelector('input[name="country"]');
                 const elPostal = document.querySelector('input[name="postal_code"]');
                 const elAddress1 = document.querySelector('input[name="address_line_1"]');
                 const elNeighborhood = document.querySelector('input[name="neighborhood"]');
-                
-                if (elCity) elCity.value = addr.city || addr.town || addr.village || addr.county || '';
-                if (elState) elState.value = addr.state || addr.region || '';
-                if (elCountry) elCountry.value = addr.country || '';
-                if (elPostal) elPostal.value = addr.postcode || '';
-                
-                const street = addr.road || '';
-                const houseNumber = addr.house_number || '';
-                if (elAddress1 && street) elAddress1.value = `${houseNumber} ${street}`.trim();
-                
-                if (elNeighborhood) elNeighborhood.value = addr.neighbourhood || addr.suburb || '';
-            }
+
+                if (elCity) elCity.value = city;
+                if (elState) elState.value = state;
+                if (elCountry) elCountry.value = country;
+                if (elPostal) elPostal.value = postalCode;
+                if (elAddress1) elAddress1.value = `${streetNumber} ${route}`.trim();
+                if (elNeighborhood) elNeighborhood.value = neighborhood;
+            });
         },
 
         init() {
@@ -204,6 +206,8 @@ document.addEventListener('alpine:init', () => {
                     console.error('Google Maps API not loaded.');
                     return;
                 }
+                
+                this.initAutocomplete();
                 
                 const position = { lat: parseFloat(this.lat) || 23.8103, lng: parseFloat(this.lng) || 90.4125 };
                 
