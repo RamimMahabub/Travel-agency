@@ -421,7 +421,7 @@ code, pre, .font-mono {
         color: var(--brand-primary);
     }
     .star-rating .star.empty {
-        color: var(--brand-border);
+        color: #D1D5DB;
     }
 
     /* ============================================
