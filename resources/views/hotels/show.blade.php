@@ -15,17 +15,17 @@
 
     <style>
         :root {
-            --brand: #003580;
-            --brand-light: #e8f0fc;
-            --brand-red: #d00e15;
-            --green: #008009;
-            --orange: #e2780a;
+            --brand: #d00e15;
+            --brand-dark: #A90B16;
+            --brand-light: #FFF5F5;
+            --green: #2E7D32;
+            --orange: #F57F17;
             --gold: #f5a623;
-            --bg: #f2f6fa;
+            --bg: #F8F7F7;
             --card: #ffffff;
-            --text: #1a1a1a;
-            --muted: #6b7280;
-            --border: #e4e8ed;
+            --text: #19100F;
+            --muted: #6B7280;
+            --border: #E5E7EB;
         }
 
         * { box-sizing: border-box; }
@@ -39,7 +39,7 @@
 
         /* ── Header ─────────────────────────────── */
         .hotel-header {
-            background: #003b95;
+            background: #d00e15;
             color: white;
             padding: 0;
             position: sticky;
@@ -92,13 +92,13 @@
         }
         .btn-sign-in {
             background: white;
-            color: #003b95 !important;
+            color: #d00e15 !important;
             padding: 6px 16px;
             border-radius: 4px;
             font-weight: 600;
         }
         .btn-register {
-            background: #0071c2;
+            background: #A90B16;
             color: white !important;
             padding: 6px 16px;
             border-radius: 4px;
@@ -127,7 +127,7 @@
             cursor: pointer;
         }
         .gallery-img:hover { transform: scale(1.03); }
-        .gallery-slot { overflow: hidden; position: relative; background: #d8e2f0; }
+        .gallery-slot { overflow: hidden; position: relative; background: #f0d8d8; }
         .show-all-btn {
             position: absolute;
             bottom: 16px;
@@ -162,8 +162,8 @@
         .stars-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
         .star-icon { color: #f5a623; font-size: 13px; }
         .prop-type-badge {
-            background: #e8f0fc;
-            color: #003b95;
+            background: #FFF5F5;
+            color: #d00e15;
             font-size: 11px;
             font-weight: 600;
             padding: 2px 8px;
@@ -184,7 +184,7 @@
             align-items: center;
             gap: 6px;
             font-size: 13px;
-            color: #0071c2;
+            color: #d00e15;
             margin-bottom: 12px;
             cursor: pointer;
         }
@@ -210,7 +210,7 @@
             margin-bottom: 20px;
         }
         .rating-score {
-            background: #003b95;
+            background: #d00e15;
             color: white;
             font-weight: 700;
             font-size: 18px;
@@ -288,7 +288,7 @@
         .room-photo-wrap:hover img { transform: scale(1.05); }
         .room-type-name {
             font-weight: 700;
-            color: #0071c2;
+            color: #d00e15;
             font-size: 15px;
             margin-bottom: 4px;
             cursor: pointer;
@@ -383,7 +383,7 @@
             justify-content: center;
             width: 100%;
             padding: 11px 20px;
-            background: #0071c2;
+            background: #d00e15;
             color: white;
             font-size: 14px;
             font-weight: 700;
@@ -394,7 +394,7 @@
             transition: background 0.2s;
             white-space: nowrap;
         }
-        .btn-reserve:hover { background: #005fa3; color: white; }
+        .btn-reserve:hover { background: #A90B16; color: white; }
         .btn-sold-out {
             display: inline-flex;
             align-items: center;
@@ -413,7 +413,7 @@
         /* ── Sticky Booking Widget ─────────────── */
         .booking-widget {
             background: white;
-            border: 2px solid #003b95;
+            border: 2px solid #d00e15;
             border-radius: 10px;
             padding: 20px;
             position: sticky;
@@ -443,7 +443,7 @@
             cursor: pointer;
             transition: background 0.15s;
         }
-        .widget-date-block:hover { background: var(--brand-light); }
+        .widget-date-block:hover { background: #FFF5F5; }
         .widget-date-label {
             font-size: 10px;
             font-weight: 700;
@@ -485,7 +485,7 @@
             gap: 8px;
             width: 100%;
             padding: 14px;
-            background: #0071c2;
+            background: #d00e15;
             color: white;
             font-size: 15px;
             font-weight: 700;
@@ -495,7 +495,7 @@
             text-decoration: none;
             transition: background 0.2s;
         }
-        .btn-check-avail:hover { background: #005fa3; color: white; }
+        .btn-check-avail:hover { background: #A90B16; color: white; }
         .widget-free-cancel {
             display: flex;
             align-items: center;
@@ -515,15 +515,15 @@
             justify-content: center;
             width: 44px;
             height: 44px;
-            background: #003b95;
+            background: #d00e15;
             color: white;
             font-weight: 700;
             font-size: 17px;
             border-radius: 8px 8px 8px 0;
         }
-        .score-badge.excellent { background: #003b95; }
-        .score-badge.very-good { background: #0071c2; }
-        .score-badge.good { background: #42a5f5; }
+        .score-badge.excellent { background: #2E7D32; }
+        .score-badge.very-good { background: #d00e15; }
+        .score-badge.good { background: #F57F17; }
         .score-badge.avg { background: #f5a623; }
         .review-score-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
         .review-score-label { font-size: 12px; width: 90px; flex-shrink: 0; }
@@ -534,7 +534,7 @@
             border-radius: 4px;
             overflow: hidden;
         }
-        .review-score-fill { height: 100%; background: #003b95; border-radius: 4px; transition: width 1s ease; }
+        .review-score-fill { height: 100%; background: #d00e15; border-radius: 4px; transition: width 1s ease; }
         .review-score-val { font-size: 12px; font-weight: 600; width: 28px; flex-shrink: 0; }
 
         /* Review Cards */
@@ -548,7 +548,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: #003b95;
+            background: #d00e15;
             color: white;
             display: flex;
             align-items: center;
@@ -557,7 +557,7 @@
             font-size: 16px;
         }
         .review-score-inline {
-            background: #003b95;
+            background: #d00e15;
             color: white;
             font-weight: 700;
             font-size: 13px;
@@ -578,7 +578,7 @@
             font-size: 13px;
             color: #374151;
         }
-        .amenity-item i { color: #008009; width: 16px; text-align: center; }
+        .amenity-item i { color: #2E7D32; width: 16px; text-align: center; }
 
         /* ── Description ─────────────────────── */
         .description-text {
@@ -610,7 +610,7 @@
             gap: 8px;
             margin-bottom: 12px;
         }
-        .location-icon { font-size: 36px; color: #003b95; }
+        .location-icon { font-size: 36px; color: #d00e15; }
 
         /* ── Responsive ─────────────────────── */
         @media (max-width: 768px) {
@@ -641,7 +641,7 @@
         .spinner {
             width: 24px; height: 24px;
             border: 3px solid #e4e8ed;
-            border-top-color: #003b95;
+            border-top-color: #d00e15;
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
         }
@@ -706,7 +706,7 @@
         </a>
     @endif
     @else
-    <div style="height:350px;background:linear-gradient(135deg,#003b95,#0071c2);display:flex;align-items:center;justify-content:center;">
+    <div style="height:350px;background:linear-gradient(135deg,#d00e15,#A90B16);display:flex;align-items:center;justify-content:center;">
         <i class="fas fa-hotel" style="font-size:60px;color:rgba(255,255,255,0.3);"></i>
     </div>
     @endif
@@ -732,7 +732,7 @@
                     <div class="prop-location" onclick="document.getElementById('location').scrollIntoView({behavior:'smooth'})">
                         <i class="fas fa-map-marker-alt"></i>
                         <span>{{ $property->full_address }}</span>
-                        <span style="color:#0071c2;text-decoration:underline;font-size:12px;">Excellent location — show on map</span>
+                        <span style="color:#A90B16;text-decoration:underline;font-size:12px;">Excellent location — show on map</span>
                     </div>
                     <div class="prop-badges">
                         @if($property->cancellation_policy && ($property->cancellation_policy['type'] ?? '') === 'free')
@@ -1043,7 +1043,7 @@
                     <div class="section-card-body">
                         <div class="location-placeholder">
                             <i class="fas fa-map-marked-alt location-icon"></i>
-                            <div style="font-weight:600;color:#003b95;font-size:15px;">{{ $property->full_address }}</div>
+                            <div style="font-weight:600;color:#d00e15;font-size:15px;">{{ $property->full_address }}</div>
                             @if($property->city)
                                 <div style="font-size:13px;color:#6b7280;">{{ $property->city }}{{ $property->country ? ', ' . $property->country : '' }}</div>
                             @endif
@@ -1051,21 +1051,21 @@
                         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
                             @if($property->airport_distance)
                                 <div style="text-align:center;background:#f8f9fa;border-radius:8px;padding:12px;">
-                                    <i class="fas fa-plane" style="color:#003b95;margin-bottom:4px;"></i>
+                                    <i class="fas fa-plane" style="color:#d00e15;margin-bottom:4px;"></i>
                                     <div style="font-size:13px;font-weight:600;color:#1a1a1a;">{{ $property->airport_distance }}</div>
                                     <div style="font-size:11px;color:#6b7280;">to Airport</div>
                                 </div>
                             @endif
                             @if($property->beach_distance)
                                 <div style="text-align:center;background:#f8f9fa;border-radius:8px;padding:12px;">
-                                    <i class="fas fa-umbrella-beach" style="color:#003b95;margin-bottom:4px;"></i>
+                                    <i class="fas fa-umbrella-beach" style="color:#d00e15;margin-bottom:4px;"></i>
                                     <div style="font-size:13px;font-weight:600;color:#1a1a1a;">{{ $property->beach_distance }}</div>
                                     <div style="font-size:11px;color:#6b7280;">to Beach</div>
                                 </div>
                             @endif
                             @if($property->city_center_distance)
                                 <div style="text-align:center;background:#f8f9fa;border-radius:8px;padding:12px;">
-                                    <i class="fas fa-city" style="color:#003b95;margin-bottom:4px;"></i>
+                                    <i class="fas fa-city" style="color:#d00e15;margin-bottom:4px;"></i>
                                     <div style="font-size:13px;font-weight:600;color:#1a1a1a;">{{ $property->city_center_distance }}</div>
                                     <div style="font-size:11px;color:#6b7280;">to City Center</div>
                                 </div>
@@ -1134,8 +1134,8 @@
                                 <p style="font-size:14px;color:#374151;line-height:1.7;margin:0;">{{ $review->comment }}</p>
                             @endif
                             @if($review->hotel_response)
-                                <div style="margin-top:12px;background:#f0f4f8;border-left:3px solid #003b95;padding:10px 14px;border-radius:0 6px 6px 0;">
-                                    <div style="font-size:12px;font-weight:600;color:#003b95;margin-bottom:4px;"><i class="fas fa-reply"></i> Property response</div>
+                                <div style="margin-top:12px;background:#f0f4f8;border-left:3px solid #d00e15;padding:10px 14px;border-radius:0 6px 6px 0;">
+                                    <div style="font-size:12px;font-weight:600;color:#d00e15;margin-bottom:4px;"><i class="fas fa-reply"></i> Property response</div>
                                     <p style="font-size:13px;color:#374151;margin:0;">{{ $review->hotel_response }}</p>
                                 </div>
                             @endif
@@ -1164,7 +1164,7 @@
 
                 @if($property->average_rating)
                 <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
-                    <span style="background:#003b95;color:white;font-weight:700;font-size:13px;padding:3px 8px;border-radius:4px;">{{ number_format($property->average_rating, 1) }}</span>
+                    <span style="background:#d00e15;color:white;font-weight:700;font-size:13px;padding:3px 8px;border-radius:4px;">{{ number_format($property->average_rating, 1) }}</span>
                     <span style="font-size:13px;color:#1a1a1a;font-weight:600;">
                         {{ $property->average_rating >= 9 ? 'Exceptional' : ($property->average_rating >= 8 ? 'Excellent' : ($property->average_rating >= 7 ? 'Very Good' : 'Good')) }}
                     </span>
@@ -1269,7 +1269,7 @@
                         </div>
                     </div>
                     <div style="display:flex;align-items:start;gap:10px;">
-                        <i class="fas fa-headset" style="color:#0071c2;margin-top:2px;font-size:14px;"></i>
+                        <i class="fas fa-headset" style="color:#A90B16;margin-top:2px;font-size:14px;"></i>
                         <div>
                             <div style="font-size:12px;font-weight:600;color:#1a1a1a;">24/7 customer support</div>
                             <div style="font-size:11px;color:#6b7280;">We're here when you need us</div>
@@ -1329,3 +1329,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+

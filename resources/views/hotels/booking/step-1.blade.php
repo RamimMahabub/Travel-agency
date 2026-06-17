@@ -14,7 +14,7 @@
 
         /* ── Header ── */
         .checkout-header {
-            background: #003b95;
+            background: #d00e15;
             color: white;
             padding: 0;
         }
@@ -61,18 +61,18 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 12px; font-weight: 700;
         }
-        .step-item.active .step-num { background: white; color: #003b95; border-color: white; }
+        .step-item.active .step-num { background: white; color: #d00e15; border-color: white; }
         .step-item.done .step-num { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
         .step-arrow { color: rgba(255,255,255,0.3); font-size: 11px; }
 
         /* ── Security bar ── */
         .security-bar {
-            background: #e8f0fc;
-            border-bottom: 1px solid #c7d9f7;
+            background: #FFF5F5;
+            border-bottom: 1px solid #ffd0d1;
             padding: 8px 16px;
             text-align: center;
             font-size: 12px;
-            color: #003b95;
+            color: #d00e15;
         }
 
         /* ── Page Layout ── */
@@ -196,7 +196,7 @@
         }
         .form-input:focus {
             outline: none;
-            border-color: #003b95;
+            border-color: #d00e15;
             box-shadow: 0 0 0 3px rgba(0, 59, 149, 0.1);
         }
         .form-input::placeholder { color: #9ca3af; }
@@ -215,8 +215,8 @@
             transition: border-color 0.2s, background 0.2s;
             font-size: 13px;
         }
-        .sr-option:hover { border-color: #003b95; background: #f0f4fc; }
-        .sr-option input[type=checkbox] { accent-color: #003b95; width: 16px; height: 16px; }
+        .sr-option:hover { border-color: #d00e15; background: #FFF5F5; }
+        .sr-option input[type=checkbox] { accent-color: #d00e15; width: 16px; height: 16px; }
 
         /* ── Payment Method ── */
         .payment-option {
@@ -230,9 +230,9 @@
             transition: all 0.2s;
             margin-bottom: 8px;
         }
-        .payment-option.selected { border-color: #003b95; background: #f0f4fc; }
-        .payment-option:hover { border-color: #0071c2; }
-        .payment-option input[type=radio] { accent-color: #003b95; width: 18px; height: 18px; }
+        .payment-option.selected { border-color: #d00e15; background: #FFF5F5; }
+        .payment-option:hover { border-color: #A90B16; }
+        .payment-option input[type=radio] { accent-color: #d00e15; width: 18px; height: 18px; }
         .payment-option-info .title { font-weight: 600; font-size: 14px; color: #1a1a1a; }
         .payment-option-info .desc { font-size: 12px; color: #6b7280; margin-top: 2px; }
         .coming-soon-badge {
@@ -254,7 +254,7 @@
             overflow: hidden;
         }
         .price-card-header {
-            background: #003b95;
+            background: #d00e15;
             color: white;
             padding: 16px 20px;
         }
@@ -329,7 +329,7 @@
             gap: 10px;
             width: 100%;
             padding: 16px;
-            background: #0071c2;
+            background: #A90B16;
             color: white;
             font-size: 16px;
             font-weight: 700;
@@ -340,7 +340,7 @@
             transition: background 0.2s, transform 0.1s;
             text-decoration: none;
         }
-        .btn-confirm:hover { background: #005fa3; color: white; }
+        .btn-confirm:hover { background: #8a0a11; color: white; }
         .btn-confirm:active { transform: scale(0.99); }
         .btn-confirm:disabled { background: #9ca3af; cursor: not-allowed; }
 
@@ -425,7 +425,7 @@
                             @endfor
                         </div>
                         @if($property->average_rating)
-                            <span style="background:#003b95;color:white;font-weight:700;font-size:12px;padding:2px 8px;border-radius:4px;">
+                            <span style="background:#d00e15;color:white;font-weight:700;font-size:12px;padding:2px 8px;border-radius:4px;">
                                 {{ number_format($property->average_rating, 1) }}
                             </span>
                         @endif
@@ -445,7 +445,7 @@
                     <div class="room-info">
                         <div class="room-name">{{ $roomType->name }}</div>
                         @if($ratePlan)
-                            <div style="font-size:13px;color:#0071c2;font-weight:500;">{{ $ratePlan->plan_display_name }}</div>
+                            <div style="font-size:13px;color:#A90B16;font-weight:500;">{{ $ratePlan->plan_display_name }}</div>
                         @endif
                         <div class="room-meta-row">
                             @if($roomType->size_sqm)
@@ -488,7 +488,7 @@
                     @else
                         <div class="inclusion-item neg"><i class="fas fa-times-circle"></i> Non-refundable</div>
                     @endif
-                    <div class="inclusion-item neutral"><i class="fas fa-credit-card" style="color:#0071c2;"></i> No payment needed today</div>
+                    <div class="inclusion-item neutral"><i class="fas fa-credit-card" style="color:#A90B16;"></i> No payment needed today</div>
                 </div>
             </div>
 
@@ -579,7 +579,7 @@
                                 <input type="radio" name="payment_method" value="pending" checked
                                     onchange="selectPayment(this.closest('.payment-option'))">
                                 <div>
-                                    <i class="fas fa-hotel" style="font-size:18px;color:#003b95;"></i>
+                                    <i class="fas fa-hotel" style="font-size:18px;color:#d00e15;"></i>
                                 </div>
                                 <div class="payment-option-info">
                                     <div class="title">Pay at the property</div>
@@ -602,9 +602,9 @@
                         {{-- Terms --}}
                         <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e4e8ed;">
                             <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#374151;font-weight:400;">
-                                <input type="checkbox" id="terms-cb" required style="margin-top:2px;accent-color:#003b95;width:16px;height:16px;flex-shrink:0;">
+                                <input type="checkbox" id="terms-cb" required style="margin-top:2px;accent-color:#d00e15;width:16px;height:16px;flex-shrink:0;">
                                 I have read and accept the
-                                <a href="#" style="color:#003b95;">booking terms and conditions</a>
+                                <a href="#" style="color:#d00e15;">booking terms and conditions</a>
                                 and the property's cancellation policy.
                             </label>
                         </div>
@@ -692,8 +692,8 @@
                 <div style="font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:10px;">Your booking is safe</div>
                 <div class="trust-row"><i class="fas fa-lock" style="color:#008009;"></i> Secure transaction</div>
                 <div class="trust-row"><i class="fas fa-medal" style="color:#f5a623;"></i> Best price guarantee</div>
-                <div class="trust-row"><i class="fas fa-headset" style="color:#0071c2;"></i> 24/7 support</div>
-                <div class="trust-row"><i class="fas fa-file-invoice" style="color:#003b95;"></i> Instant confirmation</div>
+                <div class="trust-row"><i class="fas fa-headset" style="color:#A90B16;"></i> 24/7 support</div>
+                <div class="trust-row"><i class="fas fa-file-invoice" style="color:#d00e15;"></i> Instant confirmation</div>
             </div>
         </div>
     </div>
@@ -723,3 +723,5 @@
 <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 </html>
+
+

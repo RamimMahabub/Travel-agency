@@ -20,9 +20,9 @@
 
         /* ── Top bar ── */
         .conf-topbar {
-            background: #003b95;
+            background: #d00e15;
             height: 6px;
-            background: linear-gradient(90deg, #003b95, #0071c2, #00a8e0);
+            background: linear-gradient(90deg, #d00e15, #A90B16, #19100F);
         }
         .conf-header {
             background: white;
@@ -36,7 +36,7 @@
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
             font-size: 20px;
-            color: #003b95;
+            color: #d00e15;
             text-decoration: none;
             display: flex;
             align-items: center;
@@ -45,7 +45,7 @@
 
         /* ── Hero confirmation banner ── */
         .conf-hero {
-            background: linear-gradient(135deg, #003b95 0%, #0071c2 60%, #00a8e0 100%);
+            background: linear-gradient(135deg, #d00e15 0%, #A90B16 60%, #19100F 100%);
             color: white;
             padding: 48px 24px 64px;
             text-align: center;
@@ -106,7 +106,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         .ref-label { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
-        .ref-value { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #003b95; letter-spacing: 2px; }
+        .ref-value { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #d00e15; letter-spacing: 2px; }
 
         /* ── Main content ── */
         .page-wrap {
@@ -136,11 +136,11 @@
         .card-header-icon {
             width: 38px; height: 38px;
             border-radius: 10px;
-            background: #e8f0fc;
+            background: #FFF5F5;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #003b95;
+            color: #d00e15;
             font-size: 15px;
             flex-shrink: 0;
         }
@@ -200,7 +200,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 16px 20px;
-            background: #003b95;
+            background: #d00e15;
             color: white;
         }
         .total-label { font-size: 14px; opacity: 0.85; }
@@ -218,7 +218,7 @@
         .next-step-num {
             width: 32px; height: 32px;
             border-radius: 50%;
-            background: #003b95;
+            background: #d00e15;
             color: white;
             display: flex;
             align-items: center;
@@ -237,7 +237,7 @@
             align-items: center;
             gap: 8px;
             padding: 13px 24px;
-            background: #0071c2;
+            background: #A90B16;
             color: white;
             font-size: 14px;
             font-weight: 700;
@@ -246,7 +246,7 @@
             font-family: 'Outfit', sans-serif;
             transition: background 0.2s;
         }
-        .btn-primary:hover { background: #005fa3; color: white; }
+        .btn-primary:hover { background: #8a0a11; color: white; }
         .btn-outline {
             display: inline-flex;
             align-items: center;
@@ -262,7 +262,7 @@
             font-family: 'Outfit', sans-serif;
             transition: all 0.2s;
         }
-        .btn-outline:hover { border-color: #003b95; color: #003b95; }
+        .btn-outline:hover { border-color: #d00e15; color: #d00e15; }
 
         /* ── Important notice ── */
         .notice-box {
@@ -490,10 +490,11 @@
         </div>
 
         <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:28px;">
-            Booking reference: <strong style="color:#003b95;">{{ $booking->booking_ref }}</strong> &bull;
-            Questions? Contact our <a href="#" style="color:#003b95;">support team</a>
+            Booking reference: <strong style="color:#d00e15;">{{ $booking->booking_ref }}</strong> &bull;
+            Questions? Contact our <a href="#" style="color:#d00e15;">support team</a>
         </p>
     </div>
 
 </body>
 </html>
+
