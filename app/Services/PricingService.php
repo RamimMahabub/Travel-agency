@@ -76,14 +76,55 @@ class PricingService
         ?string $promoCode = null,
         ?int $propertyId = null
     ): array {
+        $roomType = RoomType::findOrFail($roomTypeId);
         $nights = $checkIn->diffInDays($checkOut);
+
+        $overrides = Availability::where('room_type_id', $roomTypeId)
+            ->whereBetween('date', [$checkIn->toDateString(), $checkOut->copy()->subDay()->toDateString()])
+            ->get()
+            ->keyBy(fn($a) => $a->date->toDateString());
+
+        $rateRules = RateRule::where('room_type_id', $roomTypeId)->where('is_active', true)->get();
+        $seasonalRules = $rateRules->where('rule_type', 'seasonal');
+        $weekendRule = $rateRules->where('rule_type', 'weekend_surcharge')->first();
+
+        $ratePlanSupplement = 0;
+        if ($ratePlanId) {
+            $ratePlan = RatePlan::find($ratePlanId);
+            if ($ratePlan && $ratePlan->price_supplement_per_adult > 0) {
+                $ratePlanSupplement = $ratePlan->price_supplement_per_adult;
+            }
+        }
+
         $nightlyRates = [];
         $subtotal = 0;
 
         for ($i = 0; $i < $nights; $i++) {
             $date = $checkIn->copy()->addDays($i);
-            $price = $this->getPriceForDate($roomTypeId, $date, $ratePlanId);
-            $nightlyRates[$date->toDateString()] = $price;
+            $dateStr = $date->toDateString();
+
+            $basePrice = $roomType->base_price_per_night;
+            $override = $overrides->get($dateStr);
+
+            if ($override && $override->price_override !== null) {
+                $basePrice = (float) $override->price_override;
+            } else {
+                $seasonalRule = $seasonalRules->first(function ($rule) use ($dateStr) {
+                    return $rule->start_date <= $dateStr && $rule->end_date >= $dateStr;
+                });
+                if ($seasonalRule) {
+                    $basePrice = $this->applyAdjustment($basePrice, $seasonalRule);
+                }
+
+                if (in_array($date->dayOfWeek, [5, 6]) && $weekendRule) {
+                    $basePrice = $this->applyAdjustment($basePrice, $weekendRule);
+                }
+            }
+
+            $basePrice += $ratePlanSupplement;
+            $price = round($basePrice, 2);
+
+            $nightlyRates[$dateStr] = $price;
             $subtotal += $price;
         }
 

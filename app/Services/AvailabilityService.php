@@ -45,11 +45,41 @@ class AvailabilityService
      */
     public function checkAvailability(int $roomTypeId, Carbon $checkIn, Carbon $checkOut): int
     {
+        $roomType = RoomType::findOrFail($roomTypeId);
+        $totalRooms = $roomType->inventory_count;
+
+        // Pre-fetch availability overrides
+        $overrides = Availability::where('room_type_id', $roomTypeId)
+            ->whereBetween('date', [$checkIn->toDateString(), $checkOut->copy()->subDay()->toDateString()])
+            ->get()
+            ->keyBy(fn($a) => $a->date->toDateString());
+
+        // Pre-fetch active bookings
+        $bookings = HotelBooking::where('room_type_id', $roomTypeId)
+            ->where('check_in', '<=', $checkOut->copy()->subDay()->toDateString())
+            ->where('check_out', '>', $checkIn->toDateString())
+            ->whereIn('status', ['confirmed', 'checked_in', 'pending'])
+            ->get();
+
         $minAvailable = PHP_INT_MAX;
         $period = CarbonPeriod::create($checkIn, $checkOut->copy()->subDay());
 
         foreach ($period as $date) {
-            $available = $this->getAvailableRooms($roomTypeId, $date);
+            $dateStr = $date->toDateString();
+            $override = $overrides->get($dateStr);
+            $dailyTotal = $totalRooms;
+
+            if ($override) {
+                if ($override->is_closed) return 0;
+                $dailyTotal = $override->available_rooms ?? $totalRooms;
+                $dailyTotal -= $override->blocked_rooms;
+            }
+
+            $bookedRooms = $bookings->filter(function ($b) use ($date) {
+                return $b->check_in->lte($date) && $b->check_out->gt($date);
+            })->sum('rooms_booked');
+
+            $available = max(0, $dailyTotal - $bookedRooms);
             $minAvailable = min($minAvailable, $available);
 
             if ($minAvailable <= 0) return 0;

@@ -56,14 +56,24 @@ class HotelController extends Controller
             ->latest()
             ->paginate(10);
 
+        $stats = Review::where('property_id', $property->id)
+            ->published()
+            ->selectRaw('
+                AVG(cleanliness_score) as cleanliness,
+                AVG(location_score) as location,
+                AVG(service_score) as service,
+                AVG(value_score) as value,
+                AVG(facilities_score) as facilities
+            ')->first();
+
         $reviewStats = [
             'average' => $property->average_rating,
             'count' => $property->review_count,
-            'cleanliness' => Review::where('property_id', $property->id)->published()->avg('cleanliness_score'),
-            'location' => Review::where('property_id', $property->id)->published()->avg('location_score'),
-            'service' => Review::where('property_id', $property->id)->published()->avg('service_score'),
-            'value' => Review::where('property_id', $property->id)->published()->avg('value_score'),
-            'facilities' => Review::where('property_id', $property->id)->published()->avg('facilities_score'),
+            'cleanliness' => $stats ? $stats->cleanliness : null,
+            'location' => $stats ? $stats->location : null,
+            'service' => $stats ? $stats->service : null,
+            'value' => $stats ? $stats->value : null,
+            'facilities' => $stats ? $stats->facilities : null,
         ];
 
         return view('hotels.show', compact(
