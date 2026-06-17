@@ -20,7 +20,7 @@ class HotelBookingController extends Controller
     ) {}
 
     /**
-     * Step 1 — Review Your Booking
+     * Step 1 — Single-page checkout (Review + Guest Details)
      */
     public function step1(Property $property, RoomType $roomType, Request $request)
     {
@@ -36,6 +36,10 @@ class HotelBookingController extends Controller
 
         $ratePlan = $ratePlanId ? RatePlan::find($ratePlanId) : null;
 
+        // Load room photos for display
+        $roomType->load('photos');
+        $property->load('photos');
+
         return view('hotels.booking.step-1', compact(
             'property', 'roomType', 'pricing', 'ratePlan',
             'checkIn', 'checkOut', 'adults', 'children'
@@ -43,17 +47,17 @@ class HotelBookingController extends Controller
     }
 
     /**
-     * Step 2 — Guest Details
+     * Step 2 — Guest Details (kept for backward compat, now unused)
      */
     public function step2(Request $request)
     {
         $data = $request->validate([
-            'property_id' => 'required|exists:properties,id',
+            'property_id'  => 'required|exists:properties,id',
             'room_type_id' => 'required|exists:room_types,id',
-            'check_in' => 'required|date',
-            'check_out' => 'required|date|after:check_in',
-            'adults' => 'required|integer|min:1',
-            'children' => 'integer|min:0',
+            'check_in'     => 'required|date',
+            'check_out'    => 'required|date|after:check_in',
+            'adults'       => 'required|integer|min:1',
+            'children'     => 'integer|min:0',
             'rate_plan_id' => 'nullable|exists:rate_plans,id',
         ]);
 
@@ -64,30 +68,30 @@ class HotelBookingController extends Controller
     }
 
     /**
-     * Step 3 — Payment
+     * Step 3 — Payment (kept for backward compat, now unused)
      */
     public function step3(Request $request)
     {
         $data = $request->validate([
-            'property_id' => 'required|exists:properties,id',
-            'room_type_id' => 'required|exists:room_types,id',
-            'check_in' => 'required|date',
-            'check_out' => 'required|date|after:check_in',
-            'adults' => 'required|integer|min:1',
-            'children' => 'integer|min:0',
-            'rate_plan_id' => 'nullable|exists:rate_plans,id',
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
-            'email' => 'required|email',
-            'phone' => 'required|string|max:20',
-            'country' => 'nullable|string|max:100',
+            'property_id'      => 'required|exists:properties,id',
+            'room_type_id'     => 'required|exists:room_types,id',
+            'check_in'         => 'required|date',
+            'check_out'        => 'required|date|after:check_in',
+            'adults'           => 'required|integer|min:1',
+            'children'         => 'integer|min:0',
+            'rate_plan_id'     => 'nullable|exists:rate_plans,id',
+            'first_name'       => 'required|string|max:100',
+            'last_name'        => 'required|string|max:100',
+            'email'            => 'required|email',
+            'phone'            => 'required|string|max:20',
+            'country'          => 'nullable|string|max:100',
             'special_requests' => 'nullable|string|max:500',
-            'estimated_arrival' => 'nullable|string',
+            'estimated_arrival'=> 'nullable|string',
         ]);
 
         $property = Property::findOrFail($data['property_id']);
         $roomType = RoomType::findOrFail($data['room_type_id']);
-        $checkIn = Carbon::parse($data['check_in']);
+        $checkIn  = Carbon::parse($data['check_in']);
         $checkOut = Carbon::parse($data['check_out']);
 
         $pricing = $this->pricingService->calculateStayPrice(
@@ -99,37 +103,50 @@ class HotelBookingController extends Controller
     }
 
     /**
-     * Confirm Booking
+     * Confirm Booking — accepts both old (3-step) and new (single-page) form submissions.
      */
     public function confirm(Request $request)
     {
         $data = $request->validate([
-            'property_id' => 'required|exists:properties,id',
-            'room_type_id' => 'required|exists:room_types,id',
-            'check_in' => 'required|date',
-            'check_out' => 'required|date|after:check_in',
-            'adults' => 'required|integer|min:1',
-            'children' => 'integer|min:0',
-            'rate_plan_id' => 'nullable|exists:rate_plans,id',
-            'special_requests' => 'nullable|string',
+            'property_id'       => 'required|exists:properties,id',
+            'room_type_id'      => 'required|exists:room_types,id',
+            'check_in'          => 'required|date',
+            'check_out'         => 'required|date|after:check_in',
+            'adults'            => 'required|integer|min:1',
+            'children'          => 'integer|min:0',
+            'rate_plan_id'      => 'nullable|exists:rate_plans,id',
+            'special_requests'  => 'nullable|string|max:1000',
             'estimated_arrival' => 'nullable|string',
-            'promo_code' => 'nullable|string|max:50',
+            'promo_code'        => 'nullable|string|max:50',
+            // Guest fields (from single-page checkout)
+            'first_name'        => 'nullable|string|max:100',
+            'last_name'         => 'nullable|string|max:100',
+            'email'             => 'nullable|email',
+            'phone'             => 'nullable|string|max:20',
+            'country'           => 'nullable|string|max:100',
+            'request_options'   => 'nullable|array',
         ]);
+
+        // Combine checkbox special requests with text
+        $specialRequests = collect($data['request_options'] ?? [])
+            ->push($data['special_requests'] ?? null)
+            ->filter()
+            ->implode('. ');
 
         try {
             $booking = $this->bookingService->createBooking([
-                'guest_id' => Auth::id(),
-                'property_id' => $data['property_id'],
-                'room_type_id' => $data['room_type_id'],
-                'check_in' => $data['check_in'],
-                'check_out' => $data['check_out'],
-                'adults' => $data['adults'],
-                'children' => $data['children'] ?? 0,
-                'rate_plan_id' => $data['rate_plan_id'] ?? null,
-                'source' => 'direct',
-                'special_requests' => $data['special_requests'] ?? null,
+                'guest_id'          => Auth::id(),
+                'property_id'       => $data['property_id'],
+                'room_type_id'      => $data['room_type_id'],
+                'check_in'          => $data['check_in'],
+                'check_out'         => $data['check_out'],
+                'adults'            => $data['adults'],
+                'children'          => $data['children'] ?? 0,
+                'rate_plan_id'      => $data['rate_plan_id'] ?? null,
+                'source'            => 'direct',
+                'special_requests'  => $specialRequests ?: null,
                 'estimated_arrival' => $data['estimated_arrival'] ?? null,
-                'promo_code' => $data['promo_code'] ?? null,
+                'promo_code'        => $data['promo_code'] ?? null,
             ]);
 
             return redirect()->route('hotels.book.confirmation', $booking);

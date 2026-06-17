@@ -8,384 +8,1324 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        :root {
+            --brand: #003580;
+            --brand-light: #e8f0fc;
+            --brand-red: #d00e15;
+            --green: #008009;
+            --orange: #e2780a;
+            --gold: #f5a623;
+            --bg: #f2f6fa;
+            --card: #ffffff;
+            --text: #1a1a1a;
+            --muted: #6b7280;
+            --border: #e4e8ed;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+        }
+
+        /* ── Header ─────────────────────────────── */
+        .hotel-header {
+            background: #003b95;
+            color: white;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+        .hotel-header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+        }
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+        .back-link:hover { opacity: 1; }
+        .anchor-nav {
+            display: flex;
+            gap: 4px;
+        }
+        .anchor-nav a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .anchor-nav a:hover, .anchor-nav a.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+        .header-auth { display: flex; align-items: center; gap: 10px; }
+        .header-auth a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .btn-sign-in {
+            background: white;
+            color: #003b95 !important;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .btn-register {
+            background: #0071c2;
+            color: white !important;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+
+        /* ── Gallery ─────────────────────────────── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            grid-template-rows: 200px 200px;
+            gap: 4px;
+            border-radius: 0;
+            overflow: hidden;
+            max-height: 404px;
+            position: relative;
+        }
+        .gallery-grid .hero { grid-row: span 2; }
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s;
+            cursor: pointer;
+        }
+        .gallery-img:hover { transform: scale(1.03); }
+        .gallery-slot { overflow: hidden; position: relative; background: #d8e2f0; }
+        .show-all-btn {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 5;
+            text-decoration: none;
+        }
+        .show-all-btn:hover { background: #f0f0f0; }
+
+        /* ── Layout ─────────────────────────────── */
+        .page-wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* ── Property Title Block ─────────────────── */
+        .prop-header { margin-bottom: 20px; }
+        .stars-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+        .star-icon { color: #f5a623; font-size: 13px; }
+        .prop-type-badge {
+            background: #e8f0fc;
+            color: #003b95;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .prop-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 6px 0;
+            line-height: 1.2;
+        }
+        .prop-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #0071c2;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .prop-location:hover { text-decoration: underline; }
+        .prop-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+        .prop-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #008009;
+            font-weight: 500;
+        }
+
+        /* ── Rating summary ─────────────────────── */
+        .rating-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--brand-light);
+            border-radius: 8px;
+            padding: 8px 14px;
+            margin-bottom: 20px;
+        }
+        .rating-score {
+            background: #003b95;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px 8px 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rating-label { font-weight: 700; font-size: 14px; color: #1a1a1a; }
+        .rating-count { font-size: 12px; color: #6b7280; }
+
+        /* ── Section Cards ─────────────────────── */
+        .section-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .section-card-header {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0;
+        }
+        .section-card-body { padding: 20px; }
+
+        /* ── Room Type Rows (Booking.com style) ─── */
+        .rooms-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .rooms-table thead th {
+            background: #f8f9fa;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+        .rooms-table td {
+            padding: 16px 12px;
+            vertical-align: top;
+            border-bottom: 1px solid var(--border);
+        }
+        .rooms-table tr:last-child td { border-bottom: none; }
+        .room-type-cell { min-width: 220px; }
+        .room-photo-wrap {
+            width: 100%;
+            height: 130px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            background: #e8eef5;
+            cursor: pointer;
+        }
+        .room-photo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .room-photo-wrap:hover img { transform: scale(1.05); }
+        .room-type-name {
+            font-weight: 700;
+            color: #0071c2;
+            font-size: 15px;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+        .room-type-name:hover { text-decoration: underline; }
+        .room-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .room-meta span { display: flex; align-items: center; gap: 4px; }
+        .room-amenity-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .room-amenity-tag {
+            background: #f0f4f8;
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-size: 11px;
+            color: #374151;
+        }
+        .urgency-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #fff3e0;
+            color: #e65100;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-top: 6px;
+        }
+
+        /* Rate Plan Cell */
+        .rate-plan-cell { min-width: 220px; }
+        .rate-plan-row {
+            padding: 10px 0;
+            border-bottom: 1px dashed #e4e8ed;
+        }
+        .rate-plan-row:last-child { border-bottom: none; }
+        .rate-plan-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        .rate-inclusion {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #008009;
+            margin-top: 3px;
+        }
+        .rate-inclusion.neg { color: #c62828; }
+        .rate-inclusion.neutral { color: #6b7280; }
+
+        /* Price Cell */
+        .price-cell { min-width: 130px; text-align: right; }
+        .price-nightly {
+            font-size: 22px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            color: #1a1a1a;
+            line-height: 1;
+        }
+        .price-per-night-label { font-size: 11px; color: #6b7280; margin-top: 2px; }
+        .price-total { font-size: 12px; color: #6b7280; margin-top: 4px; }
+        .price-taxes-note { font-size: 11px; color: #6b7280; }
+
+        /* Reserve Cell */
+        .reserve-cell { min-width: 140px; text-align: center; vertical-align: middle; }
+        .rooms-select {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 8px;
+            background: white;
+        }
+        .btn-reserve {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 11px 20px;
+            background: #0071c2;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .btn-reserve:hover { background: #005fa3; color: white; }
+        .btn-sold-out {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 11px 20px;
+            background: #f0f0f0;
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: not-allowed;
+        }
+
+        /* ── Sticky Booking Widget ─────────────── */
+        .booking-widget {
+            background: white;
+            border: 2px solid #003b95;
+            border-radius: 10px;
+            padding: 20px;
+            position: sticky;
+            top: 72px;
+        }
+        .widget-title { font-size: 13px; color: #6b7280; margin-bottom: 4px; }
+        .widget-price {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            color: #1a1a1a;
+            line-height: 1;
+        }
+        .widget-price span { font-size: 14px; font-weight: 400; color: #6b7280; }
+        .widget-form { margin-top: 16px; }
+        .widget-date-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .widget-date-row > div:first-child { border-right: 1px solid #ccc; }
+        .widget-date-block {
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .widget-date-block:hover { background: var(--brand-light); }
+        .widget-date-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #6b7280;
+            letter-spacing: 0.5px;
+        }
+        .widget-date-input {
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            width: 100%;
+            padding: 0;
+            cursor: pointer;
+        }
+        .widget-date-input:focus { outline: none; }
+        .widget-guests-row {
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 14px;
+        }
+        .widget-guests-select {
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            width: 100%;
+            padding: 0;
+        }
+        .widget-guests-select:focus { outline: none; }
+        .btn-check-avail {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            background: #0071c2;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-check-avail:hover { background: #005fa3; color: white; }
+        .widget-free-cancel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #008009;
+            font-weight: 500;
+        }
+        .widget-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+        /* ── Guest Score ─────────────────────── */
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: #003b95;
+            color: white;
+            font-weight: 700;
+            font-size: 17px;
+            border-radius: 8px 8px 8px 0;
+        }
+        .score-badge.excellent { background: #003b95; }
+        .score-badge.very-good { background: #0071c2; }
+        .score-badge.good { background: #42a5f5; }
+        .score-badge.avg { background: #f5a623; }
+        .review-score-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+        .review-score-label { font-size: 12px; width: 90px; flex-shrink: 0; }
+        .review-score-track {
+            flex: 1;
+            height: 8px;
+            background: #e4e8ed;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .review-score-fill { height: 100%; background: #003b95; border-radius: 4px; transition: width 1s ease; }
+        .review-score-val { font-size: 12px; font-weight: 600; width: 28px; flex-shrink: 0; }
+
+        /* Review Cards */
+        .review-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #003b95;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .review-score-inline {
+            background: #003b95;
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        /* Amenities */
+        .amenity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+        }
+        .amenity-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #374151;
+        }
+        .amenity-item i { color: #008009; width: 16px; text-align: center; }
+
+        /* ── Description ─────────────────────── */
+        .description-text {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        /* ── Check-in/out cards ─────────────── */
+        .checkin-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .checkin-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .checkin-card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; font-weight: 600; margin-bottom: 4px; }
+        .checkin-card-value { font-size: 18px; font-weight: 700; font-family: 'Outfit', sans-serif; color: #1a1a1a; }
+        .checkin-card-sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+        /* ── Location ─────────────────────── */
+        .location-placeholder {
+            background: linear-gradient(135deg, #e8f0fc 0%, #f0f4ff 100%);
+            height: 200px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .location-icon { font-size: 36px; color: #003b95; }
+
+        /* ── Responsive ─────────────────────── */
+        @media (max-width: 768px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: 1fr; grid-template-rows: 200px; }
+            .gallery-grid .gallery-slot:not(.hero) { display: none; }
+            .anchor-nav { display: none; }
+            .rooms-table thead { display: none; }
+            .rooms-table, .rooms-table tbody, .rooms-table tr, .rooms-table td { display: block; }
+            .rooms-table td { padding: 12px 16px; border: none; }
+            .rooms-table tr { border-bottom: 2px solid var(--border); }
+            .price-cell { text-align: left; }
+            .reserve-cell { text-align: left; }
+            .booking-widget { position: static; border: 1px solid var(--border); border-radius: 8px; }
+        }
+
+        /* Loading state */
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 8px;
+        }
+        .spinner {
+            width: 24px; height: 24px;
+            border: 3px solid #e4e8ed;
+            border-top-color: #003b95;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
-<body class="font-body antialiased bg-brand-surface">
+<body>
 
-    {{-- Sticky Header --}}
-    <header class="bg-white border-b border-brand-border sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
-            <a href="{{ route('hotels.search') }}" class="flex items-center gap-2 text-brand-text hover:text-brand-primary transition-colors">
-                <i class="fas fa-arrow-left"></i>
-                <span class="text-sm">Back to results</span>
-            </a>
-            <div class="hidden md:flex items-center gap-6">
-                <a href="#overview" class="text-sm text-brand-text hover:text-brand-primary">Overview</a>
-                <a href="#rooms" class="text-sm text-brand-text hover:text-brand-primary">Rooms</a>
-                <a href="#location" class="text-sm text-brand-text hover:text-brand-primary">Location</a>
-                <a href="#reviews" class="text-sm text-brand-text hover:text-brand-primary">Reviews</a>
-            </div>
-            <div class="flex items-center gap-2">
-                @if($property->average_rating)
-                    <div class="guest-score text-xs {{ $property->average_rating >= 8 ? 'excellent' : 'good' }}">
-                        {{ number_format($property->average_rating, 1) }}
-                    </div>
-                @endif
-            </div>
-        </div>
-    </header>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-        {{-- Photo Gallery --}}
-        <div class="grid grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden h-[420px] mb-8 animate-fade-in">
-            @if($property->photos->isNotEmpty())
-                {{-- Hero Image --}}
-                <a href="{{ $property->photos[0]->url }}" class="glightbox col-span-2 row-span-2 relative group cursor-pointer overflow-hidden block" data-gallery="hotel-gallery">
-                    <img src="{{ $property->photos[0]->url }}" alt="{{ $property->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
-                </a>
-                @foreach($property->photos->skip(1)->take(4) as $photo)
-                    <a href="{{ $photo->url }}" class="glightbox relative group cursor-pointer overflow-hidden block" data-gallery="hotel-gallery">
-                        <img src="{{ $photo->url }}" alt="{{ $property->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </a>
-                @endforeach
-                {{-- Hidden Remaining Photos --}}
-                @foreach($property->photos->skip(5) as $photo)
-                    <a href="{{ $photo->url }}" class="glightbox hidden" data-gallery="hotel-gallery"></a>
-                @endforeach
+{{-- ── Header ─── --}}
+<header class="hotel-header">
+    <div class="hotel-header-inner">
+        <a href="{{ url()->previous() }}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to results</span>
+        </a>
+        <nav class="anchor-nav">
+            <a href="#overview" class="active">Overview</a>
+            <a href="#rooms">Rooms</a>
+            <a href="#amenities">Amenities</a>
+            <a href="#location">Location</a>
+            <a href="#reviews">Reviews</a>
+        </nav>
+        <div class="header-auth">
+            @auth
+                <a href="{{ route('my-bookings.index') }}" style="color:rgba(255,255,255,0.85); font-size:13px;">My Bookings</a>
+                <div style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;">
+                    {{ substr(Auth::user()->name, 0, 1) }}
+                </div>
             @else
-                <div class="col-span-4 row-span-2 bg-gradient-to-br from-brand-light to-white flex items-center justify-center">
-                    <div class="text-center">
-                        <i class="fas fa-hotel text-6xl text-brand-border mb-3"></i>
-                        <p class="text-brand-muted text-sm">No photos available</p>
+                <a href="{{ route('login') }}" class="btn-sign-in">Sign in</a>
+                <a href="{{ route('register') }}" class="btn-register">Register</a>
+            @endauth
+        </div>
+    </div>
+</header>
+
+{{-- ── Photo Gallery ─── --}}
+<div style="background:#1a1a1a; position:relative;">
+    @if($property->photos->isNotEmpty())
+    <div class="gallery-grid">
+        {{-- Hero --}}
+        <div class="gallery-slot hero">
+            <a href="{{ $property->photos[0]->url }}" class="glightbox" data-gallery="hotel">
+                <img src="{{ $property->photos[0]->url }}" alt="{{ $property->name }}" class="gallery-img">
+            </a>
+        </div>
+        @foreach($property->photos->skip(1)->take(4) as $photo)
+        <div class="gallery-slot">
+            <a href="{{ $photo->url }}" class="glightbox" data-gallery="hotel">
+                <img src="{{ $photo->url }}" alt="{{ $property->name }}" class="gallery-img">
+            </a>
+        </div>
+        @endforeach
+        {{-- Hidden remaining for lightbox --}}
+        @foreach($property->photos->skip(5) as $photo)
+            <a href="{{ $photo->url }}" class="glightbox hidden" data-gallery="hotel"></a>
+        @endforeach
+    </div>
+    @if($property->photos->count() > 5)
+        <a href="{{ $property->photos[5]->url }}" class="show-all-btn glightbox" data-gallery="hotel">
+            <i class="fas fa-th"></i> Show all {{ $property->photos->count() }} photos
+        </a>
+    @endif
+    @else
+    <div style="height:350px;background:linear-gradient(135deg,#003b95,#0071c2);display:flex;align-items:center;justify-content:center;">
+        <i class="fas fa-hotel" style="font-size:60px;color:rgba(255,255,255,0.3);"></i>
+    </div>
+    @endif
+</div>
+
+{{-- ── Page Content ─── --}}
+<div class="page-wrap">
+    <div class="main-grid">
+
+        {{-- ── LEFT COLUMN ─── --}}
+        <div>
+
+            {{-- Property Title & Info --}}
+            <section id="overview">
+                <div class="prop-header">
+                    <div class="stars-row">
+                        @for($i = 1; $i <= $property->stars; $i++)
+                            <i class="fas fa-star star-icon"></i>
+                        @endfor
+                        <span class="prop-type-badge">{{ ucfirst($property->type) }}</span>
+                    </div>
+                    <h1 class="prop-name">{{ $property->name }}</h1>
+                    <div class="prop-location" onclick="document.getElementById('location').scrollIntoView({behavior:'smooth'})">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ $property->full_address }}</span>
+                        <span style="color:#0071c2;text-decoration:underline;font-size:12px;">Excellent location — show on map</span>
+                    </div>
+                    <div class="prop-badges">
+                        @if($property->cancellation_policy && ($property->cancellation_policy['type'] ?? '') === 'free')
+                            <span class="prop-badge"><i class="fas fa-check-circle"></i> Free cancellation</span>
+                        @endif
+                        @if($property->check_in_time)
+                            <span class="prop-badge" style="color:#6b7280;"><i class="fas fa-clock"></i> Check-in from {{ $property->check_in_time }}</span>
+                        @endif
                     </div>
                 </div>
-            @endif
-        </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {{-- Main Content --}}
-            <div class="lg:col-span-2 space-y-8">
+                @if($property->average_rating)
+                <div class="rating-pill">
+                    @php
+                        $score = $property->average_rating;
+                        $label = $score >= 9 ? 'Exceptional' : ($score >= 8 ? 'Excellent' : ($score >= 7 ? 'Very Good' : ($score >= 6 ? 'Good' : 'Pleasant')));
+                    @endphp
+                    <div class="rating-score">{{ number_format($score, 1) }}</div>
+                    <div>
+                        <div class="rating-label">{{ $label }}</div>
+                        <div class="rating-count">{{ $property->review_count }} reviews</div>
+                    </div>
+                </div>
+                @endif
 
-                {{-- Overview Section --}}
-                <section id="overview" class="animate-slide-up">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                @for($i = 1; $i <= $property->stars; $i++)
-                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                @endfor
-                                <span class="badge bg-brand-surface text-brand-text text-[10px]">{{ ucfirst($property->type) }}</span>
-                            </div>
-                            <h1 class="font-heading text-3xl font-bold text-brand-black mb-1">{{ $property->name }}</h1>
-                            <p class="text-sm text-brand-muted">
-                                <i class="fas fa-map-marker-alt text-brand-primary"></i>
-                                {{ $property->full_address }}
-                            </p>
+                {{-- Description --}}
+                @if($property->full_description || $property->short_description)
+                <div class="section-card">
+                    <div class="section-card-body">
+                        <p class="description-text">{{ $property->full_description ?? $property->short_description }}</p>
+                    </div>
+                </div>
+                @endif
+            </section>
+
+            {{-- ── Rooms & Rates ─────────────────── --}}
+            <section id="rooms">
+                <div class="section-card">
+                    <div class="section-card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                        <h2 class="section-title">Available Rooms</h2>
+                        <div style="font-size:12px;color:#6b7280;">
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ $checkIn->format('M d') }} – {{ $checkOut->format('M d, Y') }} &bull;
+                            {{ $pricing['nights'] ?? $checkIn->diffInDays($checkOut) }} nights &bull;
+                            {{ $guests }} guests
                         </div>
                     </div>
 
-                    @if($property->short_description)
-                        <p class="text-brand-text text-sm leading-relaxed mb-4">{{ $property->short_description }}</p>
-                    @endif
+                    @if($property->activeRoomTypes->isEmpty())
+                        <div class="section-card-body" style="text-align:center;padding:40px;">
+                            <i class="fas fa-bed" style="font-size:36px;color:#d1d5db;margin-bottom:12px;"></i>
+                            <p style="color:#6b7280;">No rooms available for the selected dates.</p>
+                        </div>
+                    @else
+                    <div style="overflow-x:auto;">
+                        <table class="rooms-table">
+                            <thead>
+                                <tr>
+                                    <th>Room Type</th>
+                                    <th>Includes</th>
+                                    <th>Price per night</th>
+                                    <th>Rooms</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($property->activeRoomTypes as $roomType)
+                                @php
+                                    $data = $roomsData[$roomType->id] ?? ['available' => 0, 'pricing' => ['total' => 0, 'nightly_rate' => 0, 'nights' => 1]];
+                                    $isAvailable = $data['available'] > 0;
+                                    $plans = $roomType->activeRatePlans;
+                                    $planCount = max($plans->count(), 1);
+                                @endphp
+                                @if($plans->isEmpty())
+                                {{-- Room with no rate plans --}}
+                                <tr>
+                                    <td class="room-type-cell" rowspan="1">
+                                        @if($roomType->photos->isNotEmpty())
+                                        <div class="room-photo-wrap">
+                                            <a href="{{ $roomType->photos[0]->url }}" class="glightbox" data-gallery="room-{{ $roomType->id }}">
+                                                <img src="{{ $roomType->photos[0]->url }}" alt="{{ $roomType->name }}">
+                                            </a>
+                                        </div>
+                                        @endif
+                                        <div class="room-type-name">{{ $roomType->name }}</div>
+                                        <div class="room-meta">
+                                            @if($roomType->size_sqm)
+                                                <span><i class="fas fa-expand-arrows-alt"></i> {{ $roomType->size_sqm }} m²</span>
+                                            @endif
+                                            <span><i class="fas fa-user"></i> {{ $roomType->max_adults }} adults</span>
+                                            @if($roomType->max_children > 0)
+                                                <span><i class="fas fa-child"></i> {{ $roomType->max_children }} children</span>
+                                            @endif
+                                            <span><i class="fas fa-bed"></i> {{ $roomType->bed_config_display }}</span>
+                                        </div>
+                                        @if($roomType->amenities)
+                                        <div class="room-amenity-tags">
+                                            @foreach(array_slice($roomType->amenities, 0, 5) as $amenity)
+                                                <span class="room-amenity-tag">{{ $amenity }}</span>
+                                            @endforeach
+                                        </div>
+                                        @endif
+                                        @if($isAvailable && $data['available'] <= 3)
+                                            <div class="urgency-tag"><i class="fas fa-fire"></i> Only {{ $data['available'] }} left!</div>
+                                        @endif
+                                    </td>
+                                    <td class="rate-plan-cell">
+                                        <div class="rate-inclusion"><i class="fas fa-times-circle" style="color:#c62828;"></i> No meals</div>
+                                        @if($property->cancellation_policy && ($property->cancellation_policy['type'] ?? '') === 'free')
+                                            <div class="rate-inclusion"><i class="fas fa-check-circle"></i> Free cancellation</div>
+                                        @else
+                                            <div class="rate-inclusion neg"><i class="fas fa-times-circle"></i> Non-refundable</div>
+                                        @endif
+                                    </td>
+                                    <td class="price-cell">
+                                        <div class="price-nightly">${{ number_format($data['pricing']['nightly_rate'], 0) }}</div>
+                                        <div class="price-per-night-label">per night</div>
+                                        @if($data['pricing']['nights'] > 1)
+                                            <div class="price-total">${{ number_format($data['pricing']['total'], 0) }} total</div>
+                                        @endif
+                                        <div class="price-taxes-note" style="margin-top:3px;">Incl. taxes &amp; fees</div>
+                                    </td>
+                                    <td class="reserve-cell">
+                                        @if($isAvailable)
+                                            <a href="{{ route('hotels.book.step1', ['property' => $property, 'roomType' => $roomType, 'check_in' => $checkIn->format('Y-m-d'), 'check_out' => $checkOut->format('Y-m-d'), 'adults' => $guests]) }}" class="btn-reserve">
+                                                Reserve
+                                            </a>
+                                        @else
+                                            <div class="btn-sold-out">Sold Out</div>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @else
+                                {{-- Rooms with rate plans --}}
+                                @foreach($plans as $planIndex => $plan)
+                                <tr>
+                                    @if($planIndex === 0)
+                                    <td class="room-type-cell" rowspan="{{ $planCount }}">
+                                        @if($roomType->photos->isNotEmpty())
+                                        <div class="room-photo-wrap">
+                                            <a href="{{ $roomType->photos[0]->url }}" class="glightbox" data-gallery="room-{{ $roomType->id }}">
+                                                <img src="{{ $roomType->photos[0]->url }}" alt="{{ $roomType->name }}">
+                                            </a>
+                                        </div>
+                                        @endif
+                                        <div class="room-type-name">{{ $roomType->name }}</div>
+                                        <div class="room-meta">
+                                            @if($roomType->size_sqm)
+                                                <span><i class="fas fa-expand-arrows-alt"></i> {{ $roomType->size_sqm }} m²</span>
+                                            @endif
+                                            <span><i class="fas fa-user"></i> {{ $roomType->max_adults }} adults</span>
+                                            @if($roomType->max_children > 0)
+                                                <span><i class="fas fa-child"></i> {{ $roomType->max_children }} children</span>
+                                            @endif
+                                            <span><i class="fas fa-bed"></i> {{ $roomType->bed_config_display }}</span>
+                                        </div>
+                                        @if($roomType->amenities)
+                                        <div class="room-amenity-tags">
+                                            @foreach(array_slice($roomType->amenities, 0, 5) as $amenity)
+                                                <span class="room-amenity-tag">{{ $amenity }}</span>
+                                            @endforeach
+                                        </div>
+                                        @endif
+                                        @if($isAvailable && $data['available'] <= 3)
+                                            <div class="urgency-tag"><i class="fas fa-fire"></i> Only {{ $data['available'] }} left!</div>
+                                        @endif
+                                    </td>
+                                    @endif
 
-                    {{-- Highlights --}}
-                    @if($property->amenities)
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            @php $topAmenities = collect($property->amenities)->flatten()->take(6); @endphp
-                            @foreach($topAmenities as $amenity)
-                                <span class="amenity-tag active">
-                                    <i class="fas fa-check text-[10px]"></i>
-                                    {{ str_replace('_', ' ', ucfirst($amenity)) }}
-                                </span>
+                                    <td class="rate-plan-cell">
+                                        <div class="rate-plan-name">{{ $plan->plan_display_name }}</div>
+                                        @php
+                                            $mealType = strtolower($plan->meal_plan ?? '');
+                                            $mealLabel = match(true) {
+                                                str_contains($mealType, 'breakfast') => '🍳 Breakfast included',
+                                                str_contains($mealType, 'half') => '🍽️ Half board',
+                                                str_contains($mealType, 'full') => '🍽️ Full board',
+                                                str_contains($mealType, 'all') => '🍽️ All inclusive',
+                                                default => null,
+                                            };
+                                        @endphp
+                                        @if($mealLabel)
+                                            <div class="rate-inclusion"><i class="fas fa-check-circle"></i> {{ $mealLabel }}</div>
+                                        @else
+                                            <div class="rate-inclusion" style="color:#6b7280;"><i class="fas fa-times-circle" style="color:#d1d5db;"></i> Room only</div>
+                                        @endif
+                                        @if($property->cancellation_policy && ($property->cancellation_policy['type'] ?? '') === 'free')
+                                            <div class="rate-inclusion"><i class="fas fa-check-circle"></i> Free cancellation</div>
+                                        @else
+                                            <div class="rate-inclusion neg"><i class="fas fa-times-circle"></i> Non-refundable</div>
+                                        @endif
+                                        <div class="rate-inclusion neutral" style="margin-top:4px;">
+                                            <i class="fas fa-credit-card" style="color:#6b7280;"></i> Pay at hotel
+                                        </div>
+                                    </td>
+
+                                    <td class="price-cell">
+                                        @php
+                                            $planRate = ($data['pricing']['nightly_rate'] ?? 0) + $plan->price_supplement_per_adult;
+                                            $planTotal = ($data['pricing']['total'] ?? 0) + ($plan->price_supplement_per_adult * ($data['pricing']['nights'] ?? 1));
+                                        @endphp
+                                        <div class="price-nightly">${{ number_format($planRate, 0) }}</div>
+                                        <div class="price-per-night-label">per night</div>
+                                        @if(($data['pricing']['nights'] ?? 1) > 1)
+                                            <div class="price-total">${{ number_format($planTotal, 0) }} total</div>
+                                        @endif
+                                        <div class="price-taxes-note" style="margin-top:3px;">Incl. taxes &amp; fees</div>
+                                    </td>
+
+                                    <td class="reserve-cell">
+                                        @if($isAvailable)
+                                            <a href="{{ route('hotels.book.step1', ['property' => $property, 'roomType' => $roomType, 'check_in' => $checkIn->format('Y-m-d'), 'check_out' => $checkOut->format('Y-m-d'), 'adults' => $guests, 'rate_plan_id' => $plan->id]) }}" class="btn-reserve">
+                                                Reserve
+                                            </a>
+                                        @else
+                                            <div class="btn-sold-out">Sold Out</div>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                                @endif
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @endif
+                </div>
+            </section>
+
+            {{-- ── Amenities ─────────────────────── --}}
+            @if($property->amenities)
+            <section id="amenities">
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h2 class="section-title">Amenities</h2>
+                    </div>
+                    <div class="section-card-body">
+                        <div class="amenity-grid">
+                            @php
+                                $amenityIcons = [
+                                    'wifi' => 'fa-wifi', 'pool' => 'fa-swimming-pool', 'gym' => 'fa-dumbbell',
+                                    'parking' => 'fa-parking', 'restaurant' => 'fa-utensils', 'spa' => 'fa-spa',
+                                    'bar' => 'fa-glass-martini-alt', 'ac' => 'fa-snowflake', 'airport_shuttle' => 'fa-bus',
+                                    'beach' => 'fa-umbrella-beach', 'business_center' => 'fa-briefcase',
+                                    'laundry' => 'fa-tshirt', 'room_service' => 'fa-concierge-bell',
+                                    'pet_friendly' => 'fa-paw', 'non_smoking' => 'fa-smoking-ban',
+                                    'wheelchair' => 'fa-wheelchair', 'breakfast' => 'fa-coffee',
+                                    'concierge' => 'fa-concierge-bell', 'security' => 'fa-shield-alt',
+                                    'elevator' => 'fa-sort',
+                                ];
+                                $allAmenities = collect($property->amenities)->flatten()->toArray();
+                            @endphp
+                            @foreach($allAmenities as $amenity)
+                                @php
+                                    $key = strtolower(str_replace([' ', '-'], '_', $amenity));
+                                    $icon = collect($amenityIcons)->first(fn($ic, $k) => str_contains($key, $k)) ?? 'fa-check';
+                                @endphp
+                                <div class="amenity-item">
+                                    <i class="fas {{ $icon }}"></i>
+                                    <span>{{ str_replace('_', ' ', ucfirst($amenity)) }}</span>
+                                </div>
                             @endforeach
                         </div>
-                    @endif
+                    </div>
+                </div>
+            </section>
+            @endif
 
-                    {{-- Check-in/out --}}
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-brand-surface rounded-xl p-4">
-                            <p class="text-xs text-brand-muted mb-1">Check-in</p>
-                            <p class="text-sm font-semibold text-brand-black">From {{ $property->check_in_time }}</p>
+            {{-- ── Check-in / Check-out ─────────── --}}
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h2 class="section-title">Check-in / Check-out</h2>
+                </div>
+                <div class="section-card-body">
+                    <div class="checkin-cards">
+                        <div class="checkin-card">
+                            <div class="checkin-card-label">Check-in</div>
+                            <div class="checkin-card-value">{{ $property->check_in_time ?? 'From 14:00' }}</div>
+                            <div class="checkin-card-sub">Reception is open 24 hours</div>
                         </div>
-                        <div class="bg-brand-surface rounded-xl p-4">
-                            <p class="text-xs text-brand-muted mb-1">Check-out</p>
-                            <p class="text-sm font-semibold text-brand-black">Until {{ $property->check_out_time }}</p>
+                        <div class="checkin-card">
+                            <div class="checkin-card-label">Check-out</div>
+                            <div class="checkin-card-value">{{ $property->check_out_time ?? 'Until 12:00' }}</div>
+                            <div class="checkin-card-sub">Late check-out may be available</div>
                         </div>
                     </div>
-
-                    @if($property->full_description)
-                        <div class="mt-6">
-                            <h3 class="section-heading text-base">About this property</h3>
-                            <p class="text-sm text-brand-text leading-relaxed">{{ $property->full_description }}</p>
-                        </div>
-                    @endif
-                </section>
-
-                {{-- Rooms & Rates --}}
-                <section id="rooms" class="animate-slide-up">
-                    <h2 class="section-heading">Rooms & Rates</h2>
-
-                    <div class="space-y-4">
-                        @foreach($property->activeRoomTypes as $roomType)
-                            @php $data = $roomsData[$roomType->id] ?? ['available' => 0, 'pricing' => ['total' => 0, 'nightly_rate' => 0, 'nights' => 1]]; @endphp
-                            <div class="card overflow-hidden">
-                                <div class="flex flex-col md:flex-row">
-                                    {{-- Room Photo --}}
-                                    <div class="md:w-56 h-40 md:h-auto flex-shrink-0 bg-brand-surface relative overflow-hidden">
-                                        @if($roomType->photos->isNotEmpty())
-                                            <a href="{{ $roomType->photos[0]->url }}" class="glightbox block w-full h-full" data-gallery="room-gallery-{{ $roomType->id }}">
-                                                <img src="{{ $roomType->photos[0]->url }}" alt="{{ $roomType->name }}" class="w-full h-full object-cover hover:scale-105 transition-transform">
-                                            </a>
-                                            @foreach($roomType->photos->skip(1) as $photo)
-                                                <a href="{{ $photo->url }}" class="glightbox hidden" data-gallery="room-gallery-{{ $roomType->id }}"></a>
-                                            @endforeach
-                                        @else
-                                            <div class="w-full h-full flex items-center justify-center">
-                                                <i class="fas fa-bed text-3xl text-brand-border"></i>
-                                            </div>
-                                        @endif
-                                    </div>
-
-                                    {{-- Room Details --}}
-                                    <div class="flex-1 p-5">
-                                        <div class="flex items-start justify-between mb-3">
-                                            <div>
-                                                <h3 class="font-heading font-bold text-brand-black">{{ $roomType->name }}</h3>
-                                                <div class="flex items-center gap-4 mt-1 text-xs text-brand-muted">
-                                                    @if($roomType->size_sqm)
-                                                        <span><i class="fas fa-expand"></i> {{ $roomType->size_sqm }} sqm</span>
-                                                    @endif
-                                                    <span><i class="fas fa-user"></i> {{ $roomType->max_adults }} adults</span>
-                                                    @if($roomType->max_children > 0)
-                                                        <span><i class="fas fa-child"></i> {{ $roomType->max_children }} children</span>
-                                                    @endif
-                                                    <span><i class="fas fa-bed"></i> {{ $roomType->bed_config_display }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {{-- Room Amenities --}}
-                                        @if($roomType->amenities)
-                                            <div class="flex flex-wrap gap-1.5 mb-3">
-                                                @foreach(array_slice($roomType->amenities, 0, 6) as $amenity)
-                                                    <span class="text-[10px] px-2 py-0.5 bg-brand-surface rounded-full text-brand-text">{{ $amenity }}</span>
-                                                @endforeach
-                                            </div>
-                                        @endif
-
-                                        {{-- Rate Plans --}}
-                                        @foreach($roomType->activeRatePlans as $plan)
-                                            <div class="flex items-center justify-between py-2 {{ !$loop->last ? 'border-b border-brand-border' : '' }}">
-                                                <div>
-                                                    <span class="text-sm font-medium text-brand-black">{{ $plan->plan_display_name }}</span>
-                                                    @if($plan->price_supplement_per_adult > 0)
-                                                        <span class="text-xs text-brand-muted">(+${{ number_format($plan->price_supplement_per_adult, 0) }}/adult)</span>
-                                                    @endif
-                                                </div>
-                                                <div class="flex items-center gap-4">
-                                                    <div class="text-right">
-                                                        <p class="text-lg font-heading font-bold text-brand-black">
-                                                            ${{ number_format($data['pricing']['nightly_rate'] + $plan->price_supplement_per_adult, 0) }}
-                                                        </p>
-                                                        <p class="text-[10px] text-brand-muted">per night</p>
-                                                    </div>
-                                                    @if($data['available'] > 0)
-                                                        <a href="{{ route('hotels.book.step1', ['property' => $property, 'roomType' => $roomType, 'check_in' => $checkIn->format('Y-m-d'), 'check_out' => $checkOut->format('Y-m-d'), 'adults' => $guests, 'rate_plan_id' => $plan->id]) }}" class="btn-primary btn-sm">
-                                                            Reserve
-                                                        </a>
-                                                    @else
-                                                        <span class="badge-cancelled">Sold Out</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @endforeach
-
-                                        {{-- Availability Warning --}}
-                                        @if($data['available'] > 0 && $data['available'] <= 3)
-                                            <p class="text-xs text-status-cancelled font-medium mt-2">
-                                                <i class="fas fa-fire"></i> Only {{ $data['available'] }} room{{ $data['available'] > 1 ? 's' : '' }} left!
-                                            </p>
-                                        @endif
-                                    </div>
-                                </div>
+                    @if($property->cancellation_policy)
+                        <div style="margin-top:16px;background:#f0fff4;border:1px solid #c6f6d5;border-radius:8px;padding:14px 16px;">
+                            <div style="font-size:13px;font-weight:600;color:#276749;margin-bottom:4px;"><i class="fas fa-shield-check"></i> Cancellation Policy</div>
+                            <div style="font-size:13px;color:#374151;">
+                                @if(($property->cancellation_policy['type'] ?? '') === 'free')
+                                    Free cancellation. Cancel before check-in for a full refund.
+                                @else
+                                    This property has a non-refundable policy.
+                                @endif
                             </div>
-                        @endforeach
-                    </div>
-                </section>
-
-                {{-- Location --}}
-                <section id="location" class="animate-slide-up">
-                    <h2 class="section-heading">Location</h2>
-                    <div class="card card-body">
-                        <div class="bg-brand-surface rounded-xl p-8 text-center mb-4">
-                            <i class="fas fa-map text-4xl text-brand-muted mb-2"></i>
-                            <p class="text-sm text-brand-muted">{{ $property->full_address }}</p>
                         </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    @endif
+                </div>
+            </div>
+
+            {{-- ── Location ─────────────────────── --}}
+            <section id="location">
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h2 class="section-title">Location</h2>
+                    </div>
+                    <div class="section-card-body">
+                        <div class="location-placeholder">
+                            <i class="fas fa-map-marked-alt location-icon"></i>
+                            <div style="font-weight:600;color:#003b95;font-size:15px;">{{ $property->full_address }}</div>
+                            @if($property->city)
+                                <div style="font-size:13px;color:#6b7280;">{{ $property->city }}{{ $property->country ? ', ' . $property->country : '' }}</div>
+                            @endif
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
                             @if($property->airport_distance)
-                                <div class="text-center p-3 bg-brand-surface rounded-xl">
-                                    <i class="fas fa-plane text-brand-primary mb-1"></i>
-                                    <p class="text-xs font-medium text-brand-black">{{ $property->airport_distance }}</p>
-                                    <p class="text-[10px] text-brand-muted">to Airport</p>
+                                <div style="text-align:center;background:#f8f9fa;border-radius:8px;padding:12px;">
+                                    <i class="fas fa-plane" style="color:#003b95;margin-bottom:4px;"></i>
+                                    <div style="font-size:13px;font-weight:600;color:#1a1a1a;">{{ $property->airport_distance }}</div>
+                                    <div style="font-size:11px;color:#6b7280;">to Airport</div>
                                 </div>
                             @endif
                             @if($property->beach_distance)
-                                <div class="text-center p-3 bg-brand-surface rounded-xl">
-                                    <i class="fas fa-umbrella-beach text-brand-primary mb-1"></i>
-                                    <p class="text-xs font-medium text-brand-black">{{ $property->beach_distance }}</p>
-                                    <p class="text-[10px] text-brand-muted">to Beach</p>
+                                <div style="text-align:center;background:#f8f9fa;border-radius:8px;padding:12px;">
+                                    <i class="fas fa-umbrella-beach" style="color:#003b95;margin-bottom:4px;"></i>
+                                    <div style="font-size:13px;font-weight:600;color:#1a1a1a;">{{ $property->beach_distance }}</div>
+                                    <div style="font-size:11px;color:#6b7280;">to Beach</div>
                                 </div>
                             @endif
                             @if($property->city_center_distance)
-                                <div class="text-center p-3 bg-brand-surface rounded-xl">
-                                    <i class="fas fa-city text-brand-primary mb-1"></i>
-                                    <p class="text-xs font-medium text-brand-black">{{ $property->city_center_distance }}</p>
-                                    <p class="text-[10px] text-brand-muted">to City Center</p>
+                                <div style="text-align:center;background:#f8f9fa;border-radius:8px;padding:12px;">
+                                    <i class="fas fa-city" style="color:#003b95;margin-bottom:4px;"></i>
+                                    <div style="font-size:13px;font-weight:600;color:#1a1a1a;">{{ $property->city_center_distance }}</div>
+                                    <div style="font-size:11px;color:#6b7280;">to City Center</div>
                                 </div>
                             @endif
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                {{-- Reviews --}}
-                <section id="reviews" class="animate-slide-up">
-                    <h2 class="section-heading">Guest Reviews</h2>
-
-                    {{-- Review Summary --}}
-                    @if($reviewStats['average'])
-                        <div class="card card-body mb-5">
-                            <div class="flex items-center gap-6">
-                                <div class="text-center">
-                                    <div class="guest-score text-xl w-16 h-16 rounded-xl {{ $reviewStats['average'] >= 8 ? 'excellent' : 'good' }}">
-                                        {{ number_format($reviewStats['average'], 1) }}
-                                    </div>
-                                    <p class="text-xs text-brand-muted mt-1">{{ $reviewStats['count'] }} reviews</p>
-                                </div>
-                                <div class="flex-1 grid grid-cols-2 gap-x-8 gap-y-2">
-                                    @foreach(['cleanliness' => 'Cleanliness', 'location' => 'Location', 'service' => 'Service', 'value' => 'Value', 'facilities' => 'Facilities'] as $key => $label)
-                                        @if($reviewStats[$key])
-                                            <div>
-                                                <div class="flex items-center justify-between mb-0.5">
-                                                    <span class="text-xs text-brand-text">{{ $label }}</span>
-                                                    <span class="text-xs font-bold text-brand-black">{{ number_format($reviewStats[$key], 1) }}</span>
-                                                </div>
-                                                <div class="w-full h-1.5 bg-brand-surface rounded-full overflow-hidden">
-                                                    <div class="h-full rounded-full bg-brand-primary" style="width: {{ ($reviewStats[$key] / 10) * 100 }}%"></div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Review List --}}
-                    <div class="space-y-3">
-                        @forelse($reviews as $review)
-                            <div class="card card-body">
-                                <div class="flex items-start justify-between mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-brand-surface flex items-center justify-center">
-                                            <span class="text-sm font-bold text-brand-text">{{ substr($review->guest->name ?? 'G', 0, 1) }}</span>
-                                        </div>
-                                        <div>
-                                            <p class="text-sm font-medium text-brand-black">{{ $review->guest->name ?? 'Guest' }}</p>
-                                            <p class="text-xs text-brand-muted">{{ $review->created_at->format('M d, Y') }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="guest-score text-xs w-8 h-8 rounded-md {{ $review->overall_score >= 8 ? 'excellent' : ($review->overall_score >= 6 ? 'good' : 'average') }}">
-                                        {{ number_format($review->overall_score, 1) }}
-                                    </div>
-                                </div>
-                                @if($review->comment)
-                                    <p class="text-sm text-brand-text leading-relaxed">{{ $review->comment }}</p>
-                                @endif
-                                @if($review->hotel_response)
-                                    <div class="mt-3 pl-4 border-l-2 border-brand-primary bg-brand-light rounded-r-lg p-3">
-                                        <p class="text-xs font-medium text-brand-black mb-1"><i class="fas fa-reply text-brand-primary"></i> Hotel Response</p>
-                                        <p class="text-xs text-brand-text">{{ $review->hotel_response }}</p>
-                                    </div>
-                                @endif
-                            </div>
-                        @empty
-                            <div class="card card-body text-center py-8">
-                                <i class="fas fa-star text-3xl text-brand-border mb-2"></i>
-                                <p class="text-sm text-brand-muted">No reviews yet</p>
-                            </div>
-                        @endforelse
+            {{-- ── Guest Reviews ─────────────────── --}}
+            <section id="reviews">
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h2 class="section-title">Guest Reviews</h2>
                     </div>
+                    <div class="section-card-body">
 
-                    <div class="mt-4">{{ $reviews->links() }}</div>
-                </section>
-            </div>
-
-            {{-- Sticky Booking Widget --}}
-            <div class="hidden lg:block">
-                <div class="booking-widget animate-slide-up">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <p class="text-xs text-brand-muted">From</p>
-                            <div class="total-price">${{ number_format($property->lowest_price ?? 0, 0) }}</div>
-                            <p class="text-xs text-brand-muted">per night</p>
-                        </div>
-                        @if($property->average_rating)
-                            <div class="guest-score {{ $property->average_rating >= 8 ? 'excellent' : 'good' }}">
-                                {{ number_format($property->average_rating, 1) }}
+                        @if($reviewStats['average'])
+                        <div style="display:grid;grid-template-columns:auto 1fr;gap:24px;margin-bottom:24px;align-items:start;">
+                            {{-- Score side --}}
+                            <div style="text-align:center;">
+                                @php
+                                    $avg = $reviewStats['average'];
+                                    $scoreClass = $avg >= 9 ? 'exceptional' : ($avg >= 8 ? 'excellent' : ($avg >= 7 ? 'very-good' : 'good'));
+                                    $scoreWord = $avg >= 9 ? 'Exceptional' : ($avg >= 8 ? 'Excellent' : ($avg >= 7 ? 'Very Good' : ($avg >= 6 ? 'Good' : 'Pleasant')));
+                                @endphp
+                                <div class="score-badge excellent" style="width:80px;height:80px;font-size:28px;border-radius:12px 12px 12px 0;margin:0 auto 8px;">
+                                    {{ number_format($avg, 1) }}
+                                </div>
+                                <div style="font-weight:700;font-size:15px;color:#1a1a1a;">{{ $scoreWord }}</div>
+                                <div style="font-size:12px;color:#6b7280;">{{ $reviewStats['count'] }} reviews</div>
                             </div>
+                            {{-- Score bars --}}
+                            <div>
+                                @foreach(['cleanliness' => 'Cleanliness', 'location' => 'Location', 'service' => 'Service', 'value' => 'Value for money', 'facilities' => 'Facilities'] as $key => $label)
+                                    @if($reviewStats[$key])
+                                        <div class="review-score-bar">
+                                            <div class="review-score-label">{{ $label }}</div>
+                                            <div class="review-score-track">
+                                                <div class="review-score-fill" style="width:{{ ($reviewStats[$key] / 10) * 100 }}%"></div>
+                                            </div>
+                                            <div class="review-score-val">{{ number_format($reviewStats[$key], 1) }}</div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        {{-- Review List --}}
+                        @forelse($reviews as $review)
+                        <div class="review-card">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                                <div style="display:flex;align-items:center;gap:12px;">
+                                    <div class="review-avatar">
+                                        {{ substr($review->guest->name ?? 'G', 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:14px;color:#1a1a1a;">{{ $review->guest->name ?? 'Guest' }}</div>
+                                        <div style="font-size:12px;color:#6b7280;">{{ $review->created_at->format('M Y') }}</div>
+                                    </div>
+                                </div>
+                                <span class="review-score-inline">{{ number_format($review->overall_score, 1) }}</span>
+                            </div>
+                            @if($review->comment)
+                                <p style="font-size:14px;color:#374151;line-height:1.7;margin:0;">{{ $review->comment }}</p>
+                            @endif
+                            @if($review->hotel_response)
+                                <div style="margin-top:12px;background:#f0f4f8;border-left:3px solid #003b95;padding:10px 14px;border-radius:0 6px 6px 0;">
+                                    <div style="font-size:12px;font-weight:600;color:#003b95;margin-bottom:4px;"><i class="fas fa-reply"></i> Property response</div>
+                                    <p style="font-size:13px;color:#374151;margin:0;">{{ $review->hotel_response }}</p>
+                                </div>
+                            @endif
+                        </div>
+                        @empty
+                        <div style="text-align:center;padding:32px;color:#6b7280;">
+                            <i class="fas fa-star" style="font-size:32px;color:#e4e8ed;margin-bottom:12px;"></i>
+                            <p>No reviews yet for this property.</p>
+                        </div>
+                        @endforelse
+
+                        @if($reviews->hasPages())
+                            <div style="margin-top:16px;">{{ $reviews->links() }}</div>
                         @endif
                     </div>
+                </div>
+            </section>
 
-                    <form action="{{ route('hotels.search') }}" method="GET" class="space-y-3">
-                        <div class="form-group">
-                            <label class="form-label text-xs">Check-in</label>
-                            <input type="date" name="check_in" value="{{ $checkIn->format('Y-m-d') }}" class="form-input-styled text-sm">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label text-xs">Check-out</label>
-                            <input type="date" name="check_out" value="{{ $checkOut->format('Y-m-d') }}" class="form-input-styled text-sm">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label text-xs">Guests</label>
-                            <select name="guests" class="form-input-styled text-sm">
-                                @for($g = 1; $g <= 10; $g++)
-                                    <option value="{{ $g }}" {{ $guests == $g ? 'selected' : '' }}>{{ $g }} {{ $g === 1 ? 'Guest' : 'Guests' }}</option>
-                                @endfor
-                            </select>
-                        </div>
-                    </form>
+        </div>{{-- end LEFT --}}
 
-                    <div class="mt-4 pt-4 border-t border-brand-border">
-                        <a href="#rooms" class="btn-primary w-full text-center btn-lg">
-                            <i class="fas fa-bed"></i> See Available Rooms
-                        </a>
+        {{-- ── RIGHT COLUMN: Booking Widget ─── --}}
+        <div>
+            <div class="booking-widget">
+                <div class="widget-title">Starting from</div>
+                <div class="widget-price">${{ number_format($property->lowest_price ?? 0, 0) }} <span>/ night</span></div>
+
+                @if($property->average_rating)
+                <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+                    <span style="background:#003b95;color:white;font-weight:700;font-size:13px;padding:3px 8px;border-radius:4px;">{{ number_format($property->average_rating, 1) }}</span>
+                    <span style="font-size:13px;color:#1a1a1a;font-weight:600;">
+                        {{ $property->average_rating >= 9 ? 'Exceptional' : ($property->average_rating >= 8 ? 'Excellent' : ($property->average_rating >= 7 ? 'Very Good' : 'Good')) }}
+                    </span>
+                    <span style="font-size:12px;color:#6b7280;">· {{ $property->review_count }} reviews</span>
+                </div>
+                @endif
+
+                <hr class="widget-divider">
+
+                <form action="{{ route('hotels.show', $property) }}" method="GET" class="widget-form" id="availability-form">
+                    <div style="font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Your stay</div>
+                    <div class="widget-date-row">
+                        <div class="widget-date-block">
+                            <div class="widget-date-label">Check-in</div>
+                            <input type="date" name="check_in" class="widget-date-input"
+                                value="{{ $checkIn->format('Y-m-d') }}"
+                                min="{{ now()->format('Y-m-d') }}"
+                                id="widget-checkin">
+                        </div>
+                        <div class="widget-date-block">
+                            <div class="widget-date-label">Check-out</div>
+                            <input type="date" name="check_out" class="widget-date-input"
+                                value="{{ $checkOut->format('Y-m-d') }}"
+                                min="{{ now()->addDay()->format('Y-m-d') }}"
+                                id="widget-checkout">
+                        </div>
                     </div>
+                    <div class="widget-guests-row">
+                        <div class="widget-date-label">Guests</div>
+                        <select name="guests" class="widget-guests-select">
+                            @for($g = 1; $g <= 10; $g++)
+                                <option value="{{ $g }}" {{ $guests == $g ? 'selected' : '' }}>
+                                    {{ $g }} {{ $g === 1 ? 'Guest' : 'Guests' }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-check-avail" id="check-avail-btn">
+                        <i class="fas fa-search"></i>
+                        <span>Check availability</span>
+                    </button>
+                </form>
 
-                    @if($property->cancellation_policy && ($property->cancellation_policy['type'] ?? '') === 'free')
-                        <div class="mt-3 flex items-center gap-2 text-xs text-status-confirmed">
-                            <i class="fas fa-shield-check"></i>
-                            <span>Free cancellation available</span>
-                        </div>
+                @if($property->cancellation_policy && ($property->cancellation_policy['type'] ?? '') === 'free')
+                    <div class="widget-free-cancel">
+                        <i class="fas fa-shield-check"></i>
+                        <span>Free cancellation available</span>
+                    </div>
+                @endif
+
+                <hr class="widget-divider">
+
+                {{-- Price breakdown --}}
+                @php
+                    $firstRoom = $property->activeRoomTypes->first();
+                    $firstData = $firstRoom ? ($roomsData[$firstRoom->id] ?? null) : null;
+                @endphp
+                @if($firstData)
+                <div style="font-size:13px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;color:#374151;">
+                        <span>${{ number_format($firstData['pricing']['nightly_rate'], 0) }} × {{ $firstData['pricing']['nights'] }} nights</span>
+                        <span>${{ number_format($firstData['pricing']['subtotal'], 0) }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;color:#374151;">
+                        <span>Taxes &amp; fees</span>
+                        <span>${{ number_format(($firstData['pricing']['taxes'] ?? 0) + ($firstData['pricing']['fees'] ?? 0), 0) }}</span>
+                    </div>
+                    @if(($firstData['pricing']['discount'] ?? 0) > 0)
+                    <div style="display:flex;justify-content:space-between;margin-bottom:6px;color:#008009;">
+                        <span>Discount</span>
+                        <span>-${{ number_format($firstData['pricing']['discount'], 0) }}</span>
+                    </div>
                     @endif
+                    <div style="display:flex;justify-content:space-between;font-weight:700;font-size:16px;color:#1a1a1a;padding-top:10px;border-top:2px solid #1a1a1a;margin-top:10px;">
+                        <span>Total</span>
+                        <span>${{ number_format($firstData['pricing']['total'], 0) }}</span>
+                    </div>
+                </div>
+                @endif
+
+                <div style="margin-top:16px;font-size:11px;color:#6b7280;text-align:center;">
+                    <i class="fas fa-lock"></i> Secure booking — no hidden charges
                 </div>
             </div>
-        </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const lightbox = GLightbox({
-                selector: '.glightbox',
-                touchNavigation: true,
-                loop: true,
-            });
+            {{-- Trust Signals --}}
+            <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:16px;">
+                <div style="font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:12px;">Why book here?</div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div style="display:flex;align-items:start;gap:10px;">
+                        <i class="fas fa-medal" style="color:#f5a623;margin-top:2px;font-size:14px;"></i>
+                        <div>
+                            <div style="font-size:12px;font-weight:600;color:#1a1a1a;">Lowest price guarantee</div>
+                            <div style="font-size:11px;color:#6b7280;">Find it cheaper? We'll match it</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:start;gap:10px;">
+                        <i class="fas fa-shield-alt" style="color:#008009;margin-top:2px;font-size:14px;"></i>
+                        <div>
+                            <div style="font-size:12px;font-weight:600;color:#1a1a1a;">Secure & safe booking</div>
+                            <div style="font-size:11px;color:#6b7280;">Your data is always protected</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:start;gap:10px;">
+                        <i class="fas fa-headset" style="color:#0071c2;margin-top:2px;font-size:14px;"></i>
+                        <div>
+                            <div style="font-size:12px;font-weight:600;color:#1a1a1a;">24/7 customer support</div>
+                            <div style="font-size:11px;color:#6b7280;">We're here when you need us</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>{{-- end RIGHT --}}
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Lightbox
+    GLightbox({ selector: '.glightbox', touchNavigation: true, loop: true });
+
+    // Check-in date constraint
+    const checkin = document.getElementById('widget-checkin');
+    const checkout = document.getElementById('widget-checkout');
+    if (checkin && checkout) {
+        checkin.addEventListener('change', function() {
+            const minOut = new Date(this.value);
+            minOut.setDate(minOut.getDate() + 1);
+            checkout.min = minOut.toISOString().split('T')[0];
+            if (checkout.value <= this.value) {
+                checkout.value = minOut.toISOString().split('T')[0];
+            }
         });
-    </script>
+    }
+
+    // Active anchor nav on scroll
+    const anchors = document.querySelectorAll('.anchor-nav a');
+    const sections = [...anchors].map(a => document.querySelector(a.getAttribute('href')));
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                anchors.forEach(a => a.classList.remove('active'));
+                const active = [...anchors].find(a => a.getAttribute('href') === '#' + entry.target.id);
+                if (active) active.classList.add('active');
+            }
+        });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    sections.forEach(s => s && observer.observe(s));
+
+    // Loading state on availability check
+    const form = document.getElementById('availability-form');
+    const btn = document.getElementById('check-avail-btn');
+    if (form && btn) {
+        form.addEventListener('submit', function() {
+            btn.innerHTML = '<span class="spinner" style="border-color:#cce;border-top-color:white;"></span> Checking...';
+            btn.disabled = true;
+        });
+    }
+});
+</script>
 </body>
 </html>
