@@ -128,6 +128,27 @@
         const startDateInput = document.querySelector('input[name="start_date"]');
         const endDateInput = document.querySelector('input[name="end_date"]');
 
+        function updateSelectionHighlight() {
+            const start = startDateInput.value;
+            const end = endDateInput.value;
+            
+            document.querySelectorAll('th[data-date], td[data-date]').forEach(cell => {
+                const date = cell.getAttribute('data-date');
+                if (!date) return;
+                
+                // Remove previous highlights
+                cell.classList.remove('ring-2', 'ring-inset', 'ring-brand-primary', 'bg-brand-primary/10');
+                
+                if (firstClickDate && date === firstClickDate) {
+                    // Highlight the single clicked date while waiting for second click
+                    cell.classList.add('ring-2', 'ring-inset', 'ring-brand-primary', 'bg-brand-primary/10');
+                } else if (start && end && date >= start && date <= end) {
+                    // Highlight the range
+                    cell.classList.add('ring-2', 'ring-inset', 'ring-brand-primary', 'bg-brand-primary/10');
+                }
+            });
+        }
+
         document.querySelectorAll('th[data-date], td[data-date]').forEach(cell => {
             cell.addEventListener('click', (e) => {
                 const date = e.currentTarget.getAttribute('data-date');
@@ -149,7 +170,19 @@
                     }
                     firstClickDate = null; // Reset for the next pair of clicks
                 }
+                
+                updateSelectionHighlight();
             });
+        });
+        
+        // Also update highlight if inputs are changed manually
+        startDateInput.addEventListener('change', () => {
+            firstClickDate = null;
+            updateSelectionHighlight();
+        });
+        endDateInput.addEventListener('change', () => {
+            firstClickDate = null;
+            updateSelectionHighlight();
         });
     });
 </script>
