@@ -22,7 +22,8 @@
                         <tr>
                             <th class="sticky left-0 bg-brand-surface px-3 py-2 text-left text-brand-black font-semibold border-b border-r border-brand-border z-10 min-w-[140px]">Room Type</th>
                             @foreach($dates as $date)
-                                <th class="px-1 py-2 text-center border-b border-brand-border font-medium {{ in_array($date->dayOfWeek, [5, 6]) ? 'bg-yellow-50' : 'bg-brand-surface' }}">
+                                <th class="px-1 py-2 text-center border-b border-brand-border font-medium cursor-pointer hover:bg-brand-muted/20 {{ in_array($date->dayOfWeek, [5, 6]) ? 'bg-yellow-50' : 'bg-brand-surface' }}"
+                                    data-date="{{ $date->format('Y-m-d') }}">
                                     <div class="text-[10px] text-brand-muted">{{ $date->format('D') }}</div>
                                     <div class="{{ $date->isToday() ? 'text-brand-primary font-bold' : 'text-brand-black' }}">{{ $date->format('d') }}</div>
                                 </th>
@@ -46,7 +47,8 @@
                                         $isClosed = $cell ? $cell['is_closed'] : false;
                                         $isWeekend = $cell ? $cell['is_weekend'] : in_array($date->dayOfWeek, [5, 6]);
                                     @endphp
-                                    <td class="avail-cell {{ $isClosed ? 'blocked' : ($available <= 0 ? 'sold-out' : ($isWeekend ? 'weekend' : '')) }}" title="{{ $dateStr }}">
+                                    <td class="avail-cell cursor-pointer hover:bg-brand-muted/20 {{ $isClosed ? 'blocked' : ($available <= 0 ? 'sold-out' : ($isWeekend ? 'weekend' : '')) }}" 
+                                        title="{{ $dateStr }}" data-date="{{ $dateStr }}">
                                         @if(!$isClosed)
                                             <div class="avail-count">{{ $available }}/{{ $total }}</div>
                                             <div class="avail-price">${{ number_format($price, 0) }}</div>
@@ -118,4 +120,38 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let firstClickDate = null;
+        const startDateInput = document.querySelector('input[name="start_date"]');
+        const endDateInput = document.querySelector('input[name="end_date"]');
+
+        document.querySelectorAll('th[data-date], td[data-date]').forEach(cell => {
+            cell.addEventListener('click', (e) => {
+                const date = e.currentTarget.getAttribute('data-date');
+                if (!date) return;
+                
+                if (!firstClickDate) {
+                    firstClickDate = date;
+                    startDateInput.value = date;
+                    endDateInput.value = date;
+                } else {
+                    const d1 = new Date(firstClickDate);
+                    const d2 = new Date(date);
+                    if (d2 < d1) {
+                        startDateInput.value = date;
+                        endDateInput.value = firstClickDate;
+                    } else {
+                        startDateInput.value = firstClickDate;
+                        endDateInput.value = date;
+                    }
+                    firstClickDate = null; // Reset for the next pair of clicks
+                }
+            });
+        });
+    });
+</script>
+@endpush
 </x-pms-layout>
