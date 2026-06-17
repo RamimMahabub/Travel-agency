@@ -62,7 +62,14 @@
                     @endif
                 </a>
 
-                <a href="{{ route('property-owner.availability.index', ['hotel' => $currentPropertyId ?? 0]) }}"
+                @php
+                    $availHotelId = $currentPropertyId
+                        ?? optional(\App\Models\Property::where('owner_id', Auth::id())->first())->id;
+                    $availUrl = $availHotelId
+                        ? route('property-owner.availability.index', ['hotel' => $availHotelId])
+                        : route('property-owner.hotels.index');
+                @endphp
+                <a href="{{ $availUrl }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group {{ request()->routeIs('property-owner.availability.*') ? 'bg-brand-primary/10 text-brand-primary' : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
                     <i class="fas fa-calendar-days w-5 text-center {{ request()->routeIs('property-owner.availability.*') ? 'text-brand-primary' : 'text-white/50 group-hover:text-white/80' }}"></i>
                     <span x-show="sidebarOpen" class="font-medium text-sm">Availability</span>

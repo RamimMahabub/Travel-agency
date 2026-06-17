@@ -39,13 +39,13 @@
 
         /* ── Header ─────────────────────────────── */
         .hotel-header {
-            background: #d00e15;
+            background: #19100F;
             color: white;
             padding: 0;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
         }
         .hotel-header-inner {
             max-width: 1200px;
@@ -54,25 +54,25 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 56px;
+            height: 60px;
         }
         .back-link {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: white;
+            color: rgba(255,255,255,0.85);
             text-decoration: none;
             font-size: 14px;
-            opacity: 0.9;
-            transition: opacity 0.2s;
+            font-weight: 500;
+            transition: color 0.2s;
         }
-        .back-link:hover { opacity: 1; }
+        .back-link:hover { color: white; }
         .anchor-nav {
             display: flex;
-            gap: 4px;
+            gap: 2px;
         }
         .anchor-nav a {
-            color: rgba(255,255,255,0.85);
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
             font-size: 13px;
             font-weight: 500;
@@ -81,30 +81,34 @@
             transition: all 0.2s;
         }
         .anchor-nav a:hover, .anchor-nav a.active {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.1);
             color: white;
         }
         .header-auth { display: flex; align-items: center; gap: 10px; }
         .header-auth a {
-            color: white;
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
             font-size: 13px;
         }
         .btn-sign-in {
-            background: white;
-            color: #d00e15 !important;
-            padding: 6px 16px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        .btn-register {
-            background: #A90B16;
+            background: rgba(255,255,255,0.12);
             color: white !important;
-            padding: 6px 16px;
-            border-radius: 4px;
+            padding: 7px 16px;
+            border-radius: 6px;
             font-weight: 600;
-            border: 2px solid rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: background 0.2s;
         }
+        .btn-sign-in:hover { background: rgba(255,255,255,0.2); }
+        .btn-register {
+            background: #d00e15;
+            color: white !important;
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-register:hover { background: #A90B16; }
 
         /* ── Gallery ─────────────────────────────── */
         .gallery-grid {
@@ -184,11 +188,12 @@
             align-items: center;
             gap: 6px;
             font-size: 13px;
-            color: #d00e15;
+            color: #6B7280;
             margin-bottom: 12px;
             cursor: pointer;
         }
-        .prop-location:hover { text-decoration: underline; }
+        .prop-location i { color: #d00e15; }
+        .prop-location:hover { color: #19100F; }
         .prop-badges { display: flex; flex-wrap: wrap; gap: 8px; }
         .prop-badge {
             display: flex;
@@ -210,7 +215,7 @@
             margin-bottom: 20px;
         }
         .rating-score {
-            background: #d00e15;
+            background: #19100F;
             color: white;
             font-weight: 700;
             font-size: 18px;
@@ -288,12 +293,12 @@
         .room-photo-wrap:hover img { transform: scale(1.05); }
         .room-type-name {
             font-weight: 700;
-            color: #d00e15;
+            color: #19100F;
             font-size: 15px;
             margin-bottom: 4px;
             cursor: pointer;
         }
-        .room-type-name:hover { text-decoration: underline; }
+        .room-type-name:hover { color: #d00e15; text-decoration: underline; }
         .room-meta {
             display: flex;
             flex-wrap: wrap;
@@ -413,11 +418,13 @@
         /* ── Sticky Booking Widget ─────────────── */
         .booking-widget {
             background: white;
-            border: 2px solid #d00e15;
+            border: 1px solid #E5E7EB;
+            border-top: 3px solid #d00e15;
             border-radius: 10px;
             padding: 20px;
             position: sticky;
             top: 72px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
         .widget-title { font-size: 13px; color: #6b7280; margin-bottom: 4px; }
         .widget-price {
@@ -515,16 +522,16 @@
             justify-content: center;
             width: 44px;
             height: 44px;
-            background: #d00e15;
+            background: #19100F;
             color: white;
             font-weight: 700;
             font-size: 17px;
             border-radius: 8px 8px 8px 0;
         }
         .score-badge.excellent { background: #2E7D32; }
-        .score-badge.very-good { background: #d00e15; }
+        .score-badge.very-good { background: #19100F; }
         .score-badge.good { background: #F57F17; }
-        .score-badge.avg { background: #f5a623; }
+        .score-badge.avg { background: #9ca3af; }
         .review-score-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
         .review-score-label { font-size: 12px; width: 90px; flex-shrink: 0; }
         .review-score-track {
@@ -534,7 +541,7 @@
             border-radius: 4px;
             overflow: hidden;
         }
-        .review-score-fill { height: 100%; background: #d00e15; border-radius: 4px; transition: width 1s ease; }
+        .review-score-fill { height: 100%; background: #19100F; border-radius: 4px; transition: width 1s ease; }
         .review-score-val { font-size: 12px; font-weight: 600; width: 28px; flex-shrink: 0; }
 
         /* Review Cards */
@@ -548,7 +555,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: #d00e15;
+            background: #19100F;
             color: white;
             display: flex;
             align-items: center;
@@ -557,7 +564,7 @@
             font-size: 16px;
         }
         .review-score-inline {
-            background: #d00e15;
+            background: #19100F;
             color: white;
             font-weight: 700;
             font-size: 13px;

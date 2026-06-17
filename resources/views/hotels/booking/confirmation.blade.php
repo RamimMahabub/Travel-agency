@@ -18,11 +18,9 @@
             min-height: 100vh;
         }
 
-        /* ── Top bar ── */
         .conf-topbar {
+            height: 4px;
             background: #d00e15;
-            height: 6px;
-            background: linear-gradient(90deg, #d00e15, #A90B16, #19100F);
         }
         .conf-header {
             background: white;
@@ -45,12 +43,21 @@
 
         /* ── Hero confirmation banner ── */
         .conf-hero {
-            background: linear-gradient(135deg, #d00e15 0%, #A90B16 60%, #19100F 100%);
+            background: linear-gradient(160deg, #19100F 0%, #2c1a18 60%, #19100F 100%);
             color: white;
             padding: 48px 24px 64px;
             text-align: center;
             position: relative;
             overflow: hidden;
+        }
+        .conf-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #d00e15;
         }
         .conf-hero::before {
             content: '';

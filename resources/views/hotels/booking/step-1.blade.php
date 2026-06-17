@@ -14,7 +14,7 @@
 
         /* ── Header ── */
         .checkout-header {
-            background: #d00e15;
+            background: #19100F;
             color: white;
             padding: 0;
         }
@@ -61,7 +61,7 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 12px; font-weight: 700;
         }
-        .step-item.active .step-num { background: white; color: #d00e15; border-color: white; }
+        .step-item.active .step-num { background: #d00e15; color: white; border-color: #d00e15; }
         .step-item.done .step-num { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
         .step-arrow { color: rgba(255,255,255,0.3); font-size: 11px; }
 
@@ -72,7 +72,7 @@
             padding: 8px 16px;
             text-align: center;
             font-size: 12px;
-            color: #d00e15;
+            color: #6B7280;
         }
 
         /* ── Page Layout ── */
