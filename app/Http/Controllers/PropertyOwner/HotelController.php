@@ -59,13 +59,21 @@ class HotelController extends Controller
             'late_checkout_policy' => 'nullable|string',
             'photos' => 'nullable|array',
             'photos.*' => 'image|max:5120',
-            'rooms' => 'required|array|min:1',
+            'rooms' => 'nullable|array',
             'rooms.*.name' => 'required|string|max:255',
             'rooms.*.size_sqm' => 'nullable|integer|min:1|max:99999',
-            'rooms.*.max_adults' => 'required|integer|min:1|max:99',
+            'rooms.*.floor_level' => 'nullable|string|max:50',
+            'rooms.*.max_adults' => 'required|integer|min:1|max:20',
+            'rooms.*.max_children' => 'nullable|integer|min:0|max:10',
+            'rooms.*.max_infants' => 'nullable|integer|min:0|max:5',
             'rooms.*.bathrooms' => 'nullable|integer|min:0|max:99',
+            'rooms.*.bed_config' => 'nullable|array',
             'rooms.*.base_price_per_night' => 'required|numeric|min:0|max:999999',
-            'rooms.*.breakfast' => 'required|in:yes,no',
+            'rooms.*.inventory_count' => 'required|integer|min:1',
+            'rooms.*.rate_plans' => 'nullable|array',
+            'rooms.*.amenities' => 'nullable|array',
+            'rooms.*.photos' => 'nullable|array',
+            'rooms.*.photos.*' => 'image|max:5120',
         ]);
 
         $validated['owner_id'] = Auth::id();
@@ -95,23 +103,57 @@ class HotelController extends Controller
             }
         }
         // Handle Rooms Creation
-        foreach ($roomsData as $roomData) {
-            $roomAmenities = [];
-            if (($roomData['breakfast'] ?? 'no') === 'yes') {
-                $roomAmenities[] = 'breakfast';
-            }
-            // If you want to store bathrooms, could push to amenities or extend migration later.
-            
-            \App\Models\RoomType::create([
+        foreach ($roomsData as $index => $roomData) {
+            $roomType = \App\Models\RoomType::create([
                 'property_id' => $property->id,
                 'name' => $roomData['name'],
                 'size_sqm' => $roomData['size_sqm'] ?? null,
+                'floor_level' => $roomData['floor_level'] ?? null,
                 'max_adults' => $roomData['max_adults'] ?? 1,
+                'max_children' => $roomData['max_children'] ?? 0,
+                'max_infants' => $roomData['max_infants'] ?? 0,
+                'bed_config' => $roomData['bed_config'] ?? null,
+                'amenities' => $roomData['amenities'] ?? null,
                 'base_price_per_night' => $roomData['base_price_per_night'] ?? 0,
-                'amenities' => $roomAmenities,
-                'inventory_count' => 1,
+                'inventory_count' => $roomData['inventory_count'] ?? 1,
                 'status' => 'active'
             ]);
+
+            // Create default RO rate plan
+            $roomType->ratePlans()->create([
+                'plan_code' => 'RO',
+                'plan_name' => 'Room Only',
+                'price_supplement_per_adult' => 0,
+                'is_active' => true,
+            ]);
+
+            // Create additional rate plans if selected
+            if (!empty($roomData['rate_plans'])) {
+                $planNames = \App\Models\RatePlan::getPlanCodes();
+                foreach ($roomData['rate_plans'] as $code => $data) {
+                    if ($code === 'RO') continue;
+                    if (!empty($data['enabled'])) {
+                        $roomType->ratePlans()->create([
+                            'plan_code' => $code,
+                            'plan_name' => $planNames[$code] ?? $code,
+                            'price_supplement_per_adult' => $data['supplement'] ?? 0,
+                            'is_active' => true,
+                        ]);
+                    }
+                }
+            }
+
+            // Handle room photos
+            if ($request->hasFile("rooms.{$index}.photos")) {
+                foreach ($request->file("rooms.{$index}.photos") as $pIndex => $photo) {
+                    $path = $photo->store('rooms/' . $roomType->id, 'cloudinary');
+                    \App\Models\RoomTypePhoto::create([
+                        'room_type_id' => $roomType->id,
+                        'file_path' => $path,
+                        'sort_order' => $pIndex,
+                    ]);
+                }
+            }
         }
 
         return redirect()->route('property-owner.hotels.show', $property)

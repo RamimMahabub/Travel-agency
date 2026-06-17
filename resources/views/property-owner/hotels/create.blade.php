@@ -258,123 +258,161 @@
             </div>
 
             <div class="space-y-6">
+                <div x-show="rooms.length === 0" class="card card-body text-center py-10 border-2 border-dashed border-gray-200 bg-gray-50/30">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100">
+                        <i class="fas fa-bed text-2xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">No rooms added yet</h3>
+                    <p class="text-sm text-gray-500 mb-0">You can add room types now or do it later from the property dashboard.</p>
+                </div>
+                
                 <template x-for="(room, index) in rooms" :key="index">
-                    <div>
-                        <h3 class="text-lg font-bold text-brand-black mb-4">Room <span x-text="index + 1"></span></h3>
+                    <div class="card card-body bg-white border border-gray-200 shadow-sm relative">
+                        <div class="absolute top-4 right-4 z-10">
+                            <button type="button" @click="removeRoom(index)" class="w-8 h-8 rounded-full bg-white border border-red-200 text-red-500 flex items-center justify-center hover:bg-red-50 transition-colors shadow-sm" title="Remove Room">
+                                <i class="fas fa-trash-alt text-sm"></i>
+                            </button>
+                        </div>
+                        <h3 class="text-lg font-bold text-brand-black mb-5">Room <span x-text="index + 1"></span></h3>
                         
-                        <div class="card card-body bg-gray-50/50 border border-gray-100 shadow-sm">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-4 mb-6">
-                                <div class="relative" x-data="{ dropdownOpen: false, searchQuery: '' }" @click.away="dropdownOpen = false">
-                                    <label class="absolute -top-2.5 left-3 bg-white px-1.5 text-[11px] font-medium text-gray-500 z-10">Room type</label>
-                                    
-                                    <input type="hidden" :name="'rooms['+index+'][name]'" x-model="room.name" required>
-                                    
-                                    <button type="button" @click="dropdownOpen = !dropdownOpen; if(dropdownOpen) { setTimeout(() => $refs.searchInput.focus(), 50) }" class="w-full flex items-center justify-between px-4 py-3.5 text-sm bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition-colors text-left" :class="!room.name ? 'text-gray-500' : 'text-gray-900'">
-                                        <span x-text="room.name || 'Select room type'"></span>
-                                        <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform" :class="dropdownOpen ? 'rotate-180' : ''"></i>
-                                    </button>
-
-                                    <div x-show="dropdownOpen" x-transition style="display: none;" class="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] overflow-hidden">
-                                        <div class="p-3 border-b border-gray-100 bg-white">
-                                            <div class="relative">
-                                                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-primary text-sm"></i>
-                                                <input type="text" x-model="searchQuery" x-ref="searchInput" class="w-full pl-9 pr-4 py-2.5 text-sm border-2 border-brand-primary/40 rounded-full focus:outline-none focus:border-brand-primary bg-blue-50/20 text-brand-black placeholder-brand-primary/60 transition-colors" placeholder="Search or type custom name">
-                                            </div>
-                                        </div>
+                        <div class="space-y-6">
+                            <!-- Room Details -->
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-700 mb-3 border-b pb-2"><i class="fas fa-bed mr-2 text-brand-primary"></i>Room Details</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div class="form-group md:col-span-2 relative" x-data="{ dropdownOpen: false, searchQuery: '' }" @click.away="dropdownOpen = false">
+                                        <label class="form-label">Room Type Name *</label>
+                                        <input type="hidden" :name="'rooms['+index+'][name]'" x-model="room.name" required>
                                         
-                                        <div class="max-h-[280px] overflow-y-auto custom-scrollbar p-2">
-                                            <div class="text-[11px] text-gray-400 font-semibold mb-2 px-2 uppercase tracking-wide">Most used room types</div>
+                                        <button type="button" @click="dropdownOpen = !dropdownOpen; if(dropdownOpen) { setTimeout(() => $refs.searchInput.focus(), 50) }" class="w-full flex items-center justify-between px-4 py-2.5 text-sm bg-white rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition-colors text-left" :class="!room.name ? 'text-gray-500' : 'text-gray-900'">
+                                            <span x-text="room.name || 'Select or type room name'"></span>
+                                            <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform" :class="dropdownOpen ? 'rotate-180' : ''"></i>
+                                        </button>
+
+                                        <div x-show="dropdownOpen" x-transition style="display: none;" class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                            <div class="p-2 border-b border-gray-100 bg-gray-50">
+                                                <div class="relative">
+                                                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                                    <input type="text" x-model="searchQuery" x-ref="searchInput" class="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:border-brand-primary bg-white text-brand-black placeholder-gray-400" placeholder="Search or custom name">
+                                                </div>
+                                            </div>
                                             
-                                            <template x-for="type in predefinedRoomTypes.filter(t => t.toLowerCase().includes(searchQuery.toLowerCase()))" :key="type">
-                                                <label class="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors group">
-                                                    <input type="radio" :name="'room_type_select_'+index" :value="type" x-model="room.name" @change="dropdownOpen = false; searchQuery = ''" class="text-blue-600 focus:ring-blue-500 w-4 h-4 border-gray-300">
-                                                    <span class="text-[13px] text-gray-700 group-hover:text-brand-black" x-text="type"></span>
-                                                </label>
-                                            </template>
-                                            
-                                            <!-- Custom name option -->
-                                            <div x-show="searchQuery.length > 0 && !predefinedRoomTypes.some(t => t.toLowerCase() === searchQuery.toLowerCase())" class="px-2 py-1 mt-1 border-t border-gray-100 pt-2">
-                                                <label class="flex items-center gap-3 px-3 py-2.5 bg-blue-50/50 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors group border border-blue-100">
-                                                    <input type="radio" :name="'room_type_select_'+index" :value="searchQuery" x-model="room.name" @change="dropdownOpen = false; searchQuery = ''" class="text-blue-600 focus:ring-blue-500 w-4 h-4 border-blue-300">
-                                                    <span class="text-[13px] text-blue-800 font-medium group-hover:text-blue-900">
-                                                        Use custom name: "<span x-text="searchQuery"></span>"
-                                                    </span>
-                                                </label>
+                                            <div class="max-h-[200px] overflow-y-auto p-1">
+                                                <div class="text-[10px] text-gray-400 font-semibold mb-1 px-2 uppercase tracking-wide">Suggestions</div>
+                                                <template x-for="type in predefinedRoomTypes.filter(t => t.toLowerCase().includes(searchQuery.toLowerCase()))" :key="type">
+                                                    <label class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 rounded cursor-pointer transition-colors">
+                                                        <input type="radio" :name="'rt_sel_'+index" :value="type" x-model="room.name" @change="dropdownOpen = false; searchQuery = ''" class="text-brand-primary focus:ring-brand-primary w-3.5 h-3.5 border-gray-300">
+                                                        <span class="text-xs text-gray-700" x-text="type"></span>
+                                                    </label>
+                                                </template>
+                                                <div x-show="searchQuery.length > 0 && !predefinedRoomTypes.some(t => t.toLowerCase() === searchQuery.toLowerCase())" class="px-1 py-1 border-t border-gray-100 mt-1">
+                                                    <label class="flex items-center gap-2 px-2 py-1.5 bg-blue-50 hover:bg-blue-100 rounded cursor-pointer transition-colors">
+                                                        <input type="radio" :name="'rt_sel_'+index" :value="searchQuery" x-model="room.name" @change="dropdownOpen = false; searchQuery = ''" class="text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 border-blue-300">
+                                                        <span class="text-xs text-blue-800 font-medium">Use "<span x-text="searchQuery"></span>"</span>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="relative">
-                                    <label class="absolute -top-2.5 left-3 bg-white px-1.5 text-[11px] font-medium text-gray-500 z-10">Room size</label>
-                                    <div class="relative">
-                                        <input type="number" :name="'rooms['+index+'][size_sqm]'" x-model="room.size" min="1" class="block w-full pl-4 pr-16 py-3.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-                                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                            <span class="text-gray-500 text-sm">sqm</span>
-                                        </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Size (sqm)</label>
+                                        <input type="number" :name="'rooms['+index+'][size_sqm]'" x-model="room.size_sqm" class="form-input-styled" min="1" placeholder="e.g. 25">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Floor Level</label>
+                                        <input type="text" :name="'rooms['+index+'][floor_level]'" x-model="room.floor_level" class="form-input-styled" placeholder="e.g., 2nd-5th floor">
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="space-y-1 mb-8">
-                                <div class="flex items-center justify-between py-3 border-b border-gray-200">
-                                    <div class="text-[15px] text-brand-black">Total occupancy limit</div>
-                                    <div class="flex items-center gap-4">
-                                        <button type="button" @click="if(room.occupancy > 1) room.occupancy--" class="w-8 h-8 rounded-full border border-blue-200 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors">
-                                            <i class="fas fa-minus text-[10px]"></i>
-                                        </button>
-                                        <input type="hidden" :name="'rooms['+index+'][max_adults]'" :value="room.occupancy">
-                                        <span class="text-base font-bold w-4 text-center text-brand-black" x-text="room.occupancy"></span>
-                                        <button type="button" @click="room.occupancy++" class="w-8 h-8 rounded-full border border-blue-200 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors">
-                                            <i class="fas fa-plus text-[10px]"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between py-3 border-b border-gray-200">
-                                    <div class="text-[15px] text-brand-black">Bathrooms</div>
-                                    <div class="flex items-center gap-4">
-                                        <button type="button" @click="if(room.bathrooms > 0) room.bathrooms--" class="w-8 h-8 rounded-full border border-blue-200 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors">
-                                            <i class="fas fa-minus text-[10px]"></i>
-                                        </button>
-                                        <input type="hidden" :name="'rooms['+index+'][bathrooms]'" :value="room.bathrooms">
-                                        <span class="text-base font-bold w-4 text-center text-brand-black" x-text="room.bathrooms"></span>
-                                        <button type="button" @click="room.bathrooms++" class="w-8 h-8 rounded-full border border-blue-200 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors">
-                                            <i class="fas fa-plus text-[10px]"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="relative">
-                                <label class="absolute -top-2.5 left-3 bg-white px-1.5 text-[11px] font-medium text-gray-500 z-10">Minimum room rate</label>
-                                <div class="relative">
-                                    <input type="number" :name="'rooms['+index+'][base_price_per_night]'" x-model="room.price" min="0" step="0.01" class="block w-full pl-4 pr-24 py-3.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition-colors" required>
-                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 text-sm">USD / night</span>
-                                    </div>
-                                </div>
-                                <p class="text-[11px] text-gray-500 mt-2 ml-1">Set your lowest possible rate for this room (not including promotions, taxes, and/or other fees)</p>
                             </div>
                             
-                            <div class="mt-8 pt-6 border-t border-gray-200">
-                                <h4 class="text-base font-bold text-brand-black mb-3">Breakfast</h4>
-                                <p class="text-[13px] text-gray-500 mb-4">Do you provide breakfast at the property?</p>
-                                <div class="space-y-3">
-                                    <label class="flex items-center gap-3 cursor-pointer">
-                                        <input type="radio" :name="'rooms['+index+'][breakfast]'" value="yes" x-model="room.breakfast" class="text-blue-600 focus:ring-blue-500 w-4 h-4 border-gray-300">
-                                        <span class="text-sm text-brand-black">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-3 cursor-pointer">
-                                        <input type="radio" :name="'rooms['+index+'][breakfast]'" value="no" x-model="room.breakfast" class="text-blue-600 focus:ring-blue-500 w-4 h-4 border-gray-300">
-                                        <span class="text-sm text-brand-black">No</span>
-                                    </label>
+                            <!-- Occupancy & Beds -->
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-700 mb-3 border-b pb-2"><i class="fas fa-users mr-2 text-brand-primary"></i>Occupancy & Beds</h4>
+                                <div class="grid grid-cols-3 gap-5 mb-4">
+                                    <div class="form-group">
+                                        <label class="form-label">Max Adults *</label>
+                                        <input type="number" :name="'rooms['+index+'][max_adults]'" x-model="room.max_adults" class="form-input-styled" min="1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Max Children</label>
+                                        <input type="number" :name="'rooms['+index+'][max_children]'" x-model="room.max_children" class="form-input-styled" min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Max Infants</label>
+                                        <input type="number" :name="'rooms['+index+'][max_infants]'" x-model="room.max_infants" class="form-input-styled" min="0">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="form-label mb-2 block">Bed Configuration</label>
+                                    <template x-for="(bed, bedIndex) in room.beds" :key="bedIndex">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <select :name="'rooms['+index+'][bed_config]['+bedIndex+'][type]'" x-model="bed.type" class="form-input-styled text-sm flex-1">
+                                                @foreach(\App\Models\RoomType::getBedTypes() as $bedType)
+                                                    <option value="{{ $bedType }}">{{ ucfirst($bedType) }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="number" :name="'rooms['+index+'][bed_config]['+bedIndex+'][count]'" x-model="bed.count" min="1" class="form-input-styled text-sm w-20">
+                                            <button type="button" @click="room.beds.splice(bedIndex, 1)" x-show="room.beds.length > 1" class="btn-ghost btn-sm text-red-500"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </template>
+                                    <button type="button" @click="room.beds.push({type: 'twin', count: 1})" class="text-xs text-brand-primary hover:underline font-medium"><i class="fas fa-plus mr-1"></i> Add bed</button>
                                 </div>
                             </div>
 
-                            <div class="mt-6 flex justify-end" x-show="rooms.length > 1">
-                                <button type="button" @click="removeRoom(index)" class="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">
-                                    <i class="fas fa-trash-alt mr-1"></i> Remove Room
-                                </button>
+                            <!-- Pricing & Inventory -->
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-700 mb-3 border-b pb-2"><i class="fas fa-dollar-sign mr-2 text-brand-primary"></i>Pricing & Inventory</h4>
+                                <div class="grid grid-cols-2 gap-5 mb-4">
+                                    <div class="form-group">
+                                        <label class="form-label">Base Price per Night ($) *</label>
+                                        <input type="number" :name="'rooms['+index+'][base_price_per_night]'" x-model="room.base_price_per_night" class="form-input-styled" step="0.01" min="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Total Rooms of This Type *</label>
+                                        <input type="number" :name="'rooms['+index+'][inventory_count]'" x-model="room.inventory_count" class="form-input-styled" min="1" required>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="form-label block mb-1">Rate Plans</label>
+                                    <p class="text-xs text-gray-500 mb-3">Room Only is included by default. Enable additional meal plans:</p>
+                                    @foreach(['BB' => 'Bed & Breakfast', 'HB' => 'Half Board', 'FB' => 'Full Board', 'AI' => 'All Inclusive'] as $code => $name)
+                                        <div class="flex items-center gap-3 mb-2 p-2.5 rounded-lg border transition-colors bg-white border-gray-200">
+                                            <input type="checkbox" :name="'rooms['+index+'][rate_plans][{{ $code }}][enabled]'" value="1" class="rounded border-gray-300 text-brand-primary focus:ring-brand-primary w-4 h-4">
+                                            <span class="text-sm font-medium text-gray-800 flex-1">{{ $name }}</span>
+                                            <div class="flex items-center gap-1.5 bg-white px-2 py-1 rounded border border-gray-200">
+                                                <span class="text-xs font-medium text-gray-500">+ $</span>
+                                                <input type="number" :name="'rooms['+index+'][rate_plans][{{ $code }}][supplement]'" class="border-0 focus:ring-0 text-sm w-16 p-0 font-medium" step="0.01" placeholder="0">
+                                                <span class="text-xs text-gray-500">/adult</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
+                            
+                            <!-- Room Amenities -->
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-700 mb-3 border-b pb-2"><i class="fas fa-concierge-bell mr-2 text-brand-primary"></i>Room Amenities</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach(\App\Models\RoomType::getAmenityOptions() as $amenity)
+                                        <label class="amenity-tag cursor-pointer border border-gray-200" x-data="{ on: false }" :class="{ 'active !border-brand-primary': on }">
+                                            <input type="checkbox" :name="'rooms['+index+'][amenities][]'" value="{{ $amenity }}" class="hidden" x-model="on">
+                                            <i class="fas fa-check text-[10px]" :class="on ? 'text-brand-primary' : 'text-gray-300'"></i> <span class="text-[13px]">{{ $amenity }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                            
+                            <!-- Room Photos -->
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-700 mb-3 border-b pb-2"><i class="fas fa-camera mr-2 text-brand-primary"></i>Room Photos</h4>
+                                <div class="bg-gray-50/50 p-4 rounded-lg border border-gray-200">
+                                    <input type="file" :name="'rooms['+index+'][photos][]'" multiple accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-white file:text-brand-primary hover:file:bg-brand-light file:border file:border-brand-border cursor-pointer">
+                                    <p class="text-[11px] text-gray-500 mt-2">Upload multiple photos showcasing this specific room type.</p>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                 </template>
@@ -530,11 +568,19 @@ function roomManager() {
             'Executive Room', 'Presidential Suite', 'Honeymoon Suite',
             'Single Room', 'Triple Room', 'Quadruple Room'
         ],
-        rooms: [
-            { name: '', size: '', occupancy: 1, bathrooms: 0, price: '', breakfast: 'no' }
-        ],
+        rooms: [],
         addRoom() {
-            this.rooms.push({ name: '', size: '', occupancy: 1, bathrooms: 0, price: '', breakfast: 'no' });
+            this.rooms.push({ 
+                name: '', 
+                size_sqm: '', 
+                floor_level: '', 
+                max_adults: 2, 
+                max_children: 0, 
+                max_infants: 0, 
+                beds: [{type: 'king', count: 1}],
+                base_price_per_night: '', 
+                inventory_count: 1
+            });
         },
         removeRoom(index) {
             this.rooms.splice(index, 1);
