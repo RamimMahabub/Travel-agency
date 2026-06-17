@@ -14,10 +14,11 @@
 
     <div class="flex gap-5">
         {{-- Calendar Grid --}}
-        <div class="flex-1 overflow-x-auto">
-            <div class="card overflow-hidden min-w-[800px]">
-                <table class="w-full text-xs border-collapse">
-                    <thead>
+        <div class="flex-1 min-w-0">
+            <div class="card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs border-collapse">
+                        <thead>
                         <tr>
                             <th class="sticky left-0 bg-brand-surface px-3 py-2 text-left text-brand-black font-semibold border-b border-r border-brand-border z-10 min-w-[140px]">Room Type</th>
                             @foreach($dates as $date)
@@ -58,6 +59,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
             </div>
 
             {{-- Legend --}}
